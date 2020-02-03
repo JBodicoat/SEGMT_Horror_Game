@@ -1,1 +1,1 @@
-# SEGMT_Horror_Game
+# The Midnight Game
