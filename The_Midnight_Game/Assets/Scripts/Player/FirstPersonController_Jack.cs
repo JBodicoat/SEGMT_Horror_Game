@@ -1,3 +1,5 @@
+// Jack
+
 using System;
 using UnityEngine;
 using UnityStandardAssets.CrossPlatformInput;
@@ -9,25 +11,24 @@ namespace UnityStandardAssets.Characters.FirstPerson
 {
     [RequireComponent(typeof (CharacterController))]
     [RequireComponent(typeof (AudioSource))]
-    // Jack
-    /// Controls the character
+    /// Controls the player character.
     /// 
-    /// Does this stoof
+    /// Controls players movement and inventory system.
     public class FirstPersonController_Jack : MonoBehaviour
     {
         // Unity's variables
-        [SerializeField] private float m_WalkSpeed;
-        [SerializeField] private float m_JumpSpeed;
-        [SerializeField] private float m_StickToGroundForce;
-        [SerializeField] private float m_GravityMultiplier;
-        [SerializeField] private MouseLook_Jack m_MouseLook;
-        [SerializeField] private bool m_UseHeadBob;
+        [SerializeField] private float m_WalkSpeed = 0;
+        [SerializeField] private float m_JumpSpeed = 0;
+        [SerializeField] private float m_StickToGroundForce = 0;
+        [SerializeField] private float m_GravityMultiplier = 0;
+        [SerializeField] private MouseLook_Jack m_MouseLook = null;
+        [SerializeField] private bool m_UseHeadBob = false;
         [SerializeField] private CurveControlledBob m_HeadBob = new CurveControlledBob();
         [SerializeField] private LerpControlledBob m_JumpBob = new LerpControlledBob();
-        [SerializeField] private float m_StepInterval;
-        [SerializeField] private AudioClip[] m_FootstepSounds;    // an array of footstep sounds that will be randomly selected from.
-        [SerializeField] private AudioClip m_JumpSound;           // the sound played when character leaves the ground.
-        [SerializeField] private AudioClip m_LandSound;           // the sound played when character touches back on ground.
+        [SerializeField] private float m_StepInterval = 0;
+        [SerializeField] private AudioClip[] m_FootstepSounds = null;    // an array of footstep sounds that will be randomly selected from.
+        [SerializeField] private AudioClip m_JumpSound = null;           // the sound played when character leaves the ground.
+        [SerializeField] private AudioClip m_LandSound = null;           // the sound played when character touches back on ground.
 
         private Camera m_Camera;
         private bool m_Jump;
@@ -42,15 +43,20 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private bool m_Jumping;
         private AudioSource m_AudioSource;
 
-        // My variables
+        // ===== My variables ===== //
+        // Movement
         public Rigidbody rigidBody;
         private bool usingController = true;
-        private const float rotateSpeed = 5f;
-
-        public bool dead = false;
-
         InputDevice inputDevice = InputManager.ActiveDevice; // InControl input
 
+        // Health
+        public bool dead = false;
+
+        // Inventory
+        private ushort[] inventory = new ushort[(ushort)ItemType.sizeOf];
+
+        // Candle
+        public Light candleLight;
 
         // Use this for initialization
         private void Start()
@@ -71,6 +77,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
             {
                 rigidBody = GetComponent<Rigidbody>();
             }
+
+            inventory[(ushort)ItemType.matches] = 3;
         }
 
 
@@ -155,13 +163,11 @@ namespace UnityStandardAssets.Characters.FirstPerson
             }
         }
 
-
         private void PlayJumpSound()
         {
             m_AudioSource.clip = m_JumpSound;
             m_AudioSource.Play();
         }
-
 
         private void ProgressStepCycle()
         {
@@ -181,7 +187,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
             PlayFootStepAudio();
         }
 
-
         private void PlayFootStepAudio()
         {
             if (!m_CharacterController.isGrounded)
@@ -197,7 +202,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
             m_FootstepSounds[n] = m_FootstepSounds[0];
             m_FootstepSounds[0] = m_AudioSource.clip;
         }
-
 
         private void UpdateCameraPosition()
         {
@@ -221,7 +225,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
             }
             m_Camera.transform.localPosition = newCameraPosition;
         }
-
 
         private void GetInput()
         {
@@ -283,6 +286,67 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 return;
             }
             body.AddForceAtPosition(m_CharacterController.velocity*0.1f, hit.point, ForceMode.Impulse);
+        }
+
+        // ============== My Functions ============== //
+
+        /// Returns usingController.
+        public bool IsUsingController()
+        {
+            return usingController;
+        }
+
+        /// Adds items to the player's inventory.
+        /// 
+        /// Increases the number of passed itemType by passed quantity.
+        /// <param name="itemType"></param>
+        /// <param name="quantity"></param>
+        public void AddItems(ItemType itemType, ushort quantity)
+        {
+            inventory[(ushort)itemType] += quantity;
+        }
+
+        /// Removes items to the player's inventory.
+        /// 
+        /// Decreases the number of passed itemType by passed quantity.
+        /// <param name="itemType"></param>
+        /// <param name="quantity"></param>
+        public void RemoveItems(ItemType itemType, ushort quantity)
+        {
+            inventory[(ushort)itemType] -= quantity;
+        }
+
+
+        /// Attempts to light the player's candle.
+        /// <returns>Returns false if the candle was already lit or the player doesn't have enouch matches.</returns>
+        private bool LightCandle()
+        {
+            if(!candleLight.enabled && inventory[(ushort)ItemType.matches] > 0)
+            {
+                candleLight.enabled = true;
+                RemoveItems(ItemType.matches, 1);
+            }
+
+            return false;
+        }
+
+        /// Disables the player's candles light source.
+        /// <returns>Returns false if the candle was already extinguished.</returns>
+        public bool ExtinguishCandle()
+        {
+            if(candleLight.enabled)
+            {
+                candleLight.enabled = false;
+                return true;
+            }
+
+            return false;
+        }
+
+        /// Returns whether the candle is lit.
+        public bool IsCandleLit()
+        {
+            return candleLight.enabled;
         }
     }
 }

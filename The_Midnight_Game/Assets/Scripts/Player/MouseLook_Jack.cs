@@ -1,3 +1,6 @@
+// Jack
+// Modification to LookRotation() by Jack
+
 using System;
 using UnityEngine;
 using UnityStandardAssets.CrossPlatformInput;
@@ -8,8 +11,10 @@ namespace UnityStandardAssets.Characters.FirstPerson
     [Serializable]
     public class MouseLook_Jack
     {
-        public float XSensitivity = 2f;
-        public float YSensitivity = 2f;
+        public float mouseXSensitivity = 2f;
+        public float mouseYSensitivity = 2f;
+        public float controllerXSensitivity = 2f;
+        public float controllerYSensitivity = 2f;
         public bool clampVerticalRotation = true;
         public float MinimumX = -90F;
         public float MaximumX = 90F;
@@ -36,13 +41,13 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
             if (inputDevice != null)
             {
-                yRot = inputDevice.RightStickX;
-                xRot = inputDevice.RightStickY;
+                yRot = inputDevice.RightStickX * controllerXSensitivity;
+                xRot = inputDevice.RightStickY * controllerYSensitivity;
             }
             else
             {
-                yRot = CrossPlatformInputManager.GetAxis("Mouse X") * XSensitivity;
-                xRot = CrossPlatformInputManager.GetAxis("Mouse Y") * YSensitivity;
+                yRot = CrossPlatformInputManager.GetAxis("Mouse X") * mouseXSensitivity;
+                xRot = CrossPlatformInputManager.GetAxis("Mouse Y") * mouseYSensitivity;
             }
 
             m_CharacterTargetRot *= Quaternion.Euler (0f, yRot, 0f);

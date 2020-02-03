@@ -10,13 +10,14 @@ namespace InControl
 	[InitializeOnLoad]
 	public class VersionUpdater
 	{
-		static VersionUpdater()
+        [System.Obsolete]
+        static VersionUpdater()
 		{
 			EditorApplication.playmodeStateChanged += Update;
 		}
 
-
-		static void Update()
+        [System.Obsolete]
+        static void Update()
 		{
 			if (!EditorApplication.isPlaying)
 			{
