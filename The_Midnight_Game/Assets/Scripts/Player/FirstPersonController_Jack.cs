@@ -44,6 +44,12 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private AudioSource m_AudioSource;
 
         // ===== My variables ===== //
+        // Input
+        private const string jumpAxis = "Jump";
+        private const string horizontalAxis = "Horizontal";
+        private const string verticalAxis = "Vertical";
+        private const string lightCandleButton = "Light Candle";
+
         // Movement
         public Rigidbody rigidBody;
         private bool usingController = true;
@@ -56,7 +62,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private ushort[] inventory = new ushort[(ushort)ItemType.sizeOf];
 
         // Candle
-        public Light candleLight;
+        public GameObject candleFlame;
 
         // Use this for initialization
         private void Start()
@@ -79,6 +85,9 @@ namespace UnityStandardAssets.Characters.FirstPerson
             }
 
             inventory[(ushort)ItemType.matches] = 3;
+
+            //Test
+            ExtinguishCandle();
         }
 
 
@@ -90,7 +99,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 // the jump state needs to read here to make sure it is not missed
                 if (!m_Jump)
                 {
-                    m_Jump = CrossPlatformInputManager.GetButtonDown("Jump");
+                    m_Jump = CrossPlatformInputManager.GetButtonDown(jumpAxis);
                 }
 
                 if (!m_PreviouslyGrounded && m_CharacterController.isGrounded)
@@ -240,13 +249,23 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
                 horizontal = inputDevice.LeftStick.X;
                 vertical = inputDevice.LeftStick.Y;
+
+                if(inputDevice.RightTrigger)
+                {
+                    LightCandle();
+                }
             }
             else
             {
                 usingController = false;
 
-                horizontal = CrossPlatformInputManager.GetAxis("Horizontal");
-                vertical = CrossPlatformInputManager.GetAxis("Vertical");
+                horizontal = CrossPlatformInputManager.GetAxis(horizontalAxis);
+                vertical = CrossPlatformInputManager.GetAxis(verticalAxis);
+
+                if (Input.GetButtonDown(lightCandleButton))
+                {
+                    LightCandle();
+                }
             }
 
             m_Input = new Vector2(horizontal, vertical);
@@ -321,9 +340,9 @@ namespace UnityStandardAssets.Characters.FirstPerson
         /// <returns>Returns false if the candle was already lit or the player doesn't have enouch matches.</returns>
         private bool LightCandle()
         {
-            if(!candleLight.enabled && inventory[(ushort)ItemType.matches] > 0)
+            if(!candleFlame.activeSelf && inventory[(ushort)ItemType.matches] > 0)
             {
-                candleLight.enabled = true;
+                candleFlame.SetActive(true);
                 RemoveItems(ItemType.matches, 1);
             }
 
@@ -334,9 +353,9 @@ namespace UnityStandardAssets.Characters.FirstPerson
         /// <returns>Returns false if the candle was already extinguished.</returns>
         public bool ExtinguishCandle()
         {
-            if(candleLight.enabled)
+            if(candleFlame.activeSelf)
             {
-                candleLight.enabled = false;
+                candleFlame.SetActive(false);
                 return true;
             }
 
@@ -346,7 +365,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         /// Returns whether the candle is lit.
         public bool IsCandleLit()
         {
-            return candleLight.enabled;
+            return candleFlame.activeSelf;
         }
     }
 }

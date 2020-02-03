@@ -27,6 +27,10 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private Quaternion m_CameraTargetRot;
         private bool m_cursorIsLocked = true;
 
+        // My Variables
+        const string mouseX = "Mouse X";
+        const string mouseY = "Mouse Y";
+
         public void Init(Transform character, Transform camera)
         {
             m_CharacterTargetRot = character.localRotation;
@@ -46,8 +50,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
             }
             else
             {
-                yRot = CrossPlatformInputManager.GetAxis("Mouse X") * mouseXSensitivity;
-                xRot = CrossPlatformInputManager.GetAxis("Mouse Y") * mouseYSensitivity;
+                yRot = CrossPlatformInputManager.GetAxis(mouseX) * mouseXSensitivity;
+                xRot = CrossPlatformInputManager.GetAxis(mouseY) * mouseYSensitivity;
             }
 
             m_CharacterTargetRot *= Quaternion.Euler (0f, yRot, 0f);
