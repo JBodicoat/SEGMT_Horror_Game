@@ -1,11 +1,12 @@
 using System;
 using UnityEngine;
 using UnityStandardAssets.CrossPlatformInput;
+using InControl;
 
 namespace UnityStandardAssets.Characters.FirstPerson
 {
     [Serializable]
-    public class MouseLook
+    public class MouseLook_Jack
     {
         public float XSensitivity = 2f;
         public float YSensitivity = 2f;
@@ -28,10 +29,21 @@ namespace UnityStandardAssets.Characters.FirstPerson
         }
 
 
-        public void LookRotation(Transform character, Transform camera)
+        public void LookRotation(Transform character, Transform camera, InputDevice inputDevice = null)
         {
-            float yRot = CrossPlatformInputManager.GetAxis("Mouse X") * XSensitivity;
-            float xRot = CrossPlatformInputManager.GetAxis("Mouse Y") * YSensitivity;
+            float yRot;
+            float xRot;
+
+            if (inputDevice != null)
+            {
+                yRot = inputDevice.RightStickX;
+                xRot = inputDevice.RightStickY;
+            }
+            else
+            {
+                yRot = CrossPlatformInputManager.GetAxis("Mouse X") * XSensitivity;
+                xRot = CrossPlatformInputManager.GetAxis("Mouse Y") * YSensitivity;
+            }
 
             m_CharacterTargetRot *= Quaternion.Euler (0f, yRot, 0f);
             m_CameraTargetRot *= Quaternion.Euler (-xRot, 0f, 0f);
