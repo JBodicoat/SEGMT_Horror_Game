@@ -1,4 +1,5 @@
 ﻿// Morgan Pryor : 04/02/2020
+// Jack : 05/02/2020 Minor quality changes. Removed unnecessary Vector2
 ///
 /// This is the AI for the Midnight Man
 /// 
@@ -12,17 +13,20 @@ public class MMController_Morgan : MonoBehaviour
 {
     public MMTargeting_Morgan targetScript;
 
-    NavMeshAgent agent;
+    public NavMeshAgent agent;
     //player target
     public Transform target;
     //MM move speed
     //places MM will nav to
     public Transform[] patrolPoints;
-    int randomTarget;
+    private int randomTarget;
     // Start is called before the first frame update
     void Start()
     {
-        agent = GetComponent<NavMeshAgent>();
+        if (!agent)
+        {
+            agent = GetComponent<NavMeshAgent>();
+        }
         //random patrol target
         randomTarget = Random.Range(0, patrolPoints.Length);
     }
@@ -30,7 +34,6 @@ public class MMController_Morgan : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
         if (!targetScript.isWithPlayer)
         {
             agent.SetDestination(patrolPoints[randomTarget].position);
@@ -39,7 +42,7 @@ public class MMController_Morgan : MonoBehaviour
         {
             agent.SetDestination(target.position);
         }
-        if (new Vector2(gameObject.transform.position.x, gameObject.transform.position.z) == new Vector2(patrolPoints[randomTarget].position.x,patrolPoints[randomTarget].position.z) )
+        if (gameObject.transform.position.x == patrolPoints[randomTarget].position.x && transform.position.z == patrolPoints[randomTarget].position.z)
         {
             randomTarget = Random.Range(0, patrolPoints.Length);
         }

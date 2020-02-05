@@ -1,4 +1,5 @@
 ﻿// Morgan Pryor : 04/02/2020
+// Jack : 05/02/2020 minor optimization changes - CompareTag, const strings and removed empty awake & update
 ///
 /// This will be a part of a prefab which defines the rooms the player and midnightman are in
 /// 
@@ -14,26 +15,17 @@ public class CurrentRoom_Morgan : MonoBehaviour
     //set name of room manually
     //doesnt matter, as long as no 2 rooms are named the same
     public string roomName;
-    // Start is called before the first frame update
-    void Awake()
-    {
-        
-    }
+    private const string playerTag = "Player";
+    private const string midnightManTag = "MidnightMan";
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-    //set room when room trigger entered
+    ///set room when room trigger entered
     private void OnTriggerEnter(Collider other)
     {
-        if (other.tag == "Player")
+        if (other.CompareTag(playerTag))
         {
             targetScript.playerRoom = roomName;
         }
-        else if (other.tag == "MidnightMan")
+        else if (other.CompareTag(midnightManTag))
         {
             targetScript.midnightManRoom = roomName;
         }
