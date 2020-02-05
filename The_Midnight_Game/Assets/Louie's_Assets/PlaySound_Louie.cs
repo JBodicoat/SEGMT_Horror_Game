@@ -18,11 +18,17 @@ public class PlaySound_Louie : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
-        PlaySound();
+        if (other.tag == "Player")
+        {
+            PlaySound();
+        }
     }
     private void OnTriggerExit(Collider other)
     {
-        PauseAudio();
+        if (other.tag == "Player")
+        {
+            PauseAudio();
+        }
     }
     void PlaySound()
     {

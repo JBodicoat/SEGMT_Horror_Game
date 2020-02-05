@@ -66,9 +66,10 @@ namespace UnityStandardAssets.Characters.FirstPerson
         public GameObject candleFlame;
 
         // Handling objects
-        private const string interactableTag = "Interactable Object";
+        LayerMask moveableObjectsLayer;
         private const ushort interactDistance = 10;
         private GameObject heldObject = null;
+        private Collider heldObjectCollider = null;
 
         // Use this for initialization
         private void Start()
@@ -91,6 +92,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
             }
 
             inventory[(ushort)ItemType.matches] = 3;
+            //moveableObjectsLayer = LayerMask.NameToLayer("Moveable Object");
+            moveableObjectsLayer = 1 << 8;
         }
 
 
@@ -135,6 +138,12 @@ namespace UnityStandardAssets.Characters.FirstPerson
             if (!dead)
             {
                 GetInput();
+
+                // Held object
+                if (heldObject)
+                {
+                    heldObject.transform.position = transform.position + m_Camera.transform.forward * 2f;
+                }
 
                 RotateView();
 
@@ -280,13 +289,18 @@ namespace UnityStandardAssets.Characters.FirstPerson
                     if (heldObject)
                     {
                         // Drop held object
+                        heldObject = null;
                     }
                     else
                     {
-                        Physics.Raycast(m_Camera.transform.position, transform.forward, out RaycastHit hit, interactDistance);
-                        if (hit.transform.CompareTag(interactableTag))
+                        Debug.DrawRay(m_Camera.transform.position, m_Camera.transform.forward * interactDistance, Color.red, 2f);
+                        if (Physics.Raycast(m_Camera.transform.position, m_Camera.transform.forward, out RaycastHit hit, interactDistance, moveableObjectsLayer))
                         {
+                            print("Object picked up");
                             heldObject = hit.transform.gameObject;
+                            Physics.IgnoreCollision(heldObject.GetComponent<Collider>(), m_CharacterController);
+                            heldObject.GetComponent<Rigidbody>().useGravity = false;
+                            
                         }
                     }
                 }

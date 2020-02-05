@@ -27,7 +27,7 @@ public class ClockUI_Louie : MonoBehaviour
     {
         //Initialise all variables
         timeHour = 0;
-        isClockOn = false;
+        isClockOn = true;
         timer = 0;
         minutesTicked = 0;
         hourHandTransform = GameObject.Find("HourHand").transform;
