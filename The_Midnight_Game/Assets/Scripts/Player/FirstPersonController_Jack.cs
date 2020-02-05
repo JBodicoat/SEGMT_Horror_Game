@@ -13,7 +13,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
     [RequireComponent(typeof (AudioSource))]
     /// Controls the player character.
     /// 
-    /// Controls players movement and inventory system.
+    /// Controls players movement, inventory system & candle.
     public class FirstPersonController_Jack : MonoBehaviour
     {
         // Unity's variables
@@ -85,9 +85,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
             }
 
             inventory[(ushort)ItemType.matches] = 3;
-
-            //Test
-            ExtinguishCandle();
         }
 
 
