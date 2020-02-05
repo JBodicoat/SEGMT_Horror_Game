@@ -36,29 +36,34 @@ public class MMTargeting_Morgan : MonoBehaviour
 
     void Update()
     {
+        // This is here so you can gage distance from player visually
+        Debug.Log(distanceToPlayer);
 
-        Debug.Log(playerRoom + "    " + midnightManRoom);
-        if(playerRoom == midnightManRoom && !isAdjustedWithPlayer)
+        //defining if the player is in the same room as the midnight man
         {
-            isWithPlayer = true;
-            isAdjustedWithPlayer = true;
-        }
-        else if(playerRoom != midnightManRoom && isAdjustedWithPlayer)
-        {
-            isWithPlayer = false;
-            isAdjustedWithPlayer = false;
+            if (playerRoom == midnightManRoom && !isAdjustedWithPlayer)
+            {
+                isWithPlayer = true;
+                isAdjustedWithPlayer = true;
+            }
+            else if (playerRoom != midnightManRoom && isAdjustedWithPlayer)
+            {
+                isWithPlayer = false;
+                isAdjustedWithPlayer = false;
+            }
         }
 
         if (isWithPlayer)
         {
-            //calculate distance to player
-            /// differenceVector = new Vector2
-            ///    ((midnightMan.transform.position.x - player.transform.position.x),
-            ///     (midnightMan.transform.position.z - player.transform.position.z));
-            //pythag giving distance from midnightMan to player
-            /// distanceToPlayer = Mathf.Sqrt((differenceVector.x * differenceVector.x) + (differenceVector.y * differenceVector.y));
-
-            //turns out there is a function that does this for me
+            {
+                //calculate distance to player
+                /// differenceVector = new Vector2
+                ///    ((midnightMan.transform.position.x - player.transform.position.x),
+                ///     (midnightMan.transform.position.z - player.transform.position.z));
+                //pythag giving distance from midnightMan to player
+                /// distanceToPlayer = Mathf.Sqrt((differenceVector.x * differenceVector.x) + (differenceVector.y * differenceVector.y));
+            }
+            //turns out all the math is done for me in this function
             distanceToPlayer = Vector2.Distance(new Vector2(player.transform.position.x, player.transform.position.z), new Vector2(midnightMan.transform.position.x, midnightMan.transform.position.z));
 
         }
