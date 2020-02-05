@@ -1,4 +1,10 @@
-﻿using System.Collections;
+﻿// Morgan Pryor : 04/02/2020
+///
+/// This is the AI for the Midnight Man
+/// 
+/// 
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;

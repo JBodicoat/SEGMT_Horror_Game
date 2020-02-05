@@ -36,6 +36,8 @@ public class MMTargeting_Morgan : MonoBehaviour
 
     void Update()
     {
+
+        Debug.Log(playerRoom + "    " + midnightManRoom);
         if(playerRoom == midnightManRoom && !isAdjustedWithPlayer)
         {
             isWithPlayer = true;

@@ -1,4 +1,4 @@
-﻿// Morgan Pryor : 03/02/2020
+﻿// Morgan Pryor : 04/02/2020
 ///
 /// This will be a part of a prefab which defines the rooms the player and midnightman are in
 /// 
@@ -10,7 +10,7 @@ using UnityEngine;
 
 public class CurrentRoom_Morgan : MonoBehaviour
 {
-    internal MMTargeting_Morgan targetScript;
+    public MMTargeting_Morgan targetScript;
     //set name of room manually
     //doesnt matter, as long as no 2 rooms are named the same
     public string roomName;
@@ -29,11 +29,11 @@ public class CurrentRoom_Morgan : MonoBehaviour
     //set room when room trigger entered
     private void OnTriggerEnter(Collider other)
     {
-        if (other.tag == "player")
+        if (other.tag == "Player")
         {
             targetScript.playerRoom = roomName;
         }
-        else if (other.tag == "midnightMan")
+        else if (other.tag == "MidnightMan")
         {
             targetScript.midnightManRoom = roomName;
         }
