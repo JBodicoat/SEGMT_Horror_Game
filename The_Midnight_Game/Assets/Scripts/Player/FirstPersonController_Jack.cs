@@ -49,6 +49,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private const string horizontalAxis = "Horizontal";
         private const string verticalAxis = "Vertical";
         private const string lightCandleButton = "Light Candle";
+        private const string interactButton = "Interact";
 
         // Movement
         public Rigidbody rigidBody;
@@ -63,6 +64,11 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         // Candle
         public GameObject candleFlame;
+
+        // Handling objects
+        private const string interactableTag = "Interactable Object";
+        private const ushort interactDistance = 10;
+        private GameObject heldObject = null;
 
         // Use this for initialization
         private void Start()
@@ -251,6 +257,11 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 {
                     LightCandle();
                 }
+
+                if(inputDevice.Action1)
+                {
+
+                }
             }
             else
             {
@@ -262,6 +273,22 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 if (Input.GetButtonDown(lightCandleButton))
                 {
                     LightCandle();
+                }
+
+                if(Input.GetButtonDown(interactButton))
+                {
+                    if (heldObject)
+                    {
+                        // Drop held object
+                    }
+                    else
+                    {
+                        Physics.Raycast(m_Camera.transform.position, transform.forward, out RaycastHit hit, interactDistance);
+                        if (hit.transform.CompareTag(interactableTag))
+                        {
+                            heldObject = hit.transform.gameObject;
+                        }
+                    }
                 }
             }
 
