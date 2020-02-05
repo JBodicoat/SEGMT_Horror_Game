@@ -1,41 +1,35 @@
-﻿using System.Collections;
+﻿// Louie
+// Jack 05/02/2020 - optimized tag comparison
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class PlaySound_Louie : MonoBehaviour
 {
-    // Start is called before the first frame update
-    public AudioSource audio;
-    void Start()
-    {
-        
-    }
+    public AudioSource audioSource;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    private const string playerTag = "Player";
+
     private void OnTriggerEnter(Collider other)
     {
-        if (other.tag == "Player")
+        if (other.CompareTag(playerTag))
         {
             PlaySound();
         }
     }
     private void OnTriggerExit(Collider other)
     {
-        if (other.tag == "Player")
+        if (other.CompareTag(playerTag))
         {
             PauseAudio();
         }
     }
     void PlaySound()
     {
-        audio.Play();
+        audioSource.Play();
     }
     void PauseAudio()
     {
-        audio.Pause();
+        audioSource.Pause();
     }
 }

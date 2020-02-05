@@ -12,7 +12,7 @@ namespace InControl
 		public bool logDebugInfo = false;
 		public bool invertYAxis = false;
 		public bool enableXInput = false;
-		public bool useFixedUpdate = false;
+		public bool useFixedUpdate = true;
 		public bool dontDestroyOnLoad = false;
 		public List<string> customProfiles = new List<string>();
 
