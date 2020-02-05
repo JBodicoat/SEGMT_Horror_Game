@@ -1,4 +1,4 @@
-﻿// Morgan Pryor : 03/02/2020 16:54
+﻿// Morgan Pryor : 03/02/2020
 ///
 /// This script works out how close to the player the midnight man is and checks if the midnight man is in the same room
 ///
@@ -22,8 +22,11 @@ public class MMTargeting_Morgan : MonoBehaviour
     Vector2 differenceVector;
     internal float distanceToPlayer;
     
+
     //true if player room = midnightman room
-    bool isWithPlayer = false;
+    internal bool isWithPlayer = false;
+    //adjusted value is so it doesnt run the check constantly
+    bool isAdjustedWithPlayer = false;
 
 
     void Start()
@@ -33,14 +36,29 @@ public class MMTargeting_Morgan : MonoBehaviour
 
     void Update()
     {
+        if(playerRoom == midnightManRoom && !isAdjustedWithPlayer)
+        {
+            isWithPlayer = true;
+            isAdjustedWithPlayer = true;
+        }
+        else if(playerRoom != midnightManRoom && isAdjustedWithPlayer)
+        {
+            isWithPlayer = false;
+            isAdjustedWithPlayer = false;
+        }
+
         if (isWithPlayer)
         {
             //calculate distance to player
-            differenceVector = new Vector2
-                ((midnightMan.transform.position.x - player.transform.position.x),
-                (midnightMan.transform.position.z - player.transform.position.z));
+            /// differenceVector = new Vector2
+            ///    ((midnightMan.transform.position.x - player.transform.position.x),
+            ///     (midnightMan.transform.position.z - player.transform.position.z));
             //pythag giving distance from midnightMan to player
-            distanceToPlayer = Mathf.Sqrt((differenceVector.x * differenceVector.x) + (differenceVector.y * differenceVector.y));
+            /// distanceToPlayer = Mathf.Sqrt((differenceVector.x * differenceVector.x) + (differenceVector.y * differenceVector.y));
+
+            //turns out there is a function that does this for me
+            distanceToPlayer = Vector2.Distance(new Vector2(player.transform.position.x, player.transform.position.z), new Vector2(midnightMan.transform.position.x, midnightMan.transform.position.z));
+
         }
         else if (distanceToPlayer != highNumber)
         {
