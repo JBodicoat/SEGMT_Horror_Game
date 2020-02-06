@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityStandardAssets.Characters.FirstPerson;
 
+[System.Serializable]
 public class MMTargeting_Morgan : MonoBehaviour
 {
     public GameObject player;
