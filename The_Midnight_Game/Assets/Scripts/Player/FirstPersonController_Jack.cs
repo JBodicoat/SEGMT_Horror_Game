@@ -48,6 +48,9 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private AudioSource m_AudioSource;
 
         // ===== My variables ===== //
+        // Saving game data
+        public FirstPersonControllerSaveData_Jack saveData = new FirstPersonControllerSaveData_Jack();
+
         // Input
         private const string jumpAxis = "Jump";
         private const string horizontalAxis = "Horizontal";
@@ -60,7 +63,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         // Movement
         public Rigidbody rigidBody;
         private bool usingController = true;
-        InputDevice inputDevice = InputManager.ActiveDevice; // InControl input
+        private InputDevice inputDevice = InputManager.ActiveDevice; // InControl input
 
         // Health
         public bool dead = false;
@@ -73,26 +76,26 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         // Salt circle
         public GameObject saltCirclePrefab;
-        private readonly Quaternion identityQuaternion = new Quaternion(1, 1, 1, 1);
+        //private readonly Quaternion identityQuaternion = new Quaternion(1, 1, 1, 1);
         private float halfPlayerHeight;
-        private bool inSaltCircle = false;
+        public bool inSaltCircle = false;
         private bool pouringSalt = false;
 
         // Picking up objects
-        LayerMask moveableObjectsLayer;
+        private readonly LayerMask moveableObjectsLayer = 1 << 8;
         private const ushort interactDistance = 10;
         private GameObject heldObject = null;
         private Collider heldObjectCollider = null;
         private Rigidbody heldObjectRigidbody = null;
-        RigidbodyConstraints freezeRotationConstraints = RigidbodyConstraints.FreezeRotation;
-        RigidbodyConstraints heldObjectConstraints = RigidbodyConstraints.None;
+        private const RigidbodyConstraints freezeRotationConstraints = RigidbodyConstraints.FreezeRotation;
+        private RigidbodyConstraints heldObjectConstraints = RigidbodyConstraints.None;
         private const float dropObjectDist = 20f;
         private const float objectMoveDeadZone = 0.3f;
         private const float objectMoveSpeed = 8f;
         private readonly Vector3 zeroVector3 = new Vector3(0, 0, 0);
 
         // Interactable objects
-        LayerMask interactableObjectsLayer = 1 << 9;
+        private readonly LayerMask interactableObjectsLayer = 1 << 9;
 
         // Animation
         public Animator animator;
@@ -112,6 +115,13 @@ namespace UnityStandardAssets.Characters.FirstPerson
 			m_MouseLook.Init(transform , m_Camera.transform);
 
             // ===== My Setup ===== //
+            // Save data
+            saveData.xPos = transform.position.x;
+            saveData.yPos = transform.position.y;
+            saveData.zPos = transform.position.z;
+            saveData.inventory = inventory;
+            saveData.inSaltCirlce = inSaltCircle;
+
             // Movement
             if(!rigidBody )
             {
@@ -126,10 +136,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             if(!animator)
             {
                 animator = GetComponent<Animator>();
-            }
-
-            // Picking up objects
-            moveableObjectsLayer = 1 << 8;
+            }            
         }
 
 
@@ -583,6 +590,26 @@ namespace UnityStandardAssets.Characters.FirstPerson
         public bool IsCandleLit()
         {
             return candleFlame.activeSelf;
+        }
+
+
+        // ===== Saving game data ===== //
+        public void LoadSaveData(FirstPersonControllerSaveData_Jack loadData)
+        {
+            transform.position = new Vector3(loadData.xPos, loadData.yPos, loadData.zPos);
+            inventory = loadData.inventory;
+            inSaltCircle = loadData.inSaltCirlce;
+        }
+
+        public FirstPersonControllerSaveData_Jack GetSaveData()
+        {
+            saveData.xPos = transform.position.x;
+            saveData.yPos = transform.position.y;
+            saveData.zPos = transform.position.z;
+            saveData.inventory = inventory;
+            saveData.inSaltCirlce = inSaltCircle;
+
+            return saveData;
         }
     }
 }
