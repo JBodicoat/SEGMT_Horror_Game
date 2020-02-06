@@ -100,6 +100,7 @@ public class TabletSlot_Jack : MonoBehaviour
 
             // Fix tablet in place
             heldTablet.transform.position = transform.position + Vector3.up * 0.6f;
+            heldTablet.transform.rotation = Quaternion.Euler(0, 0, 0);
 
             doorScript.CheckSlots();
         }

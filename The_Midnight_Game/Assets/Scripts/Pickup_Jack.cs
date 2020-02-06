@@ -33,7 +33,7 @@ public class Pickup_Jack : MonoBehaviour
     /// On collision with player, add to player's inventory and destroy self.
     private void OnTriggerEnter(Collider other)
     {
-        if(other.CompareTag("playerTag"))
+        if(other.CompareTag(playerTag))
         {
             playerScript.AddItems(itemType, quantity);
             Destroy(gameObject);

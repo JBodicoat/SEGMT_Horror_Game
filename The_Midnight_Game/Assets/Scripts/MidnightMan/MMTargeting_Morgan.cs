@@ -7,10 +7,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityStandardAssets.Characters.FirstPerson;
 
 public class MMTargeting_Morgan : MonoBehaviour
 {
     public GameObject player;
+    public FirstPersonController_Jack playerScript;
     public GameObject midnightMan;
 
     //current room for player and midnight man
@@ -54,6 +56,11 @@ public class MMTargeting_Morgan : MonoBehaviour
             float xDistance = midnightMan.transform.position.x - player.transform.position.x;
             float zDistance = midnightMan.transform.position.z - player.transform.position.z;
             distanceToPlayerSquared = xDistance * xDistance + zDistance * zDistance;
+
+            if(distanceToPlayerSquared < 10)
+            {
+                playerScript.ExtinguishCandle();
+            }
         }
         else if (distanceToPlayerSquared != highNumber)
         {
