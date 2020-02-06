@@ -1,5 +1,6 @@
 // Jack
-
+// Jack : 05/02/2020 ~ 15:30 Implemented picking up objects
+//                   ~ 18:30 Finished implementing interaction with tablets for puzzle 1
 using System;
 using UnityEngine;
 using UnityStandardAssets.CrossPlatformInput;
@@ -13,7 +14,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
     [RequireComponent(typeof (AudioSource))]
     /// Controls the player character.
     /// 
-    /// Controls players movement and inventory system.
+    /// Controls players movement, inventory system & candle.
     public class FirstPersonController_Jack : MonoBehaviour
     {
         // Unity's variables
@@ -49,6 +50,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private const string horizontalAxis = "Horizontal";
         private const string verticalAxis = "Vertical";
         private const string lightCandleButton = "Light Candle";
+        private const string interactButton = "Interact";
+        private const string pickupButton = "Pickup";
 
         // Movement
         public Rigidbody rigidBody;
@@ -63,6 +66,18 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         // Candle
         public GameObject candleFlame;
+
+        // Picking up objects
+        LayerMask moveableObjectsLayer;
+        private const ushort interactDistance = 10;
+        private GameObject heldObject = null;
+        private Collider heldObjectCollider = null;
+        private Rigidbody heldObjectRigidbody = null;
+        RigidbodyConstraints freezeRotationConstraints = RigidbodyConstraints.FreezeRotation;
+        RigidbodyConstraints heldObjectConstraints = RigidbodyConstraints.None;
+
+        // Interactable objects
+        LayerMask interactableObjectsLayer = 1 << 9;
 
         // Use this for initialization
         private void Start()
@@ -85,21 +100,34 @@ namespace UnityStandardAssets.Characters.FirstPerson
             }
 
             inventory[(ushort)ItemType.matches] = 3;
-
-            //Test
-            ExtinguishCandle();
+            moveableObjectsLayer = 1 << 8;
         }
 
 
         // Update is called once per frame
-        private void Update()
+        private void Update() 
         {
             if (!dead)
             {
+                GetInput();
+
+                // Held object
+                if (heldObject)
+                {
+                    heldObject.transform.position = transform.position + m_Camera.transform.forward * 2f;
+                }
+
                 // the jump state needs to read here to make sure it is not missed
                 if (!m_Jump)
                 {
-                    m_Jump = CrossPlatformInputManager.GetButtonDown(jumpAxis);
+                    if(usingController)
+                    {
+                        m_Jump = inputDevice.Action1.WasPressed;
+                    }
+                    else
+                    {
+                        m_Jump = CrossPlatformInputManager.GetButtonDown(jumpAxis);
+                    }
                 }
 
                 if (!m_PreviouslyGrounded && m_CharacterController.isGrounded)
@@ -131,8 +159,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
         {
             if (!dead)
             {
-                GetInput();
-
                 RotateView();
 
                 // always move along the camera forward as it is the direction that it being aimed at
@@ -254,6 +280,23 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 {
                     LightCandle();
                 }
+
+                if(inputDevice.Action2.WasPressed)
+                {
+                    Interact();
+                }
+
+                if(inputDevice.Action3.WasPressed)
+                {
+                    if (heldObject)
+                    {
+                        DropObject();
+                    }
+                    else
+                    {
+                        PickupObject();
+                    }
+                }
             }
             else
             {
@@ -266,6 +309,23 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 {
                     LightCandle();
                 }
+
+                if(Input.GetButtonDown(interactButton))
+                {
+                    Interact();
+                }
+
+                if(Input.GetButtonDown(pickupButton))
+                {
+                    if (heldObject)
+                    {
+                        DropObject();
+                    }
+                    else
+                    {
+                        PickupObject();
+                    }
+                }
             }
 
             m_Input = new Vector2(horizontal, vertical);
@@ -277,6 +337,51 @@ namespace UnityStandardAssets.Characters.FirstPerson
             }
         }
 
+        private void Interact()
+        {
+            if (Physics.Raycast(m_Camera.transform.position, m_Camera.transform.forward, out RaycastHit hit, interactDistance, interactableObjectsLayer))
+            {
+                if (hit.transform.CompareTag("Tablet Slot"))
+                {
+                    hit.transform.gameObject.GetComponent<TabletSlot_Jack>().RotateTablet();
+                }
+            }
+        }
+
+        private void PickupObject()
+        {
+            Debug.DrawRay(m_Camera.transform.position, m_Camera.transform.forward * interactDistance, Color.red, 2f);
+            if (Physics.Raycast(m_Camera.transform.position, m_Camera.transform.forward, out RaycastHit hit, interactDistance, moveableObjectsLayer))
+            {
+                heldObject = hit.transform.gameObject;
+
+                heldObjectCollider = heldObject.GetComponent<Collider>();
+                Physics.IgnoreCollision(heldObjectCollider, m_CharacterController);
+
+                heldObjectRigidbody = heldObject.GetComponent<Rigidbody>();
+                heldObjectRigidbody.useGravity = false;
+                heldObjectConstraints = heldObjectRigidbody.constraints;
+                heldObjectRigidbody.constraints = freezeRotationConstraints;
+
+            }
+        }
+
+        public void DropObject()
+        {
+            heldObjectRigidbody.constraints = heldObjectConstraints;
+            heldObjectRigidbody.useGravity = true;
+            heldObjectRigidbody = null;
+
+            Physics.IgnoreCollision(heldObjectCollider, m_CharacterController, false);
+            heldObjectCollider = null;
+
+            heldObject = null;
+        }
+
+        public GameObject GetHeldObject()
+        {
+            return heldObject;
+        }
 
         private void RotateView()
         {

@@ -1,5 +1,5 @@
 ﻿// Jack
-
+// Jack : 05/02/2020 cached player script & changed to CompareTag
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -22,11 +22,20 @@ public class Pickup_Jack : MonoBehaviour
     public ItemType itemType;
     public ushort quantity;
 
+    private FirstPersonController_Jack playerScript;
+    private const string playerTag = "Player";
+
+    private void Start()
+    {
+        playerScript = FindObjectOfType<FirstPersonController_Jack>();
+    }
+
+    /// On collision with player, add to player's inventory and destroy self.
     private void OnTriggerEnter(Collider other)
     {
-        if(other.tag == "Player")
+        if(other.CompareTag(playerTag))
         {
-            other.gameObject.GetComponent<FirstPersonController_Jack>().AddItems(itemType, quantity);
+            playerScript.AddItems(itemType, quantity);
             Destroy(gameObject);
         }
     }
