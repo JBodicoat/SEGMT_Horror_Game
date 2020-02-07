@@ -1,10 +1,15 @@
-﻿using UnityEngine;
+﻿// Jack
+
+using UnityEngine;
 using System.Collections;
 using UnityEngine.SceneManagement;
 using UnityStandardAssets.Characters.FirstPerson;
 using InControl;
 
-public class SaveDataManager_Jack : MonoBehaviour
+/// Handles save data for level 1.
+/// 
+/// Save data is retrieved from the player and the level then stored in a binary file.
+public class Level1DataManager_Jack : MonoBehaviour
 {
     public FirstPersonController_Jack playerScript;
     public GameObject playerPrefab;
@@ -15,11 +20,8 @@ public class SaveDataManager_Jack : MonoBehaviour
     {
         if (loadData)
         {
-            GameObject playerToDestory = FindObjectOfType<FirstPersonController_Jack>().gameObject;
-            GameObject playerObject = Instantiate(playerPrefab);
-            playerScript = playerObject.GetComponent<FirstPersonController_Jack>();
-            playerScript.LoadSaveData(SaveData_Jack.current.playerSaveData);
-            Destroy(playerToDestory);
+            playerScript = FindObjectOfType<FirstPersonController_Jack>();
+            playerScript.LoadSaveData(Level1SaveData_Jack.current.playerSaveData);
         }
     }
 
@@ -37,19 +39,20 @@ public class SaveDataManager_Jack : MonoBehaviour
         }
     } 
 
+    /// Saves the player and level data for level 1.
     public void SaveGameData()
     {
-        print("game saved");
-        SaveData_Jack.current = new SaveData_Jack();
-        SaveData_Jack.current.playerSaveData = playerScript.GetSaveData();
+        Level1SaveData_Jack.current = new Level1SaveData_Jack
+        {
+            playerSaveData = playerScript.GetSaveData()
+        };
         SaveLoad_Jack.Save();
     }
 
+    /// Loads the player and level data for level 1.
     public void LoadGameData()
     {
         loadData = true;
-        print("Game loaded");
         SceneManager.LoadScene(1);
-        print("scene loaded");
     }
 }
