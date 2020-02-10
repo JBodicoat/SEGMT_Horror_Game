@@ -14,6 +14,7 @@ public class MMTargeting_Morgan : MonoBehaviour
 {
     public GameObject player;
     public FirstPersonController_Jack playerScript;
+    MMController_Morgan controllerScript;
     public GameObject midnightMan;
 
     //current room for player and midnight man
@@ -39,6 +40,10 @@ public class MMTargeting_Morgan : MonoBehaviour
 
     //store data of raycasts
     RaycastHit hit;
+    private void Awake()
+    {
+        controllerScript = FindObjectOfType<MMController_Morgan>();
+    }
 
     void Update()
     {
@@ -78,7 +83,9 @@ public class MMTargeting_Morgan : MonoBehaviour
             }
             if (currentTrackTime > trackTime)
             {
+                controllerScript.targetLost();
                 isSeen = false;
+                currentTrackTime = 0f;
             }
         }
 
@@ -102,4 +109,6 @@ public class MMTargeting_Morgan : MonoBehaviour
             distanceToPlayerSquared = highNumber;
         }
     }
+
+
 }

@@ -23,6 +23,10 @@ public class MMController_Morgan : MonoBehaviour
     //change target
     internal bool isAtTarget = false;
 
+    //node data disection
+    float[] distanceFromNodeToTarget;
+    float minValue;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -32,6 +36,7 @@ public class MMController_Morgan : MonoBehaviour
         }
         //random patrol target
         randomTarget = Random.Range(0, patrolPoints.Length);
+        distanceFromNodeToTarget = new float[patrolPoints.Length];
     }
 
     // Update is called once per frame
@@ -53,6 +58,32 @@ public class MMController_Morgan : MonoBehaviour
         }
 
 
+    }
+    public void targetLost()
+    {
+        //get all values
+        for (int i = 0; i < patrolPoints.Length; i++)
+        {
+            float xDistance = patrolPoints[i].transform.position.x - targetScript.player.transform.position.x;
+            float zDistance = patrolPoints[i].transform.position.z - targetScript.player.transform.position.z;
+            distanceFromNodeToTarget[i] = xDistance * xDistance + zDistance * zDistance;
+        }
+        //store min value
+        minValue = Mathf.Min(distanceFromNodeToTarget);
+
+        //find min value in array
+        for (int i = 0; i < distanceFromNodeToTarget.Length; i++)
+        {
+            if (distanceFromNodeToTarget[i] == minValue)
+            {
+                //makes the "random target" fixed to the closet node
+                randomTarget = i;
+                //changes the target
+                //agent.SetDestination(patrolPoints[randomTarget].position);
+                //exits loop
+                break;
+            }
+        }
     }
 }
 

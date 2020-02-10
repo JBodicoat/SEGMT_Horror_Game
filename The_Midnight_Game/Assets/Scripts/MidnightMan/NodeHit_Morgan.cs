@@ -9,7 +9,7 @@ using UnityEngine;
 
 public class NodeHit_Morgan : MonoBehaviour
 {
-    public MMController_Morgan controllerScript;
+    MMController_Morgan controllerScript;
 
     private void Awake()
     {
