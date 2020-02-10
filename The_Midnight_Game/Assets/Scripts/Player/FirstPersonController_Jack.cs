@@ -69,7 +69,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         public bool dead = false;
 
         // Inventory
-        private ushort[] inventory = new ushort[(ushort)ItemType.sizeOf];
+        public ushort[] inventory = new ushort[(ushort)ItemType.sizeOf];
 
         // Candle
         public GameObject candleFlame;
@@ -80,6 +80,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private float halfPlayerHeight;
         public bool inSaltCircle = false;
         private bool pouringSalt = false;
+        public ParticleSystem saltParticleSystem;
 
         // Picking up objects
         private readonly LayerMask moveableObjectsLayer = 1 << 8;
@@ -145,6 +146,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
         {
             if (!dead)
             {
+                GetInput();
+
                 // the jump state needs to read here to make sure it is not missed
                 if (!m_Jump)
                 {
@@ -187,8 +190,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
         {
             if (!dead)
             {
-                GetInput();
-
                 RotateView();
 
                 // always move along the camera forward as it is the direction that it being aimed at
@@ -526,7 +527,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 RemoveItems(ItemType.salt, 1);
                 pouringSalt = true;
                 animator.enabled = true;
-
+                saltParticleSystem.Play();
                 return true;
             }
 
@@ -545,6 +546,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             inSaltCircle = true;
             pouringSalt = false;
             animator.enabled = false;
+            saltParticleSystem.Stop();
         }
 
         /// Sets inSaltCircle to the passed value.
