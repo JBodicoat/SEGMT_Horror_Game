@@ -1,5 +1,6 @@
 ﻿// Morgan Pryor : 03/02/2020
 // Jack : 05/02/2020 optimized distance calculation, square root calculations are expensive.
+// Morgan : 10/02/2020 script will use a line of sight method of finding the player for AI navigation
 ///
 /// This script works out how close to the player the midnight man is and checks if the midnight man is in the same room
 ///
@@ -30,6 +31,15 @@ public class MMTargeting_Morgan : MonoBehaviour
     //adjusted value is so it doesnt run the check constantly
     private bool isAdjustedWithPlayer = false;
 
+    //Line Of Sight Code
+    internal bool isSeen = false;
+    //if the player is seen he must hold aggro for X amount of time;
+    const float trackTime = 5f;
+    float currentTrackTime = 0f;
+
+    //store data of raycasts
+    RaycastHit hit;
+
     void Update()
     {
         // This is here so you can gage distance from player visually
@@ -49,7 +59,31 @@ public class MMTargeting_Morgan : MonoBehaviour
             }
         }
 
-        if (isWithPlayer)
+        {
+            //the raycast to "look" for player
+            if (Physics.Raycast(gameObject.transform.position, player.transform.position - gameObject.transform.position, out hit, 150f))                                  // (storing this layer mask here for future refrence in case I need it)  1 << LayerMask.NameToLayer("layer"))
+            {
+                //delete debug on completion of review
+                Debug.DrawRay(gameObject.transform.position, player.transform.position - gameObject.transform.position, Color.green);
+
+                if (hit.transform.tag == "Player")
+                {
+                    isSeen = true;
+                    currentTrackTime = 0f;
+                }
+            }
+            if (isSeen)
+            {
+                currentTrackTime += Time.deltaTime;
+            }
+            if (currentTrackTime > trackTime)
+            {
+                isSeen = false;
+            }
+        }
+
+        //is with player case
+        if (isWithPlayer && isSeen)
         {
             //calculate distance to player
             //pythag giving distance from midnightMan to player
