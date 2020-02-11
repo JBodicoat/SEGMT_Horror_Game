@@ -1,4 +1,5 @@
 ﻿// Morgan : 04/02/2020
+// Jack : 11/02/2020 added check so only midnight man can activate OnTriggerEnter
 ///
 /// detects the midnightman arriving at a node
 /// 
@@ -9,7 +10,8 @@ using UnityEngine;
 
 public class NodeHit_Morgan : MonoBehaviour
 {
-    MMController_Morgan controllerScript;
+    private MMController_Morgan controllerScript;
+    private const string midnightManTag = "MidnightMan";
 
     private void Awake()
     {
@@ -17,6 +19,9 @@ public class NodeHit_Morgan : MonoBehaviour
 }
     private void OnTriggerEnter(Collider other)
     {
-        controllerScript.isAtTarget = true;
+        if(other.CompareTag(midnightManTag))
+        {
+            controllerScript.isAtTarget = true;
+        }
     }
 }
