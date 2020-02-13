@@ -3,6 +3,7 @@
 //                   ~ 18:30 Finished implementing interaction with tablets for puzzle 1
 // Jack : 06/02/2020 Changed holding objects to use collisions
 //                   Implemented the salt circle
+// Jack 13/02/2020 - Added saving of player's rotation & candle
 using System;
 using UnityEngine;
 using UnityStandardAssets.CrossPlatformInput;
@@ -102,7 +103,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         public Animator animator;
 
         // Use this for initialization
-        private void Start()
+        private void Awake()
         {
             // Unity Setup
             m_CharacterController = GetComponent<CharacterController>();
@@ -596,20 +597,36 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
 
         // ===== Saving game data ===== //
+        /// Loads the currently saved player data.
         public void LoadSaveData(FirstPersonControllerSaveData_Jack loadData)
         {
             transform.position = new Vector3(loadData.xPos, loadData.yPos, loadData.zPos);
+            transform.localRotation = Quaternion.Euler(loadData.xRot, loadData.yRot, loadData.zRot);
+            m_Camera.transform.localRotation = Quaternion.Euler(loadData.cameraXRot, loadData.cameraYRot, loadData.cameraZRot);
+            m_MouseLook.Init(transform, m_Camera.transform);
             inventory = loadData.inventory;
             inSaltCircle = loadData.inSaltCirlce;
+            if(!loadData.candleLit)
+            {
+                candleFlame.SetActive(false);
+            }
         }
 
+        /// Returns the data of the player that needs saving.
         public FirstPersonControllerSaveData_Jack GetSaveData()
         {
             saveData.xPos = transform.position.x;
             saveData.yPos = transform.position.y;
             saveData.zPos = transform.position.z;
+            saveData.xRot = transform.eulerAngles.x;
+            saveData.yRot = transform.eulerAngles.y;
+            saveData.zRot = transform.eulerAngles.z;
+            saveData.cameraXRot = m_Camera.transform.localEulerAngles.x;
+            saveData.cameraYRot = m_Camera.transform.localEulerAngles.y;
+            saveData.cameraZRot = m_Camera.transform.localEulerAngles.z;
             saveData.inventory = inventory;
             saveData.inSaltCirlce = inSaltCircle;
+            saveData.candleLit = IsCandleLit();
 
             return saveData;
         }

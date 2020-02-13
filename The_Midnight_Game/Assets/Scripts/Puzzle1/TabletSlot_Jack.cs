@@ -1,4 +1,5 @@
 ﻿// Jack
+// Jack 13/02/2020 Added support for saving data.
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -23,8 +24,8 @@ public class TabletSlot_Jack : MonoBehaviour
     public Door_Jack doorScript;
 
     private const string tabletTag = "Tablet";
-    private bool holdingTablet = false;
-    private GameObject heldTablet = null;
+    public bool holdingTablet = false;
+    public GameObject heldTablet = null;
     private FirstPersonController_Jack playerScript;
     private LayerMask interactableLayer;
     private const RigidbodyConstraints tabletConstraints = RigidbodyConstraints.FreezeAll;
@@ -41,6 +42,12 @@ public class TabletSlot_Jack : MonoBehaviour
     public bool IsHoldingTablet()
     {
         return holdingTablet;
+    }
+
+    /// Sets holdingTablet to the passed value.
+    public void SetHoldingTablet(bool newHoldingTablet)
+    {
+        holdingTablet = newHoldingTablet;
     }
 
     /// Rotates the held tablet 90 degrees clockwise.
@@ -80,6 +87,24 @@ public class TabletSlot_Jack : MonoBehaviour
     public Orientation GetOrientation()
     {
         return tabletOrientation;
+    }
+
+    /// Sets orientation to the passed value.
+    public void SetOrientation(Orientation newOrientation)
+    {
+        tabletOrientation = newOrientation;
+    }
+
+    /// Returns the heldTablet object.
+    public GameObject GetHeldTablet()
+    {
+        return heldTablet;
+    }
+
+    /// Sets heldTablet to the passed object.
+    public void SetHeldTablet(GameObject newHeldTablet)
+    {
+        heldTablet = newHeldTablet;
     }
 
     /// Holds the tablet into place on collision.
