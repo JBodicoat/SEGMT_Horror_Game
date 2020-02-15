@@ -10,6 +10,7 @@ using UnityStandardAssets.CrossPlatformInput;
 using UnityStandardAssets.Utility;
 using Random = UnityEngine.Random;
 using InControl;
+using System.Collections.Generic;
 
 namespace UnityStandardAssets.Characters.FirstPerson
 {
@@ -60,6 +61,19 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private const string interactButton = "Interact";
         private const string pickupButton = "Pickup";
         private const string saltButton = "Salt";
+
+        enum PlayerAction
+        {
+            Jump,
+            PourSalt,
+            LightCandle
+        }
+
+        InputControlType jumpControlType = InputControlType.Action1;
+        InputControlType saltControlType = InputControlType.Action2;
+        InputControlType candleControlType = InputControlType.Action3;
+        InputControlType grabControlType = InputControlType.LeftTrigger;
+        InputControlType throwControlType = InputControlType.RightTrigger;
 
         // Movement
         public Rigidbody rigidBody;
@@ -138,7 +152,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             if(!animator)
             {
                 animator = GetComponent<Animator>();
-            }            
+            }
         }
 
 
@@ -154,7 +168,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 {
                     if(usingController)
                     {
-                        m_Jump = inputDevice.Action1.WasPressed;
+                        m_Jump = inputDevice.GetControl(jumpControlType).WasPressed;
                     }
                     else
                     {
@@ -327,7 +341,9 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 // Game pad inputs
                 usingController = true;
 
-                if(inputDevice.Action3.WasPressed)
+                //inputDevice.LastChangeTick
+
+                if(inputDevice.GetControl(saltControlType).WasPressed)
                 {
                     PourSaltCirlce();
                 }
@@ -337,7 +353,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
                     horizontal = inputDevice.LeftStick.X;
                     vertical = inputDevice.LeftStick.Y;
 
-                    if (inputDevice.RightTrigger)
+                    if (inputDevice.GetControl(candleControlType).WasPressed)
                     {
                         LightCandle();
                     }
@@ -347,7 +363,11 @@ namespace UnityStandardAssets.Characters.FirstPerson
                         Interact();
                     }
 
-                    if (inputDevice.Action3.WasPressed)
+                    if(inputDevice.GetControl(throwControlType).WasPressed)
+                    {
+                        ThrowObject();
+                    }
+                    else if (inputDevice.GetControl(grabControlType).WasPressed)
                     {
                         if (heldObject)
                         {
@@ -454,6 +474,12 @@ namespace UnityStandardAssets.Characters.FirstPerson
             heldObjectCollider = null;
 
             heldObject = null;
+        }
+
+        public void ThrowObject()
+        {
+            heldObjectRigidbody.AddForce(transform.forward * 5);
+            DropObject();
         }
 
         /// Returns heldObject.
