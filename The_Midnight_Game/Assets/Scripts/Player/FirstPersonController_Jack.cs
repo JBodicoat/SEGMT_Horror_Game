@@ -54,6 +54,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
         public FirstPersonControllerSaveData_Jack saveData = new FirstPersonControllerSaveData_Jack();
 
         // Input
+        public GameObject inputManager;
+
         private const string jumpAxis = "Jump";
         private const string horizontalAxis = "Horizontal";
         private const string verticalAxis = "Vertical";
@@ -62,18 +64,17 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private const string pickupButton = "Pickup";
         private const string saltButton = "Salt";
 
-        enum PlayerAction
-        {
-            Jump,
-            PourSalt,
-            LightCandle
-        }
+        private InputControlType jumpControlType = InputControlType.Action1;
+        private InputControlType saltControlType = InputControlType.Action2;
+        private InputControlType candleControlType = InputControlType.Action3;
+        private InputControlType grabControlType = InputControlType.LeftTrigger;
+        private InputControlType throwControlType = InputControlType.RightTrigger;
 
-        InputControlType jumpControlType = InputControlType.Action1;
-        InputControlType saltControlType = InputControlType.Action2;
-        InputControlType candleControlType = InputControlType.Action3;
-        InputControlType grabControlType = InputControlType.LeftTrigger;
-        InputControlType throwControlType = InputControlType.RightTrigger;
+        private KeyCode jumpKey = KeyCode.Space;
+        private KeyCode saltKey = KeyCode.C;
+        private KeyCode candleKey = KeyCode.F;
+        private KeyCode grabKey = KeyCode.E;
+        private KeyCode throwKey = KeyCode.Q;
 
         // Movement
         public Rigidbody rigidBody;
@@ -109,6 +110,9 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private const float objectMoveDeadZone = 0.3f;
         private const float objectMoveSpeed = 8f;
         private readonly Vector3 zeroVector3 = new Vector3(0, 0, 0);
+
+        // Throwing objects
+        private const float throwForce = 15f;
 
         // Interactable objects
         private readonly LayerMask interactableObjectsLayer = 1 << 9;
@@ -341,7 +345,10 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 // Game pad inputs
                 usingController = true;
 
-                //inputDevice.LastChangeTick
+                if(inputDevice.MenuWasPressed)
+                {
+                    inputManager.SetActive(!inputManager.activeSelf);
+                }
 
                 if(inputDevice.GetControl(saltControlType).WasPressed)
                 {
@@ -363,7 +370,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
                         Interact();
                     }
 
-                    if(inputDevice.GetControl(throwControlType).WasPressed)
+                    if(inputDevice.GetControl(throwControlType).WasPressed && heldObject)
                     {
                         ThrowObject();
                     }
@@ -468,6 +475,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         {
             heldObjectRigidbody.constraints = heldObjectConstraints;
             heldObjectRigidbody.useGravity = true;
+
             heldObjectRigidbody = null;
 
             Physics.IgnoreCollision(heldObjectCollider, m_CharacterController, false);
@@ -478,7 +486,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         public void ThrowObject()
         {
-            heldObjectRigidbody.AddForce(transform.forward * 5);
+            heldObjectRigidbody.AddForce(m_Camera.transform.forward * throwForce, ForceMode.Impulse);
             DropObject();
         }
 
@@ -549,12 +557,12 @@ namespace UnityStandardAssets.Characters.FirstPerson
         /// <returns>Returns false if the player has no salt.</returns>
         private bool PourSaltCirlce()
         {
-            if(inventory[(ushort)ItemType.salt] > 0)
+            if(inventory[(ushort)ItemType.salt] > 0 && m_CharacterController.isGrounded)
             {
                 RemoveItems(ItemType.salt, 1);
                 pouringSalt = true;
                 animator.enabled = true;
-                saltParticleSystem.Play();
+                saltParticleSystem.Play(false);
                 return true;
             }
 
@@ -573,7 +581,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             inSaltCircle = true;
             pouringSalt = false;
             animator.enabled = false;
-            saltParticleSystem.Stop();
+            saltParticleSystem.Stop(false);
         }
 
         /// Sets inSaltCircle to the passed value.
@@ -655,6 +663,42 @@ namespace UnityStandardAssets.Characters.FirstPerson
             saveData.candleLit = IsCandleLit();
 
             return saveData;
+        }
+
+        // ===== Input Settings ===== //
+        /// Sets the jump control.
+        public void SetJumpControlType(InputControlType newJumpControlType)
+        {
+            jumpControlType = newJumpControlType;
+        }
+
+        /// Sets the pour salt control.
+        public void SetSaltControlType(InputControlType newSaltControlType)
+        {
+            saltControlType = newSaltControlType;
+        }
+
+        /// Sets the light candle control.
+        public void SetCandleControlType(InputControlType newCandleControlType)
+        {
+            candleControlType = newCandleControlType;
+        }
+
+        /// Sets the grab/drop control.
+        public void SetGrabControlType(InputControlType newGrabControlType)
+        {
+            grabControlType = newGrabControlType;
+        }
+
+        /// Sets the throw control.
+        public void SetThrowControlType(InputControlType newThrowControlType)
+        {
+            throwControlType = newThrowControlType;
+        }
+
+        public void SetJumpKey(KeyCode newJumpKey)
+        {
+            jumpKey = newJumpKey;
         }
     }
 }
