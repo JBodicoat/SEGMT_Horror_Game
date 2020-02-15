@@ -4,6 +4,7 @@
 // Jack : 06/02/2020 Changed holding objects to use collisions
 //                   Implemented the salt circle
 // Jack 13/02/2020 - Added saving of player's rotation & candle
+// Jack 15/02/2020 - Added support for changing input bindings for controller & keyboard & mouse.
 using System;
 using UnityEngine;
 using UnityStandardAssets.CrossPlatformInput;
@@ -56,13 +57,9 @@ namespace UnityStandardAssets.Characters.FirstPerson
         // Input
         public GameObject inputManager;
 
-        private const string jumpAxis = "Jump";
         private const string horizontalAxis = "Horizontal";
         private const string verticalAxis = "Vertical";
-        private const string lightCandleButton = "Light Candle";
         private const string interactButton = "Interact";
-        private const string pickupButton = "Pickup";
-        private const string saltButton = "Salt";
 
         private InputControlType jumpControlType = InputControlType.Action1;
         private InputControlType saltControlType = InputControlType.Action2;
@@ -71,10 +68,11 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private InputControlType throwControlType = InputControlType.RightTrigger;
 
         private KeyCode jumpKey = KeyCode.Space;
-        private KeyCode saltKey = KeyCode.C;
+        private KeyCode saltKey = KeyCode.Q;
         private KeyCode candleKey = KeyCode.F;
-        private KeyCode grabKey = KeyCode.E;
-        private KeyCode throwKey = KeyCode.Q;
+        private KeyCode interactKey = KeyCode.E;
+        private KeyCode grabKey = KeyCode.Mouse0;
+        private KeyCode throwKey = KeyCode.Mouse1;
 
         // Movement
         public Rigidbody rigidBody;
@@ -176,7 +174,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
                     }
                     else
                     {
-                        m_Jump = CrossPlatformInputManager.GetButtonDown(jumpAxis);
+                        m_Jump = Input.GetKeyDown(jumpKey);
                     }
                 }
 
@@ -392,7 +390,12 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 // Keyboard & mouse inputs
                 usingController = false;
 
-                if (Input.GetButtonDown(saltButton))
+                if(Input.GetKeyDown(KeyCode.Escape))
+                {
+                    inputManager.SetActive(!inputManager.activeSelf);
+                }
+
+                if (Input.GetKeyDown(saltKey))
                 {
                     PourSaltCirlce();
                 }
@@ -402,17 +405,21 @@ namespace UnityStandardAssets.Characters.FirstPerson
                     horizontal = CrossPlatformInputManager.GetAxis(horizontalAxis);
                     vertical = CrossPlatformInputManager.GetAxis(verticalAxis);
 
-                    if (Input.GetButtonDown(lightCandleButton))
+                    if (Input.GetKeyDown(candleKey))
                     {
                         LightCandle();
                     }
 
-                    if (Input.GetButtonDown(interactButton))
+                    if (Input.GetKeyDown(interactKey))
                     {
                         Interact();
                     }
 
-                    if (Input.GetButtonDown(pickupButton))
+                    if(Input.GetKeyDown(throwKey) && heldObject)
+                    {
+                        ThrowObject();
+                    }
+                    else if (Input.GetKeyDown(grabKey))
                     {
                         if (heldObject)
                         {
@@ -666,39 +673,79 @@ namespace UnityStandardAssets.Characters.FirstPerson
         }
 
         // ===== Input Settings ===== //
-        /// Sets the jump control.
+        /// Sets the jump InputControlType.
         public void SetJumpControlType(InputControlType newJumpControlType)
         {
             jumpControlType = newJumpControlType;
         }
 
-        /// Sets the pour salt control.
+        /// Sets the pour salt InputControlType.
         public void SetSaltControlType(InputControlType newSaltControlType)
         {
             saltControlType = newSaltControlType;
         }
 
-        /// Sets the light candle control.
+        /// Sets the light candle InputControlType.
         public void SetCandleControlType(InputControlType newCandleControlType)
         {
             candleControlType = newCandleControlType;
         }
 
-        /// Sets the grab/drop control.
+        /// Sets the grab/drop InputControlType.
         public void SetGrabControlType(InputControlType newGrabControlType)
         {
             grabControlType = newGrabControlType;
         }
 
-        /// Sets the throw control.
+        /// Sets the throw InputControlType.
         public void SetThrowControlType(InputControlType newThrowControlType)
         {
             throwControlType = newThrowControlType;
         }
 
+        /// <summary>
+        /// Sets the jump KeyCode.
+        /// </summary>
+        /// <param name="newJumpKey"></param>
         public void SetJumpKey(KeyCode newJumpKey)
         {
             jumpKey = newJumpKey;
+        }
+
+        /// <summary>
+        /// Sets the salt KeyCode.
+        /// </summary>
+        /// <param name="newSaltKey"></param>
+        public void SetSaltKey(KeyCode newSaltKey)
+        {
+            saltKey = newSaltKey;
+        }
+
+        /// <summary>
+        /// Sets the candle KeyCode.
+        /// </summary>
+        /// <param name="newCandleKey"></param>
+        public void SetCandleKey(KeyCode newCandleKey)
+        {
+            candleKey = newCandleKey;
+        }
+
+        /// <summary>
+        /// Sets the grab/drop KeyCode.
+        /// </summary>
+        /// <param name="newGrabKey"></param>
+        public void SetGrabKey(KeyCode newGrabKey)
+        {
+            grabKey = newGrabKey;
+        }
+
+        /// <summary>
+        /// Sets the throw KeyCode.
+        /// </summary>
+        /// <param name="newThrowKey"></param>
+        public void SetThrowKey(KeyCode newThrowKey)
+        {
+            throwKey = newThrowKey;
         }
     }
 }
