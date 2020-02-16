@@ -55,8 +55,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
         public FirstPersonControllerSaveData_Jack saveData = new FirstPersonControllerSaveData_Jack();
 
         // Input
-        public GameObject inputManager;
-
         private const string horizontalAxis = "Horizontal";
         private const string verticalAxis = "Vertical";
         private const string interactButton = "Interact";
@@ -343,11 +341,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 // Game pad inputs
                 usingController = true;
 
-                if(inputDevice.MenuWasPressed)
-                {
-                    inputManager.SetActive(!inputManager.activeSelf);
-                }
-
                 if(inputDevice.GetControl(saltControlType).WasPressed)
                 {
                     PourSaltCirlce();
@@ -389,11 +382,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
             {
                 // Keyboard & mouse inputs
                 usingController = false;
-
-                if(Input.GetKeyDown(KeyCode.Escape))
-                {
-                    inputManager.SetActive(!inputManager.activeSelf);
-                }
 
                 if (Input.GetKeyDown(saltKey))
                 {
@@ -621,11 +609,11 @@ namespace UnityStandardAssets.Characters.FirstPerson
         /// <returns>Returns false if the candle was already extinguished.</returns>
         public bool ExtinguishCandle()
         {
-            if(candleFlame.activeSelf)
-            {
-                candleFlame.SetActive(false);
-                return true;
-            }
+            //if(candleFlame.activeSelf)
+            //{
+            //    candleFlame.SetActive(false);
+            //    return true;
+            //}
 
             return false;
         }

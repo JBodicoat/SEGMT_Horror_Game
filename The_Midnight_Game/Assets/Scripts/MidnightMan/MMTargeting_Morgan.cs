@@ -24,7 +24,7 @@ public class MMTargeting_Morgan : MonoBehaviour
     private const int highNumber = 1000000;
 
     //I need the player and the midnightmans exact position whenever the player and the midnight man are in the same room, It would be wasteful to consider the Y pos in calculations
-    internal float distanceToPlayerSquared;
+    internal float distanceToPlayerSquared = highNumber;
 
     //true if player room = midnightman room
     internal bool isWithPlayer = false;
@@ -34,7 +34,7 @@ public class MMTargeting_Morgan : MonoBehaviour
     void Update()
     {
         // This is here so you can gage distance from player visually
-        Debug.Log(distanceToPlayerSquared);
+        //Debug.Log(distanceToPlayerSquared);
 
         //defining if the player is in the same room as the midnight man
         {
