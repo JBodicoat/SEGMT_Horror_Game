@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Clock_3D_LW : MonoBehaviour
 {
-    //Constants
+    //Constants for watch hand movement
     private const int degreesPerGameMinute = 6;
     private const int secondsPerGameMinute = 1;
     private const int degreesPerHourHandMove = 2;
@@ -30,7 +30,7 @@ public class Clock_3D_LW : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // Animation Testing
+        // Animation Testing -- Press C to toggle on or off the clock on screen
         if (Input.GetKeyDown(KeyCode.C))
         {
             ToggleClockAnim();
