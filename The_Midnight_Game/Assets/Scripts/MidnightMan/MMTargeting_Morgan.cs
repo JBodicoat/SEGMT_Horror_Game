@@ -33,7 +33,7 @@ public class MMTargeting_Morgan : MonoBehaviour
     void Update()
     {
         // This is here so you can gage distance from player visually
-        Debug.Log(distanceToPlayerSquared);
+        //Debug.Log(distanceToPlayerSquared);
 
         //defining if the player is in the same room as the midnight man
         {

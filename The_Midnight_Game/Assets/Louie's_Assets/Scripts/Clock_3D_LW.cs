@@ -4,35 +4,91 @@ using UnityEngine;
 
 public class Clock_3D_LW : MonoBehaviour
 {
-    // Start is called before the first frame update
-    private Transform handPivot;
+    //Constants
+    private const int degreesPerGameMinute = 6;
+    private const int secondsPerGameMinute = 1;
+    private const int degreesPerHourHandMove = 2;
+    private const int minutesPerHourHandMove = 4;
 
-    public GameObject hourHand;
-    public GameObject minuteHand;
+    private bool isClockOn;
+    private float timer;
+    private int minutesTicked;
 
-    public int speed = 1;
+    private Transform minutePivot;
+    private Transform hourPivot;
+
+    private Animator anim;
+    private bool isClockOnScreen;
     void Start()
     {
-        handPivot = GameObject.Find("Pivot").transform;
+        isClockOn = true;
+        minutePivot = GameObject.Find("MinutePivot").transform;
+        hourPivot = GameObject.Find("HourPivot").transform;
+        anim = GetComponent<Animator>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.P))
+        // Animation Testing
+        if (Input.GetKeyDown(KeyCode.C))
         {
-            RotateMinute();
+            ToggleClockAnim();
+        }
+
+
+
+        if (isClockOn)
+        {
+            //start/add to timer
+            timer += Time.deltaTime;
+
+            //if timer reaches seconds per in game minute (3 seconds)
+            if (timer >= secondsPerGameMinute)
+            {
+                //move minute hand once           
+                minutePivot.Rotate(new Vector3(0, 0, degreesPerGameMinute));
+                minutesTicked++;
+                timer = 0;
+            }
+
+            //every 4 minutes moves the hour hand 2 degrees
+            if (minutesTicked == minutesPerHourHandMove)
+            { 
+                hourPivot.Rotate(new Vector3(0, 0, degreesPerHourHandMove));
+                minutesTicked = 0;
+            }
         }
     }
-    void RotateMinute()
+    
+    // Used to toggle on the clock
+    void ClockOn()
     {
+        isClockOn = true;
+    }
+
+    //Used to toggle off the clock (useful for pausing the game)
+    void ClockOff()
+    {
+        isClockOn = false;
+    }
+
+    //Toggles the clock animations
+    void ToggleClockAnim()
+    {
+        //if the clock is on the screen, then enable out animation and update boolean
+        if (isClockOnScreen)
+        {
+            anim.SetTrigger("Out");
+            isClockOnScreen = false;
+        }
+        //if the clock is NOT on the screen, then enable in animation and update boolean
+        else
+        {
+            anim.SetTrigger("In");
+            isClockOnScreen = true;
+        }
 
     }
-    void RotateHour()
-    {
-        hourHand.transform.RotateAround(handPivot.position, Vector3.up, speed);
-        hourHand.transform.RotateAroundLocal(handPivot.position, speed);
 
-
-    }
 }
