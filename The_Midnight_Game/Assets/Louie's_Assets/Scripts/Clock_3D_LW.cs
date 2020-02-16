@@ -1,7 +1,12 @@
-﻿using System.Collections;
+﻿// Louie
+// Jack : 16/02/2020 - Reviewed. Cached minute & hour hand rotation Vector3s. Cached animation trigger strings.
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Controls the pocket watch's animation and hand rotations.
+/// </summary>
 public class Clock_3D_LW : MonoBehaviour
 {
     //Constants for watch hand movement
@@ -9,6 +14,12 @@ public class Clock_3D_LW : MonoBehaviour
     private const int secondsPerGameMinute = 1;
     private const int degreesPerHourHandMove = 2;
     private const int minutesPerHourHandMove = 4;
+
+    private readonly Vector3 minuteHandRoatation = new Vector3(0, 0, degreesPerGameMinute);
+    private readonly Vector3 hourHandRotation = new Vector3(0, 0, degreesPerHourHandMove);
+
+    private const string outTrigger = "Out";
+    private const string inTrigger = "In";
 
     private bool isClockOn;
     private float timer;
@@ -19,6 +30,7 @@ public class Clock_3D_LW : MonoBehaviour
 
     private Animator anim;
     private bool isClockOnScreen;
+
     void Start()
     {
         isClockOn = true;
@@ -47,45 +59,34 @@ public class Clock_3D_LW : MonoBehaviour
             if (timer >= secondsPerGameMinute)
             {
                 //move minute hand once           
-                minutePivot.Rotate(new Vector3(0, 0, degreesPerGameMinute));
+                minutePivot.Rotate(minuteHandRoatation);
                 minutesTicked++;
                 timer = 0;
             }
 
             //every 4 minutes moves the hour hand 2 degrees
-            if (minutesTicked == minutesPerHourHandMove)
+            if (minutesTicked >= minutesPerHourHandMove)
             { 
-                hourPivot.Rotate(new Vector3(0, 0, degreesPerHourHandMove));
+                hourPivot.Rotate(hourHandRotation);
                 minutesTicked = 0;
             }
         }
     }
     
-    // Used to toggle on the clock
-    void ClockOn()
-    {
-        isClockOn = true;
-    }
 
-    //Used to toggle off the clock (useful for pausing the game)
-    void ClockOff()
-    {
-        isClockOn = false;
-    }
-
-    //Toggles the clock animations
+    /// Toggles the clock animations
     void ToggleClockAnim()
     {
         //if the clock is on the screen, then enable out animation and update boolean
         if (isClockOnScreen)
         {
-            anim.SetTrigger("Out");
+            anim.SetTrigger(outTrigger);
             isClockOnScreen = false;
         }
         //if the clock is NOT on the screen, then enable in animation and update boolean
         else
         {
-            anim.SetTrigger("In");
+            anim.SetTrigger(inTrigger);
             isClockOnScreen = true;
         }
 
