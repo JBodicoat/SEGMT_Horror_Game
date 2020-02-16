@@ -5,26 +5,20 @@ using UnityStandardAssets.Characters.FirstPerson;
 
 public class SaltCircle_Jack : MonoBehaviour
 {
-    private FirstPersonController_Jack playerScript;
+    private SaltPouring_Jack playerSaltScript;
     private const string playerTag = "Player";
 
     // Start is called before the first frame update
     void Start()
     {
-        playerScript = FindObjectOfType<FirstPersonController_Jack>();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        playerSaltScript = FindObjectOfType<SaltPouring_Jack>();
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if(other.CompareTag(playerTag))
         {
-            playerScript.SetInSaltCircle(true);
+            playerSaltScript.SetInSaltCircle(true);
         }
     }
 
@@ -32,7 +26,7 @@ public class SaltCircle_Jack : MonoBehaviour
     {
         if(other.CompareTag(playerTag))
         {
-            playerScript.SetInSaltCircle(false);
+            playerSaltScript.SetInSaltCircle(false);
         }
     }
 }

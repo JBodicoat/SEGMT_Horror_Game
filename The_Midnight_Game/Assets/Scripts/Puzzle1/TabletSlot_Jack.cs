@@ -26,7 +26,7 @@ public class TabletSlot_Jack : MonoBehaviour
     private const string tabletTag = "Tablet";
     public bool holdingTablet = false;
     public GameObject heldTablet = null;
-    private FirstPersonController_Jack playerScript;
+    private Interaction_Jack playerInteractScript;
     private LayerMask interactableLayer;
     private const RigidbodyConstraints tabletConstraints = RigidbodyConstraints.FreezeAll;
     private Orientation tabletOrientation = Orientation.right;
@@ -34,7 +34,7 @@ public class TabletSlot_Jack : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        playerScript = FindObjectOfType<FirstPersonController_Jack>();
+        playerInteractScript = FindObjectOfType<Interaction_Jack>();
         interactableLayer = LayerMask.GetMask("Interactable Objects");
     }
 
@@ -115,9 +115,9 @@ public class TabletSlot_Jack : MonoBehaviour
             holdingTablet = true;
             heldTablet = other.gameObject;
 
-            if(playerScript.GetHeldObject() == heldTablet)
+            if(playerInteractScript.GetHeldObject() == heldTablet)
             {
-                playerScript.DropObject();
+                playerInteractScript.DropObject();
             }
 
             heldTablet.layer = interactableLayer;

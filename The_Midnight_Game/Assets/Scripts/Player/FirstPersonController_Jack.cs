@@ -18,8 +18,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
     [RequireComponent(typeof (CharacterController))]
     [RequireComponent(typeof (AudioSource))]
     [System.Serializable]
-    /// Controls the player character.
-    /// 
     /// Controls players movement, inventory system & candle.
     public class FirstPersonController_Jack : MonoBehaviour
     {
@@ -80,41 +78,10 @@ namespace UnityStandardAssets.Characters.FirstPerson
         // Health
         public bool dead = false;
 
-        // Inventory
-        public ushort[] inventory = new ushort[(ushort)ItemType.sizeOf];
-
-        // Candle
-        public GameObject candleFlame;
-
-        // Salt circle
-        public GameObject saltCirclePrefab;
-        //private readonly Quaternion identityQuaternion = new Quaternion(1, 1, 1, 1);
-        private float halfPlayerHeight;
-        public bool inSaltCircle = false;
-        private bool pouringSalt = false;
-        public ParticleSystem saltParticleSystem;
-
-        // Picking up objects
-        private readonly LayerMask moveableObjectsLayer = 1 << 8;
-        private const ushort interactDistance = 10;
-        private GameObject heldObject = null;
-        private Collider heldObjectCollider = null;
-        private Rigidbody heldObjectRigidbody = null;
-        private const RigidbodyConstraints freezeRotationConstraints = RigidbodyConstraints.FreezeRotation;
-        private RigidbodyConstraints heldObjectConstraints = RigidbodyConstraints.None;
-        private const float dropObjectDist = 20f;
-        private const float objectMoveDeadZone = 0.3f;
-        private const float objectMoveSpeed = 8f;
-        private readonly Vector3 zeroVector3 = new Vector3(0, 0, 0);
-
-        // Throwing objects
-        private const float throwForce = 15f;
-
-        // Interactable objects
-        private readonly LayerMask interactableObjectsLayer = 1 << 9;
-
-        // Animation
-        public Animator animator;
+        private Inventory_Jack inventoryScript;
+        private Candle_Jack candleScript;
+        private SaltPouring_Jack saltPouringScript;
+        private Interaction_Jack interactionScript;
 
         // Use this for initialization
         private void Awake()
@@ -131,27 +98,23 @@ namespace UnityStandardAssets.Characters.FirstPerson
 			m_MouseLook.Init(transform , m_Camera.transform);
 
             // ===== My Setup ===== //
+
+            inventoryScript = FindObjectOfType<Inventory_Jack>();
+            candleScript = FindObjectOfType<Candle_Jack>();
+            saltPouringScript = FindObjectOfType<SaltPouring_Jack>();
+            interactionScript = FindObjectOfType<Interaction_Jack>();
+
             // Save data
             saveData.xPos = transform.position.x;
             saveData.yPos = transform.position.y;
             saveData.zPos = transform.position.z;
-            saveData.inventory = inventory;
-            saveData.inSaltCirlce = inSaltCircle;
+            saveData.inventory = inventoryScript.GetInventory();
+            saveData.inSaltCirlce = saltPouringScript.IsInSaltCircle();
 
             // Movement
             if(!rigidBody )
             {
                 rigidBody = GetComponent<Rigidbody>();
-            }
-            // Inventory
-            inventory[(ushort)ItemType.matches] = 3;
-            inventory[(ushort)ItemType.salt] = 2;
-
-            // Salt circle
-            halfPlayerHeight = m_CharacterController.height / 2f;
-            if(!animator)
-            {
-                animator = GetComponent<Animator>();
             }
         }
 
@@ -241,27 +204,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 UpdateCameraPosition();
 
                 m_MouseLook.UpdateCursorLock();
-
-                // Held object
-                if (heldObject)
-                {
-                    Vector3 targetPosition = m_Camera.transform.position + m_Camera.transform.forward * 2f;
-                    Vector3 distanceToTarget = targetPosition - heldObject.transform.position;
-                    if(distanceToTarget.sqrMagnitude > dropObjectDist)
-                    {
-                        DropObject();
-                    }
-                    else if(distanceToTarget.sqrMagnitude > objectMoveDeadZone)
-                    {
-                        distanceToTarget.Normalize();
-                        heldObjectRigidbody.velocity = distanceToTarget * objectMoveSpeed;
-                    }
-                    else
-                    {
-                        heldObjectRigidbody.velocity = zeroVector3;
-                    }
-                }
-
             }
         }
 
@@ -343,37 +285,37 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
                 if(inputDevice.GetControl(saltControlType).WasPressed)
                 {
-                    PourSaltCirlce();
+                    saltPouringScript.PourSaltCirlce();
                 }
 
-                if (!pouringSalt)
+                if (!saltPouringScript.IsPouringSalt())
                 {
                     horizontal = inputDevice.LeftStick.X;
                     vertical = inputDevice.LeftStick.Y;
 
                     if (inputDevice.GetControl(candleControlType).WasPressed)
                     {
-                        LightCandle();
+                        candleScript.LightCandle();
                     }
 
                     if (inputDevice.Action2.WasPressed)
                     {
-                        Interact();
+                        interactionScript.Interact();
                     }
 
-                    if(inputDevice.GetControl(throwControlType).WasPressed && heldObject)
+                    if(inputDevice.GetControl(throwControlType).WasPressed && interactionScript.GetHeldObject())
                     {
-                        ThrowObject();
+                        interactionScript.ThrowObject();
                     }
                     else if (inputDevice.GetControl(grabControlType).WasPressed)
                     {
-                        if (heldObject)
+                        if (interactionScript.GetHeldObject())
                         {
-                            DropObject();
+                            interactionScript.DropObject();
                         }
                         else
                         {
-                            PickupObject();
+                            interactionScript.PickupObject();
                         }
                     }
                 }
@@ -385,37 +327,37 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
                 if (Input.GetKeyDown(saltKey))
                 {
-                    PourSaltCirlce();
+                    saltPouringScript.PourSaltCirlce();
                 }
 
-                if (!pouringSalt)
+                if (!saltPouringScript.IsPouringSalt())
                 {
                     horizontal = CrossPlatformInputManager.GetAxis(horizontalAxis);
                     vertical = CrossPlatformInputManager.GetAxis(verticalAxis);
 
                     if (Input.GetKeyDown(candleKey))
                     {
-                        LightCandle();
+                        candleScript.LightCandle();
                     }
 
                     if (Input.GetKeyDown(interactKey))
                     {
-                        Interact();
+                        interactionScript.Interact();
                     }
 
-                    if(Input.GetKeyDown(throwKey) && heldObject)
+                    if(Input.GetKeyDown(throwKey) && interactionScript.GetHeldObject())
                     {
-                        ThrowObject();
+                        interactionScript.ThrowObject();
                     }
                     else if (Input.GetKeyDown(grabKey))
                     {
-                        if (heldObject)
+                        if (interactionScript.GetHeldObject())
                         {
-                            DropObject();
+                            interactionScript.DropObject();
                         }
                         else
                         {
-                            PickupObject();
+                            interactionScript.PickupObject();
                         }
                     }
                 }
@@ -427,68 +369,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
             {
                 m_Input.Normalize();
             }
-        }
-
-        /// Interacts with anything in front of the player.
-        /// 
-        /// Fires a ray forward from the camera. If it hits an interactable object
-        /// it will be activated.
-        private void Interact()
-        {
-            if (Physics.Raycast(m_Camera.transform.position, m_Camera.transform.forward, out RaycastHit hit, interactDistance, interactableObjectsLayer))
-            {
-                if (hit.transform.CompareTag("Tablet Slot"))
-                {
-                    hit.transform.gameObject.GetComponent<TabletSlot_Jack>().RotateTablet();
-                }
-            }
-        }
-
-        /// Picks up an object in front of the player.
-        /// 
-        /// Fires a ray from the camera in front of the player. If the ray hits an
-        /// object that can be held it will be picked up.
-        private void PickupObject()
-        {
-            Debug.DrawRay(m_Camera.transform.position, m_Camera.transform.forward * interactDistance, Color.red, 2f);
-            if (Physics.Raycast(m_Camera.transform.position, m_Camera.transform.forward, out RaycastHit hit, interactDistance, moveableObjectsLayer))
-            {
-                heldObject = hit.transform.gameObject;
-
-                heldObjectCollider = heldObject.GetComponent<Collider>();
-                Physics.IgnoreCollision(heldObjectCollider, m_CharacterController);
-
-                heldObjectRigidbody = heldObject.GetComponent<Rigidbody>();
-                heldObjectRigidbody.useGravity = false;
-                heldObjectConstraints = heldObjectRigidbody.constraints;
-                heldObjectRigidbody.constraints = freezeRotationConstraints;
-            }
-        }
-
-        /// Drops the held object if there is one.
-        public void DropObject()
-        {
-            heldObjectRigidbody.constraints = heldObjectConstraints;
-            heldObjectRigidbody.useGravity = true;
-
-            heldObjectRigidbody = null;
-
-            Physics.IgnoreCollision(heldObjectCollider, m_CharacterController, false);
-            heldObjectCollider = null;
-
-            heldObject = null;
-        }
-
-        public void ThrowObject()
-        {
-            heldObjectRigidbody.AddForce(m_Camera.transform.forward * throwForce, ForceMode.Impulse);
-            DropObject();
-        }
-
-        /// Returns heldObject.
-        public GameObject GetHeldObject()
-        {
-            return heldObject;
         }
 
         private void RotateView()
@@ -525,106 +405,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
             return usingController;
         }
 
-        /// Adds items to the player's inventory.
-        /// 
-        /// Increases the number of passed itemType by passed quantity.
-        /// <param name="itemType"></param>
-        /// <param name="quantity"></param>
-        public void AddItems(ItemType itemType, ushort quantity)
-        {
-            inventory[(ushort)itemType] += quantity;
-        }
-
-        /// Removes items to the player's inventory.
-        /// 
-        /// Decreases the number of passed itemType by passed quantity.
-        /// <param name="itemType"></param>
-        /// <param name="quantity"></param>
-        public void RemoveItems(ItemType itemType, ushort quantity)
-        {
-            inventory[(ushort)itemType] -= quantity;
-        }
-
-        /// Attempts to pour a salt circle.
-        /// 
-        /// If the player has any salt it will be used to start pouring
-        /// a salt circle.
-        /// <returns>Returns false if the player has no salt.</returns>
-        private bool PourSaltCirlce()
-        {
-            if(inventory[(ushort)ItemType.salt] > 0 && m_CharacterController.isGrounded)
-            {
-                RemoveItems(ItemType.salt, 1);
-                pouringSalt = true;
-                animator.enabled = true;
-                saltParticleSystem.Play(false);
-                return true;
-            }
-
-            return false;
-        }
-
-        /// Creates a salt circle.
-        /// 
-        /// Creates a salt circle at the players feet. 
-        /// This is called at the end of the salt pouring animation.
-        public void InstantiateSaltCircle()
-        {
-            Instantiate(saltCirclePrefab,
-                        new Vector3(transform.position.x, transform.position.y - halfPlayerHeight, transform.position.z),
-                        Quaternion.identity);
-            inSaltCircle = true;
-            pouringSalt = false;
-            animator.enabled = false;
-            saltParticleSystem.Stop(false);
-        }
-
-        /// Sets inSaltCircle to the passed value.
-        /// <param name="isInSaltCircle"></param>
-        public void SetInSaltCircle(bool isInSaltCircle)
-        {
-            inSaltCircle = isInSaltCircle;
-        }
-
-        /// Returns inSaltCircle.
-        public bool IsInSaltCircle()
-        {
-            return inSaltCircle;
-        }
-
-        /// Attempts to light the player's candle.
-        /// <returns>Returns false if the candle was already lit or the player doesn't have enouch matches.</returns>
-        private bool LightCandle()
-        {
-            if(!candleFlame.activeSelf && inventory[(ushort)ItemType.matches] > 0)
-            {
-                candleFlame.SetActive(true);
-                RemoveItems(ItemType.matches, 1);
-            }
-
-            return false;
-        }
-
-        /// Disables the player's candles light source.
-        /// <returns>Returns false if the candle was already extinguished.</returns>
-        public bool ExtinguishCandle()
-        {
-            //if(candleFlame.activeSelf)
-            //{
-            //    candleFlame.SetActive(false);
-            //    return true;
-            //}
-
-            return false;
-        }
-
-        /// Returns whether the candle is lit.
-        public bool IsCandleLit()
-        {
-            return candleFlame.activeSelf;
-        }
-
-
         // ===== Saving game data ===== //
         /// Loads the currently saved player data.
         public void LoadSaveData(FirstPersonControllerSaveData_Jack loadData)
@@ -633,12 +413,9 @@ namespace UnityStandardAssets.Characters.FirstPerson
             transform.localRotation = Quaternion.Euler(loadData.xRot, loadData.yRot, loadData.zRot);
             m_Camera.transform.localRotation = Quaternion.Euler(loadData.cameraXRot, loadData.cameraYRot, loadData.cameraZRot);
             m_MouseLook.Init(transform, m_Camera.transform);
-            inventory = loadData.inventory;
-            inSaltCircle = loadData.inSaltCirlce;
-            if(!loadData.candleLit)
-            {
-                candleFlame.SetActive(false);
-            }
+            inventoryScript.SetInventory(loadData.inventory);
+            saltPouringScript.SetInSaltCircle(loadData.inSaltCirlce);
+            candleScript.SetCandleLit(loadData.candleLit);
         }
 
         /// Returns the data of the player that needs saving.
@@ -653,9 +430,9 @@ namespace UnityStandardAssets.Characters.FirstPerson
             saveData.cameraXRot = m_Camera.transform.localEulerAngles.x;
             saveData.cameraYRot = m_Camera.transform.localEulerAngles.y;
             saveData.cameraZRot = m_Camera.transform.localEulerAngles.z;
-            saveData.inventory = inventory;
-            saveData.inSaltCirlce = inSaltCircle;
-            saveData.candleLit = IsCandleLit();
+            saveData.inventory = inventoryScript.GetInventory();
+            saveData.inSaltCirlce = saltPouringScript.IsInSaltCircle();
+            saveData.candleLit = candleScript.IsCandleLit();
 
             return saveData;
         }

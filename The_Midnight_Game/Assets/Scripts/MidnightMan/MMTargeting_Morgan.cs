@@ -13,7 +13,7 @@ using UnityStandardAssets.Characters.FirstPerson;
 public class MMTargeting_Morgan : MonoBehaviour
 {
     public GameObject player;
-    public FirstPersonController_Jack playerScript;
+    public Candle_Jack playerCandleScript;
     public GameObject midnightMan;
 
     //current room for player and midnight man
@@ -60,7 +60,7 @@ public class MMTargeting_Morgan : MonoBehaviour
 
             if(distanceToPlayerSquared < 10)
             {
-                playerScript.ExtinguishCandle();
+                playerCandleScript.ExtinguishCandle();
             }
         }
         else if (distanceToPlayerSquared != highNumber)
