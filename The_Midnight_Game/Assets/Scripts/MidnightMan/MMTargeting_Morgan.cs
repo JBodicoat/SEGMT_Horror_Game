@@ -1,5 +1,6 @@
 ﻿// Morgan Pryor : 03/02/2020
 // Jack : 05/02/2020 optimized distance calculation, square root calculations are expensive.
+//Louie : 16/02/2020 added Candle blow SFX to the same place its extinguished and added ice cracking and breathing
 ///
 /// This script works out how close to the player the midnight man is and checks if the midnight man is in the same room
 ///
@@ -13,6 +14,7 @@ public class MMTargeting_Morgan : MonoBehaviour
 {
     public GameObject player;
     public FirstPersonController_Jack playerScript;
+    private GameObject SoundManager;
     public GameObject midnightMan;
 
     //current room for player and midnight man
@@ -29,7 +31,10 @@ public class MMTargeting_Morgan : MonoBehaviour
     internal bool isWithPlayer = false;
     //adjusted value is so it doesnt run the check constantly
     private bool isAdjustedWithPlayer = false;
-
+    private void Start()
+    {
+        SoundManager = GameObject.Find("SFX_Manager");
+    }
     void Update()
     {
         // This is here so you can gage distance from player visually
@@ -60,7 +65,20 @@ public class MMTargeting_Morgan : MonoBehaviour
             if(distanceToPlayerSquared < 10)
             {
                 playerScript.ExtinguishCandle();
+                SoundManager.GetComponent<SFXManager_LW>().PlaySFX(SFXManager_LW.SFX.CandleBlow);
             }
+            //Ice Cracking and Breathing attempt
+            //if(distanceToPlayerSquared < 15)
+            //{
+            //    if (SoundManager.GetComponent<SFXManager_LW>().CanPlaySound(SFXManager_LW.SFX.IceCracking))
+            //    {
+            //        SoundManager.GetComponent<SFXManager_LW>().PlaySFX(SFXManager_LW.SFX.IceCracking);
+            //    }
+            //    if (SoundManager.GetComponent<SFXManager_LW>().CanPlaySound(SFXManager_LW.SFX.Breathing))
+            //    {
+            //        SoundManager.GetComponent<SFXManager_LW>().PlaySFX(SFXManager_LW.SFX.Breathing);
+            //    }
+            //}
         }
         else if (distanceToPlayerSquared != highNumber)
         {
