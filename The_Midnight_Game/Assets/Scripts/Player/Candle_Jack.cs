@@ -6,7 +6,6 @@ using UnityEngine;
 public class Candle_Jack : MonoBehaviour
 {
     public GameObject candleFlame;
-    public Light candlePrimaryLight;
 
     private Inventory_Jack inventoryScript;
 
@@ -22,7 +21,6 @@ public class Candle_Jack : MonoBehaviour
         if (!candleFlame.activeSelf && inventoryScript.GetNumOf(ItemType.matches) > 0)
         {
             candleFlame.SetActive(true);
-            candlePrimaryLight.enabled = true;
             inventoryScript.RemoveItems(ItemType.matches, 1);
         }
 
@@ -36,7 +34,6 @@ public class Candle_Jack : MonoBehaviour
         if (candleFlame.activeSelf)
         {
             candleFlame.SetActive(false);
-            candlePrimaryLight.enabled = false;
             return true;
         }
 
@@ -56,6 +53,5 @@ public class Candle_Jack : MonoBehaviour
     public void SetCandleLit(bool candleLit)
     {
         candleFlame.SetActive(candleLit);
-        candlePrimaryLight.enabled = candleLit;
     }
 }

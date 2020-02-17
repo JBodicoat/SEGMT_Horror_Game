@@ -29,10 +29,10 @@ public class ProximityAlerts_Jack : MonoBehaviour
     private bool fadingOut = false;
     private bool fadedOut = false;
 
-    private const float fadeInIncrement = 0.05f;
-    private const float fadeOutIncrement = 0.025f;
+    private const float fadeInIncrement = 0.025f;
+    private const float fadeOutIncrement = 0.0125f; 
 
-    private readonly WaitForSeconds fadeWait = new WaitForSeconds(0.1f);
+    private readonly WaitForSeconds fadeWait = new WaitForSeconds(0.05f);
 
     // Whispers
     public AudioSource whispersAudioSource;
