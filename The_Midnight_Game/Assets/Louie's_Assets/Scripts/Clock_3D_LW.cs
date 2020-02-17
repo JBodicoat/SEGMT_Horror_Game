@@ -49,7 +49,6 @@ public class Clock_3D_LW : MonoBehaviour
         }
 
 
-
         if (isClockOn)
         {
             //start/add to timer

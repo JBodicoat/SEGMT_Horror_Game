@@ -14,7 +14,6 @@ public class MMTargeting_Morgan : MonoBehaviour
 {
     public GameObject player;
     public FirstPersonController_Jack playerScript;
-    private GameObject SoundManager;
     public GameObject midnightMan;
 
     //current room for player and midnight man
@@ -33,7 +32,6 @@ public class MMTargeting_Morgan : MonoBehaviour
     private bool isAdjustedWithPlayer = false;
     private void Start()
     {
-        SoundManager = GameObject.Find("SFX_Manager");
     }
     void Update()
     {
@@ -65,20 +63,7 @@ public class MMTargeting_Morgan : MonoBehaviour
             if(distanceToPlayerSquared < 10)
             {
                 playerScript.ExtinguishCandle();
-                SoundManager.GetComponent<SFXManager_LW>().PlaySFX(SFXManager_LW.SFX.CandleBlow);
             }
-            //Ice Cracking and Breathing attempt
-            //if(distanceToPlayerSquared < 15)
-            //{
-            //    if (SoundManager.GetComponent<SFXManager_LW>().CanPlaySound(SFXManager_LW.SFX.IceCracking))
-            //    {
-            //        SoundManager.GetComponent<SFXManager_LW>().PlaySFX(SFXManager_LW.SFX.IceCracking);
-            //    }
-            //    if (SoundManager.GetComponent<SFXManager_LW>().CanPlaySound(SFXManager_LW.SFX.Breathing))
-            //    {
-            //        SoundManager.GetComponent<SFXManager_LW>().PlaySFX(SFXManager_LW.SFX.Breathing);
-            //    }
-            //}
         }
         else if (distanceToPlayerSquared != highNumber)
         {

@@ -41,4 +41,21 @@ public class JournalManager_Louie : MonoBehaviour
             isJournalOn = true;
 		}
 	}
+
+    void DisplayPage1()
+    {
+
+    }
+    void DisplayPage2()
+    {
+
+    }
+    void DisplayPage3()
+    {
+
+    }
+    void DisplayPage4()
+    {
+
+    }
 }

@@ -1,7 +1,7 @@
 // Jack
 // Jack : 05/02/2020 ~ 15:30 Implemented picking up objects
 //                   ~ 18:30 Finished implementing interaction with tablets for puzzle 1
-//Louie : 16/02/2020 - Added Match Light SFX where the candle is relit.
+//Louie : 16/02/2020 - Added Match Light SFX where the candle is relit and candle blow SFX when its blown out.
 using System;
 using UnityEngine;
 using UnityStandardAssets.CrossPlatformInput;
@@ -469,6 +469,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             if(candleFlame.activeSelf)
             {
                 candleFlame.SetActive(false);
+                SoundManager.GetComponent<SFXManager_LW>().PlaySFX(SFXManager_LW.SFX.CandleBlow);
                 return true;
             }
 
