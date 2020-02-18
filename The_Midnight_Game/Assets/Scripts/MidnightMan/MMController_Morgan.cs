@@ -99,6 +99,7 @@ public class MMController_Morgan : MonoBehaviour
 
     public void TeleportMidnightManAway()
     {
+        //get all values
         for (int i = 0; i < patrolPoints.Length; i++)
         {
             float xDistance = patrolPoints[i].transform.position.x - targetScript.player.transform.position.x;
@@ -106,11 +107,10 @@ public class MMController_Morgan : MonoBehaviour
             sqrDistanceFromNodeToTarget[i] = xDistance * xDistance + zDistance * zDistance;
         }
 
-        //store min value
+        //store max value
         maxValue = sqrDistanceFromNodeToTarget[0];
         targetNodeIndex = 0;
-
-        //find min value in array
+        //find max value in array
         for (ushort i = 1; i < sqrDistanceFromNodeToTarget.Length; i++)
         {
             if (sqrDistanceFromNodeToTarget[i] > maxValue)
@@ -120,9 +120,7 @@ public class MMController_Morgan : MonoBehaviour
                 //teleport the mm to the furthest node
             }
         }
-        //gameObject.transform.position = new Vector3(patrolPoints[maxValueIndex].transform.position.x, gameObject.transform.position.y, patrolPoints[maxValueIndex].transform.position.z);
-        agent.Warp(patrolPoints[maxValueIndex].position);
-        gameObject.transform.position = patrolPoints[maxValueIndex].position;
+        agent.Warp(patrolPoints[maxValueIndex].transform.position);
     }
 }
 
