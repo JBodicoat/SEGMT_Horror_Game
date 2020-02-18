@@ -105,12 +105,23 @@ public class MMTargeting_Morgan : MonoBehaviour
             if(sqrDistanceToPlayer < 10)
             {
                 playerScript.ExtinguishCandle();
+                controllerScript.TeleportMidnightManAway();
             }
+
+            //midnightman is too close!
+            //if (sqrDistanceToPlayer < 8)
+            //{
+             //   controllerScript.TeleportMidnightManAway();
+           // }
         }
         else if (sqrDistanceToPlayer != highNumber)
         {
             //if not in same room as player, distance to player is set to a arbitrary high number
             sqrDistanceToPlayer = highNumber;
         }
+
+
     }
+
+
 }
