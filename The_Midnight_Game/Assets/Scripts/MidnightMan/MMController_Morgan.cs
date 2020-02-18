@@ -29,7 +29,8 @@ public class MMController_Morgan : MonoBehaviour
     //node data disection
     private float[] sqrDistanceFromNodeToTarget;
     private float minValue;
-
+    private float maxValue;
+    private int maxValueIndex;
     // Start is called before the first frame update
     void Start()
     {
@@ -93,6 +94,32 @@ public class MMController_Morgan : MonoBehaviour
                 targetNodeIndex = i;
             }
         }
+    }
+
+    public void TeleportMidnightManAway()
+    {
+        //get all values
+        for (int i = 0; i < patrolPoints.Length; i++)
+        {
+            float xDistance = patrolPoints[i].transform.position.x - targetScript.player.transform.position.x;
+            float zDistance = patrolPoints[i].transform.position.z - targetScript.player.transform.position.z;
+            sqrDistanceFromNodeToTarget[i] = xDistance * xDistance + zDistance * zDistance;
+        }
+
+        //store min value
+        maxValue = sqrDistanceFromNodeToTarget[0];
+        targetNodeIndex = 0;
+        //find max value in array
+        for (ushort i = 1; i < sqrDistanceFromNodeToTarget.Length; i++)
+        {
+            if (sqrDistanceFromNodeToTarget[i] > maxValue)
+            {
+                maxValue = sqrDistanceFromNodeToTarget[i];
+                //makes the "random target" fixed to the closet node
+                maxValueIndex = i;
+            }
+        }
+        agent.Warp(patrolPoints[maxValueIndex].transform.position);
     }
 }
 
