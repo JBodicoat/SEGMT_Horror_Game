@@ -60,7 +60,7 @@ public class MMController_Morgan : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-       // Debug.Log(agent.speed);
+        Debug.Log(agent.speed);
         if (!targetScript.isSeen)
         {
             agent.SetDestination(patrolPoints[targetNodeIndex].position);
@@ -95,6 +95,7 @@ public class MMController_Morgan : MonoBehaviour
         }
         if(isEnraged)
         {
+            agent.speed = baseSpeed;
             currentEnrageTime += Time.deltaTime;
             if (currentEnrageTime > standardEnrageTime)
             {

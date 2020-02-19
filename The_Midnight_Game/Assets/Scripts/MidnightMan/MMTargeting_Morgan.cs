@@ -109,11 +109,6 @@ public class MMTargeting_Morgan : MonoBehaviour
                 controllerScript.TeleportMidnightManAway();
             }
 
-            //midnightman is too close!
-            //if (sqrDistanceToPlayer < 8)
-            //{
-             //   controllerScript.TeleportMidnightManAway();
-           // }
         }
         else if (sqrDistanceToPlayer != highNumber)
         {
