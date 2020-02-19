@@ -54,6 +54,7 @@ public class MMTargeting_Morgan : MonoBehaviour
 
     void Update()
     {
+
         //defining if the player is in the same room as the midnight man
         {
             if (string.Compare(playerRoom, midnightManRoom) == 0 && !isAdjustedWithPlayer)
