@@ -3,6 +3,7 @@
 // Morgan : 10/02/2020 script will use a line of sight method of finding the player for AI navigation
 // Jack : 11/02/2020 Tweaks to variable names & optimization on raycast
 //                   
+//Louie : 16/02/2020 added Candle blow SFX to the same place its extinguished and added ice cracking and breathing
 ///
 /// This script works out how close to the player the midnight man is and checks if the midnight man is in the same room
 ///
@@ -50,6 +51,15 @@ public class MMTargeting_Morgan : MonoBehaviour
     private void Awake()
     {
         controllerScript = FindObjectOfType<MMController_Morgan>();
+    }
+
+    //MM Audio Testing
+    private GameObject SoundManager;
+    private int breathingDistance = 50;
+    private int iceCrackingDistance = 30;
+    private void Start()
+    {
+        SoundManager = GameObject.Find("SFX_Manager");
     }
 
     void Update()
@@ -105,6 +115,15 @@ public class MMTargeting_Morgan : MonoBehaviour
             if(sqrDistanceToPlayer < 10)
             {
                 playerScript.ExtinguishCandle();
+            }
+            //Midnight Man Audio Tests
+            if (distanceToPlayerSquared < iceCrackingDistance)
+            {
+                SoundManager.GetComponent<SFXManager_LW>().PlayMidnightManSFX(SFXManager_LW.MMSFX.IceCracking);
+            }
+            if (distanceToPlayerSquared < breathingDistance)
+            {
+                SoundManager.GetComponent<SFXManager_LW>().PlayMidnightManSFX(SFXManager_LW.MMSFX.Breathing);
             }
         }
         else if (sqrDistanceToPlayer != highNumber)

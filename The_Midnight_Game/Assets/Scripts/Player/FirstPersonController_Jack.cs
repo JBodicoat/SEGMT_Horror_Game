@@ -1,6 +1,7 @@
 // Jack
 // Jack : 05/02/2020 ~ 15:30 Implemented picking up objects
 //                   ~ 18:30 Finished implementing interaction with tablets for puzzle 1
+//Louie : 16/02/2020 - Added Match Light SFX where the candle is relit and candle blow SFX when its blown out.
 using System;
 using UnityEngine;
 using UnityStandardAssets.CrossPlatformInput;
@@ -79,6 +80,9 @@ namespace UnityStandardAssets.Characters.FirstPerson
         // Interactable objects
         LayerMask interactableObjectsLayer = 1 << 9;
 
+        //Match Lighting Audio
+        private GameObject SoundManager;
+
         // Use this for initialization
         private void Start()
         {
@@ -101,6 +105,9 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
             inventory[(ushort)ItemType.matches] = 3;
             moveableObjectsLayer = 1 << 8;
+
+            //Audio
+            SoundManager = GameObject.Find("SFX_Manager");
         }
 
 
@@ -449,6 +456,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             {
                 candleFlame.SetActive(true);
                 RemoveItems(ItemType.matches, 1);
+                SoundManager.GetComponent<SFXManager_LW>().PlaySFX(SFXManager_LW.SFX.MatchLighting);
             }
 
             return false;
@@ -461,6 +469,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             if(candleFlame.activeSelf)
             {
                 candleFlame.SetActive(false);
+                SoundManager.GetComponent<SFXManager_LW>().PlaySFX(SFXManager_LW.SFX.CandleBlow);
                 return true;
             }
 
