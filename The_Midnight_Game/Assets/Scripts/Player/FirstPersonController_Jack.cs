@@ -1,7 +1,9 @@
 // Jack
 // Jack : 05/02/2020 ~ 15:30 Implemented picking up objects
 //                   ~ 18:30 Finished implementing interaction with tablets for puzzle 1
+// Jack : 06/02/2020 Changed holding objects to use collisions
 //                   Implemented the salt circle
+// Jack 13/02/2020 - Added saving of player's rotation & candle
 // Jack 15/02/2020 - Added support for changing input bindings for controller & keyboard & mouse.
 //Louie : 16/02/2020 - Added Match Light SFX where the candle is relit and candle blow SFX when its blown out.
 
@@ -119,7 +121,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
             {
                 rigidBody = GetComponent<Rigidbody>();
             }
-            moveableObjectsLayer = 1 << 8;
         }
 
 
@@ -455,11 +456,11 @@ namespace UnityStandardAssets.Characters.FirstPerson
         }
 
         /// Sets the light candle InputControlType.
+        public void SetCandleControlType(InputControlType newCandleControlType)
         {
             candleControlType = newCandleControlType;
         }
 
-        public bool ExtinguishCandle()
         /// Sets the grab/drop InputControlType.
         public void SetGrabControlType(InputControlType newGrabControlType)
         {
@@ -477,8 +478,10 @@ namespace UnityStandardAssets.Characters.FirstPerson
         /// </summary>
         /// <param name="newJumpKey"></param>
         public void SetJumpKey(KeyCode newJumpKey)
+        {
             jumpKey = newJumpKey;
         }
+
         /// <summary>
         /// Sets the salt KeyCode.
         /// </summary>
