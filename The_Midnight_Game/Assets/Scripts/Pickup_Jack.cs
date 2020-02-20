@@ -22,12 +22,12 @@ public class Pickup_Jack : MonoBehaviour
     public ItemType itemType;
     public ushort quantity;
 
-    private FirstPersonController_Jack playerScript;
+    private Inventory_Jack playerInventoryScript;
     private const string playerTag = "Player";
 
     private void Start()
     {
-        playerScript = FindObjectOfType<FirstPersonController_Jack>();
+        playerInventoryScript = FindObjectOfType<Inventory_Jack>();
     }
 
     /// On collision with player, add to player's inventory and destroy self.
@@ -35,7 +35,7 @@ public class Pickup_Jack : MonoBehaviour
     {
         if(other.CompareTag(playerTag))
         {
-            playerScript.AddItems(itemType, quantity);
+            playerInventoryScript.AddItems(itemType, quantity);
             Destroy(gameObject);
         }
     }

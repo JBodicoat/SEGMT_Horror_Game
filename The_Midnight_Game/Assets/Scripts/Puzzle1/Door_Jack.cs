@@ -1,5 +1,5 @@
 ﻿// Jack
-
+// Jack 13/02/2020 Added support for saving data.
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,18 +15,40 @@ public class Door_Jack : MonoBehaviour
     public TabletSlot_Jack tabletSlot2Script;
     public TabletSlot_Jack tabletSlot3Script;
 
+    private bool open = false;
+
+    /// Tests if the tablets are orientated correctly to open the door.
+    /// 
+    /// Tests if the tablets in the tabletSlots are orientated correctly to open the door.
+    /// If they are then the door opens.
     public void CheckSlots()
     {
-        if(tabletSlot1Script.IsHoldingTablet() && tabletSlot1Script.GetOrientation() == Orientation.down)
+        if (!open)
         {
-            if(tabletSlot2Script.IsHoldingTablet() && tabletSlot2Script.GetOrientation() == Orientation.left)
+            if (tabletSlot1Script.IsHoldingTablet() && tabletSlot1Script.GetOrientation() == Orientation.down)
             {
-                if(tabletSlot3Script.IsHoldingTablet() && tabletSlot3Script.GetOrientation() == Orientation.up)
+                if (tabletSlot2Script.IsHoldingTablet() && tabletSlot2Script.GetOrientation() == Orientation.left)
                 {
-                    // Open door
-                    transform.position -= moveAmount;
+                    if (tabletSlot3Script.IsHoldingTablet() && tabletSlot3Script.GetOrientation() == Orientation.up)
+                    {
+                        // Open door
+                        transform.position -= moveAmount;
+                        open = true;
+                    }
                 }
             }
         }
+    }
+
+    /// Returns open.
+    public bool IsOpen()
+    {
+        return open;
+    }
+
+    /// Sets open to the passed value.
+    public void SetOpen(bool newOpen)
+    {
+        open = newOpen;
     }
 }

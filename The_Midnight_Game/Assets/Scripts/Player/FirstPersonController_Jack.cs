@@ -1,20 +1,23 @@
 // Jack
 // Jack : 05/02/2020 ~ 15:30 Implemented picking up objects
 //                   ~ 18:30 Finished implementing interaction with tablets for puzzle 1
+//                   Implemented the salt circle
+// Jack 15/02/2020 - Added support for changing input bindings for controller & keyboard & mouse.
 //Louie : 16/02/2020 - Added Match Light SFX where the candle is relit and candle blow SFX when its blown out.
+
 using System;
 using UnityEngine;
 using UnityStandardAssets.CrossPlatformInput;
 using UnityStandardAssets.Utility;
 using Random = UnityEngine.Random;
 using InControl;
+using System.Collections.Generic;
 
 namespace UnityStandardAssets.Characters.FirstPerson
 {
     [RequireComponent(typeof (CharacterController))]
     [RequireComponent(typeof (AudioSource))]
-    /// Controls the player character.
-    /// 
+    [System.Serializable]
     /// Controls players movement, inventory system & candle.
     public class FirstPersonController_Jack : MonoBehaviour
     {
@@ -46,45 +49,45 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private AudioSource m_AudioSource;
 
         // ===== My variables ===== //
+        // Saving game data
+        public FirstPersonControllerSaveData_Jack saveData = new FirstPersonControllerSaveData_Jack();
+
         // Input
-        private const string jumpAxis = "Jump";
         private const string horizontalAxis = "Horizontal";
         private const string verticalAxis = "Vertical";
-        private const string lightCandleButton = "Light Candle";
         private const string interactButton = "Interact";
-        private const string pickupButton = "Pickup";
+
+        private InputControlType jumpControlType = InputControlType.Action1;
+        private InputControlType saltControlType = InputControlType.Action2;
+        private InputControlType candleControlType = InputControlType.Action3;
+        private InputControlType grabControlType = InputControlType.LeftTrigger;
+        private InputControlType throwControlType = InputControlType.RightTrigger;
+
+        private KeyCode jumpKey = KeyCode.Space;
+        private KeyCode saltKey = KeyCode.Q;
+        private KeyCode candleKey = KeyCode.F;
+        private KeyCode interactKey = KeyCode.E;
+        private KeyCode grabKey = KeyCode.Mouse0;
+        private KeyCode throwKey = KeyCode.Mouse1;
 
         // Movement
         public Rigidbody rigidBody;
         private bool usingController = true;
-        InputDevice inputDevice = InputManager.ActiveDevice; // InControl input
+        private InputDevice inputDevice = InputManager.ActiveDevice; // InControl input
 
         // Health
         public bool dead = false;
 
-        // Inventory
-        private ushort[] inventory = new ushort[(ushort)ItemType.sizeOf];
-
-        // Candle
-        public GameObject candleFlame;
-
-        // Picking up objects
-        LayerMask moveableObjectsLayer;
-        private const ushort interactDistance = 10;
-        private GameObject heldObject = null;
-        private Collider heldObjectCollider = null;
-        private Rigidbody heldObjectRigidbody = null;
-        RigidbodyConstraints freezeRotationConstraints = RigidbodyConstraints.FreezeRotation;
-        RigidbodyConstraints heldObjectConstraints = RigidbodyConstraints.None;
-
-        // Interactable objects
-        LayerMask interactableObjectsLayer = 1 << 9;
+        private Inventory_Jack inventoryScript;
+        private Candle_Jack candleScript;
+        private SaltPouring_Jack saltPouringScript;
+        private Interaction_Jack interactionScript;
 
         //Match Lighting Audio
         private GameObject SoundManager;
 
         // Use this for initialization
-        private void Start()
+        private void Awake()
         {
             // Unity Setup
             m_CharacterController = GetComponent<CharacterController>();
@@ -97,17 +100,26 @@ namespace UnityStandardAssets.Characters.FirstPerson
             m_AudioSource = GetComponent<AudioSource>();
 			m_MouseLook.Init(transform , m_Camera.transform);
 
-            // My Setup
+            // ===== My Setup ===== //
+
+            inventoryScript = FindObjectOfType<Inventory_Jack>();
+            candleScript = FindObjectOfType<Candle_Jack>();
+            saltPouringScript = FindObjectOfType<SaltPouring_Jack>();
+            interactionScript = FindObjectOfType<Interaction_Jack>();
+
+            // Save data
+            saveData.xPos = transform.position.x;
+            saveData.yPos = transform.position.y;
+            saveData.zPos = transform.position.z;
+            saveData.inventory = inventoryScript.GetInventory();
+            saveData.inSaltCirlce = saltPouringScript.IsInSaltCircle();
+
+            // Movement
             if(!rigidBody )
             {
                 rigidBody = GetComponent<Rigidbody>();
             }
-
-            inventory[(ushort)ItemType.matches] = 3;
             moveableObjectsLayer = 1 << 8;
-
-            //Audio
-            SoundManager = GameObject.Find("SFX_Manager");
         }
 
 
@@ -118,22 +130,16 @@ namespace UnityStandardAssets.Characters.FirstPerson
             {
                 GetInput();
 
-                // Held object
-                if (heldObject)
-                {
-                    heldObject.transform.position = transform.position + m_Camera.transform.forward * 2f;
-                }
-
                 // the jump state needs to read here to make sure it is not missed
                 if (!m_Jump)
                 {
                     if(usingController)
                     {
-                        m_Jump = inputDevice.Action1.WasPressed;
+                        m_Jump = inputDevice.GetControl(jumpControlType).WasPressed;
                     }
                     else
                     {
-                        m_Jump = CrossPlatformInputManager.GetButtonDown(jumpAxis);
+                        m_Jump = Input.GetKeyDown(jumpKey);
                     }
                 }
 
@@ -271,123 +277,102 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private void GetInput()
         {
             // Read input
-            float horizontal;
-            float vertical;
+            float horizontal = 0f;
+            float vertical = 0f;
 
             // InControl input
             inputDevice = InputManager.ActiveDevice;
             if(InputManager.Devices.Count > 0)
             {
+                // Game pad inputs
                 usingController = true;
 
-                horizontal = inputDevice.LeftStick.X;
-                vertical = inputDevice.LeftStick.Y;
-
-                if(inputDevice.RightTrigger)
+                if(inputDevice.GetControl(saltControlType).WasPressed)
                 {
-                    LightCandle();
+                    saltPouringScript.PourSaltCirlce();
                 }
 
-                if(inputDevice.Action2.WasPressed)
+                if (!saltPouringScript.IsPouringSalt())
                 {
-                    Interact();
-                }
+                    horizontal = inputDevice.LeftStick.X;
+                    vertical = inputDevice.LeftStick.Y;
 
-                if(inputDevice.Action3.WasPressed)
-                {
-                    if (heldObject)
+                    if (inputDevice.GetControl(candleControlType).WasPressed)
                     {
-                        DropObject();
+                        candleScript.LightCandle();
                     }
-                    else
+
+                    if (inputDevice.Action2.WasPressed)
                     {
-                        PickupObject();
+                        interactionScript.Interact();
+                    }
+
+                    if(inputDevice.GetControl(throwControlType).WasPressed && interactionScript.GetHeldObject())
+                    {
+                        interactionScript.ThrowObject();
+                    }
+                    else if (inputDevice.GetControl(grabControlType).WasPressed)
+                    {
+                        if (interactionScript.GetHeldObject())
+                        {
+                            interactionScript.DropObject();
+                        }
+                        else
+                        {
+                            interactionScript.PickupObject();
+                        }
                     }
                 }
             }
             else
             {
+                // Keyboard & mouse inputs
                 usingController = false;
 
-                horizontal = CrossPlatformInputManager.GetAxis(horizontalAxis);
-                vertical = CrossPlatformInputManager.GetAxis(verticalAxis);
-
-                if (Input.GetButtonDown(lightCandleButton))
+                if (Input.GetKeyDown(saltKey))
                 {
-                    LightCandle();
+                    saltPouringScript.PourSaltCirlce();
                 }
 
-                if(Input.GetButtonDown(interactButton))
+                if (!saltPouringScript.IsPouringSalt())
                 {
-                    Interact();
-                }
+                    horizontal = CrossPlatformInputManager.GetAxis(horizontalAxis);
+                    vertical = CrossPlatformInputManager.GetAxis(verticalAxis);
 
-                if(Input.GetButtonDown(pickupButton))
-                {
-                    if (heldObject)
+                    if (Input.GetKeyDown(candleKey))
                     {
-                        DropObject();
+                        candleScript.LightCandle();
                     }
-                    else
+
+                    if (Input.GetKeyDown(interactKey))
                     {
-                        PickupObject();
+                        interactionScript.Interact();
+                    }
+
+                    if(Input.GetKeyDown(throwKey) && interactionScript.GetHeldObject())
+                    {
+                        interactionScript.ThrowObject();
+                    }
+                    else if (Input.GetKeyDown(grabKey))
+                    {
+                        if (interactionScript.GetHeldObject())
+                        {
+                            interactionScript.DropObject();
+                        }
+                        else
+                        {
+                            interactionScript.PickupObject();
+                        }
                     }
                 }
             }
 
             m_Input = new Vector2(horizontal, vertical);
-
             // normalize input if it exceeds 1 in combined length:
             if (m_Input.sqrMagnitude > 1)
             {
                 m_Input.Normalize();
             }
-        }
-
-        private void Interact()
-        {
-            if (Physics.Raycast(m_Camera.transform.position, m_Camera.transform.forward, out RaycastHit hit, interactDistance, interactableObjectsLayer))
-            {
-                if (hit.transform.CompareTag("Tablet Slot"))
-                {
-                    hit.transform.gameObject.GetComponent<TabletSlot_Jack>().RotateTablet();
-                }
-            }
-        }
-
-        private void PickupObject()
-        {
-            Debug.DrawRay(m_Camera.transform.position, m_Camera.transform.forward * interactDistance, Color.red, 2f);
-            if (Physics.Raycast(m_Camera.transform.position, m_Camera.transform.forward, out RaycastHit hit, interactDistance, moveableObjectsLayer))
-            {
-                heldObject = hit.transform.gameObject;
-
-                heldObjectCollider = heldObject.GetComponent<Collider>();
-                Physics.IgnoreCollision(heldObjectCollider, m_CharacterController);
-
-                heldObjectRigidbody = heldObject.GetComponent<Rigidbody>();
-                heldObjectRigidbody.useGravity = false;
-                heldObjectConstraints = heldObjectRigidbody.constraints;
-                heldObjectRigidbody.constraints = freezeRotationConstraints;
-
-            }
-        }
-
-        public void DropObject()
-        {
-            heldObjectRigidbody.constraints = heldObjectConstraints;
-            heldObjectRigidbody.useGravity = true;
-            heldObjectRigidbody = null;
-
-            Physics.IgnoreCollision(heldObjectCollider, m_CharacterController, false);
-            heldObjectCollider = null;
-
-            heldObject = null;
-        }
-
-        public GameObject GetHeldObject()
-        {
-            return heldObject;
         }
 
         private void RotateView()
@@ -401,7 +386,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 m_MouseLook.LookRotation(transform, m_Camera.transform);
             }
         }
-
 
         private void OnControllerColliderHit(ControllerColliderHit hit)
         {
@@ -419,67 +403,116 @@ namespace UnityStandardAssets.Characters.FirstPerson
             body.AddForceAtPosition(m_CharacterController.velocity*0.1f, hit.point, ForceMode.Impulse);
         }
 
-        // ============== My Functions ============== //
-
         /// Returns usingController.
         public bool IsUsingController()
         {
             return usingController;
         }
 
-        /// Adds items to the player's inventory.
-        /// 
-        /// Increases the number of passed itemType by passed quantity.
-        /// <param name="itemType"></param>
-        /// <param name="quantity"></param>
-        public void AddItems(ItemType itemType, ushort quantity)
+        // ===== Saving game data ===== //
+        /// Loads the currently saved player data.
+        public void LoadSaveData(FirstPersonControllerSaveData_Jack loadData)
         {
-            inventory[(ushort)itemType] += quantity;
+            transform.position = new Vector3(loadData.xPos, loadData.yPos, loadData.zPos);
+            transform.localRotation = Quaternion.Euler(loadData.xRot, loadData.yRot, loadData.zRot);
+            m_Camera.transform.localRotation = Quaternion.Euler(loadData.cameraXRot, loadData.cameraYRot, loadData.cameraZRot);
+            m_MouseLook.Init(transform, m_Camera.transform);
+            inventoryScript.SetInventory(loadData.inventory);
+            saltPouringScript.SetInSaltCircle(loadData.inSaltCirlce);
+            candleScript.SetCandleLit(loadData.candleLit);
         }
 
-        /// Removes items to the player's inventory.
-        /// 
-        /// Decreases the number of passed itemType by passed quantity.
-        /// <param name="itemType"></param>
-        /// <param name="quantity"></param>
-        public void RemoveItems(ItemType itemType, ushort quantity)
+        /// Returns the data of the player that needs saving.
+        public FirstPersonControllerSaveData_Jack GetSaveData()
         {
-            inventory[(ushort)itemType] -= quantity;
+            saveData.xPos = transform.position.x;
+            saveData.yPos = transform.position.y;
+            saveData.zPos = transform.position.z;
+            saveData.xRot = transform.eulerAngles.x;
+            saveData.yRot = transform.eulerAngles.y;
+            saveData.zRot = transform.eulerAngles.z;
+            saveData.cameraXRot = m_Camera.transform.localEulerAngles.x;
+            saveData.cameraYRot = m_Camera.transform.localEulerAngles.y;
+            saveData.cameraZRot = m_Camera.transform.localEulerAngles.z;
+            saveData.inventory = inventoryScript.GetInventory();
+            saveData.inSaltCirlce = saltPouringScript.IsInSaltCircle();
+            saveData.candleLit = candleScript.IsCandleLit();
+
+            return saveData;
         }
 
-
-        /// Attempts to light the player's candle.
-        /// <returns>Returns false if the candle was already lit or the player doesn't have enouch matches.</returns>
-        private bool LightCandle()
+        // ===== Input Settings ===== //
+        /// Sets the jump InputControlType.
+        public void SetJumpControlType(InputControlType newJumpControlType)
         {
-            if(!candleFlame.activeSelf && inventory[(ushort)ItemType.matches] > 0)
-            {
-                candleFlame.SetActive(true);
-                RemoveItems(ItemType.matches, 1);
-                SoundManager.GetComponent<SFXManager_LW>().PlaySFX(SFXManager_LW.SFX.MatchLighting);
-            }
-
-            return false;
+            jumpControlType = newJumpControlType;
         }
 
-        /// Disables the player's candles light source.
-        /// <returns>Returns false if the candle was already extinguished.</returns>
+        /// Sets the pour salt InputControlType.
+        public void SetSaltControlType(InputControlType newSaltControlType)
+        {
+            saltControlType = newSaltControlType;
+        }
+
+        /// Sets the light candle InputControlType.
+        {
+            candleControlType = newCandleControlType;
+        }
+
         public bool ExtinguishCandle()
+        /// Sets the grab/drop InputControlType.
+        public void SetGrabControlType(InputControlType newGrabControlType)
         {
-            if(candleFlame.activeSelf)
-            {
-                candleFlame.SetActive(false);
-                SoundManager.GetComponent<SFXManager_LW>().PlaySFX(SFXManager_LW.SFX.CandleBlow);
-                return true;
-            }
-
-            return false;
+            grabControlType = newGrabControlType;
         }
 
-        /// Returns whether the candle is lit.
-        public bool IsCandleLit()
+        /// Sets the throw InputControlType.
+        public void SetThrowControlType(InputControlType newThrowControlType)
         {
-            return candleFlame.activeSelf;
+            throwControlType = newThrowControlType;
+        }
+
+        /// <summary>
+        /// Sets the jump KeyCode.
+        /// </summary>
+        /// <param name="newJumpKey"></param>
+        public void SetJumpKey(KeyCode newJumpKey)
+            jumpKey = newJumpKey;
+        }
+        /// <summary>
+        /// Sets the salt KeyCode.
+        /// </summary>
+        /// <param name="newSaltKey"></param>
+        public void SetSaltKey(KeyCode newSaltKey)
+        {
+            saltKey = newSaltKey;
+        }
+
+        /// <summary>
+        /// Sets the candle KeyCode.
+        /// </summary>
+        /// <param name="newCandleKey"></param>
+        public void SetCandleKey(KeyCode newCandleKey)
+        {
+            candleKey = newCandleKey;
+        }
+
+        /// <summary>
+        /// Sets the grab/drop KeyCode.
+        /// </summary>
+        /// <param name="newGrabKey"></param>
+        public void SetGrabKey(KeyCode newGrabKey)
+        {
+            grabKey = newGrabKey;
+        }
+
+        /// <summary>
+        /// Sets the throw KeyCode.
+        /// </summary>
+        /// <param name="newThrowKey"></param>
+        public void SetThrowKey(KeyCode newThrowKey)
+        {
+            throwKey = newThrowKey;
         }
     }
 }

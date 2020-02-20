@@ -12,11 +12,9 @@ namespace InControl
 		//
 		LeftStickX,
 		LeftStickY,
-		LeftStickButton,
 
 		RightStickX,
 		RightStickY,
-		RightStickButton,
 
 		DPadUp,
 		DPadDown,
@@ -28,7 +26,10 @@ namespace InControl
 		Action3,
 		Action4,
 
-		LeftTrigger,
+        LeftStickButton,
+        RightStickButton,
+
+        LeftTrigger,
 		RightTrigger,
 
 		LeftBumper,

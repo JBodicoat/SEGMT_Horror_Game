@@ -271,8 +271,27 @@ namespace InControl
 			}
 		}
 
+        public InputControl AnyControl
+        {
+            get
+            {
+                int controlCount = Controls.GetLength(0);
+                for (int i = 0; i < controlCount; i++)
+                {
+                    var control = Controls[i];
+                    if (control != null && control.IsPressed)
+                    {
+                        return control;
+                    }
+                }
 
-		public InputControl LeftStickX { get { return GetControl( InputControlType.LeftStickX ); } }
+                return InputControl.Null;
+            }
+        }
+
+
+
+        public InputControl LeftStickX { get { return GetControl( InputControlType.LeftStickX ); } }
 		public InputControl LeftStickY { get { return GetControl( InputControlType.LeftStickY ); } }
 
 		public InputControl RightStickX { get { return GetControl( InputControlType.RightStickX ); } }

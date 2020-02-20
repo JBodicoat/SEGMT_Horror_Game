@@ -10,10 +10,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityStandardAssets.Characters.FirstPerson;
 
+[System.Serializable]
 public class MMTargeting_Morgan : MonoBehaviour
 {
     public GameObject player;
-    public FirstPersonController_Jack playerScript;
+    public Candle_Jack playerCandleScript;
     public GameObject midnightMan;
 
     //current room for player and midnight man
@@ -24,7 +25,7 @@ public class MMTargeting_Morgan : MonoBehaviour
     private const int highNumber = 1000000;
 
     //I need the player and the midnightmans exact position whenever the player and the midnight man are in the same room, It would be wasteful to consider the Y pos in calculations
-    internal float distanceToPlayerSquared;
+    internal float distanceToPlayerSquared = highNumber;
 
     //true if player room = midnightman room
     internal bool isWithPlayer = false;
@@ -68,7 +69,7 @@ public class MMTargeting_Morgan : MonoBehaviour
 
             if(distanceToPlayerSquared < 10)
             {
-                playerScript.ExtinguishCandle();
+                playerCandleScript.ExtinguishCandle();
             }
             //Midnight Man Audio Tests
             if (distanceToPlayerSquared < iceCrackingDistance)

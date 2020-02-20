@@ -1,4 +1,5 @@
 ﻿// Jack
+// Jack 13/02/2020 Added support for saving data.
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -23,9 +24,9 @@ public class TabletSlot_Jack : MonoBehaviour
     public Door_Jack doorScript;
 
     private const string tabletTag = "Tablet";
-    private bool holdingTablet = false;
-    private GameObject heldTablet = null;
-    private FirstPersonController_Jack playerScript;
+    public bool holdingTablet = false;
+    public GameObject heldTablet = null;
+    private Interaction_Jack playerInteractScript;
     private LayerMask interactableLayer;
     private const RigidbodyConstraints tabletConstraints = RigidbodyConstraints.FreezeAll;
     private Orientation tabletOrientation = Orientation.right;
@@ -33,7 +34,7 @@ public class TabletSlot_Jack : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        playerScript = FindObjectOfType<FirstPersonController_Jack>();
+        playerInteractScript = FindObjectOfType<Interaction_Jack>();
         interactableLayer = LayerMask.GetMask("Interactable Objects");
     }
 
@@ -41,6 +42,12 @@ public class TabletSlot_Jack : MonoBehaviour
     public bool IsHoldingTablet()
     {
         return holdingTablet;
+    }
+
+    /// Sets holdingTablet to the passed value.
+    public void SetHoldingTablet(bool newHoldingTablet)
+    {
+        holdingTablet = newHoldingTablet;
     }
 
     /// Rotates the held tablet 90 degrees clockwise.
@@ -82,6 +89,24 @@ public class TabletSlot_Jack : MonoBehaviour
         return tabletOrientation;
     }
 
+    /// Sets orientation to the passed value.
+    public void SetOrientation(Orientation newOrientation)
+    {
+        tabletOrientation = newOrientation;
+    }
+
+    /// Returns the heldTablet object.
+    public GameObject GetHeldTablet()
+    {
+        return heldTablet;
+    }
+
+    /// Sets heldTablet to the passed object.
+    public void SetHeldTablet(GameObject newHeldTablet)
+    {
+        heldTablet = newHeldTablet;
+    }
+
     /// Holds the tablet into place on collision.
     private void OnTriggerEnter(Collider other)
     {
@@ -90,9 +115,9 @@ public class TabletSlot_Jack : MonoBehaviour
             holdingTablet = true;
             heldTablet = other.gameObject;
 
-            if(playerScript.GetHeldObject() == heldTablet)
+            if(playerInteractScript.GetHeldObject() == heldTablet)
             {
-                playerScript.DropObject();
+                playerInteractScript.DropObject();
             }
 
             heldTablet.layer = interactableLayer;
