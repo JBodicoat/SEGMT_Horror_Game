@@ -30,8 +30,14 @@ public class MMTargeting_Morgan : MonoBehaviour
     internal bool isWithPlayer = false;
     //adjusted value is so it doesnt run the check constantly
     private bool isAdjustedWithPlayer = false;
+
+    //MM Audio Testing
+    private GameObject SoundManager;
+    private int breathingDistance = 50;
+    private int iceCrackingDistance = 30;
     private void Start()
     {
+        SoundManager = GameObject.Find("SFX_Manager");
     }
     void Update()
     {
@@ -63,6 +69,15 @@ public class MMTargeting_Morgan : MonoBehaviour
             if(distanceToPlayerSquared < 10)
             {
                 playerScript.ExtinguishCandle();
+            }
+            //Midnight Man Audio Tests
+            if (distanceToPlayerSquared < iceCrackingDistance)
+            {
+                SoundManager.GetComponent<SFXManager_LW>().PlayMidnightManSFX(SFXManager_LW.MMSFX.IceCracking);
+            }
+            if (distanceToPlayerSquared < breathingDistance)
+            {
+                SoundManager.GetComponent<SFXManager_LW>().PlayMidnightManSFX(SFXManager_LW.MMSFX.Breathing);
             }
         }
         else if (distanceToPlayerSquared != highNumber)
