@@ -25,6 +25,9 @@ public class MMController_Morgan : MonoBehaviour
     private int targetNodeIndex;
     //change target
     internal bool isAtTarget = false;
+    
+    //check correct node
+
 
     //node data disection
     private float[] sqrDistanceFromNodeToTarget;
@@ -43,6 +46,7 @@ public class MMController_Morgan : MonoBehaviour
     private float currentEnrageTime = 0;
     private bool isOrderingNodes = false;
     private Transform tempPatrolPoint;
+    private float tempPatrolDist;
 
     // Start is called before the first frame update
     void Start()
@@ -60,7 +64,6 @@ public class MMController_Morgan : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(agent.speed);
         if (!targetScript.isSeen)
         {
             agent.SetDestination(patrolPoints[targetNodeIndex].position);
@@ -72,13 +75,22 @@ public class MMController_Morgan : MonoBehaviour
         
         if (isAtTarget)
         {
-            int newTarget;
-            do
+            float xDistance = patrolPoints[targetNodeIndex].transform.position.x - gameObject.transform.position.x;
+            float zDistance = patrolPoints[targetNodeIndex].transform.position.z - gameObject.transform.position.z;
+            float SqrDistanceFromPlayerToNode = xDistance * xDistance + zDistance * zDistance;
+            Debug.Log(SqrDistanceFromPlayerToNode);
+            if (SqrDistanceFromPlayerToNode < 2)
             {
-                newTarget = Random.Range(0, patrolPoints.Length);
-            } while (newTarget == targetNodeIndex);
-            targetNodeIndex = newTarget;
-            isAtTarget = false;
+                int newTarget;
+                do
+                {
+
+                    newTarget = Random.Range(0, patrolPoints.Length);
+                } while (newTarget == targetNodeIndex);
+                targetNodeIndex = newTarget;
+                isAtTarget = false;
+            }
+            else { isAtTarget = false; }
         }
 
         /// save these comments, Im working on making the MM slow down as he gets closer
@@ -91,7 +103,6 @@ public class MMController_Morgan : MonoBehaviour
         {
             baseSpeed *= 2;
             isAdjustedForEnrage = true;
-            currentEnrageTime = standardEnrageTime;
         }
         if(isEnraged)
         {
@@ -100,6 +111,7 @@ public class MMController_Morgan : MonoBehaviour
             if (currentEnrageTime > standardEnrageTime)
             {
                 isEnraged = false;
+                currentEnrageTime = 0;
             }
         }
         if (!isEnraged && isAdjustedForEnrage)
@@ -183,10 +195,6 @@ public class MMController_Morgan : MonoBehaviour
             sqrDistanceFromNodeToTarget[i] = xDistance * xDistance + zDistance * zDistance;
         }
 
-        //store min value
-        minValue = sqrDistanceFromNodeToTarget[0];
-        targetNodeIndex = 0;
-
         //looping until a value is never changed in the loop
         do
         {
@@ -196,18 +204,25 @@ public class MMController_Morgan : MonoBehaviour
             {
                 if (sqrDistanceFromNodeToTarget[i] > sqrDistanceFromNodeToTarget[i + 1])
                 {
-                    //continue sort
-                    isOrderingNodes = true;
-                    //flip values if x > x + 1
+                    //flip values if x > x + 1 for both nodes and distancesToNodes
+                    tempPatrolDist = sqrDistanceFromNodeToTarget[i];
+                    sqrDistanceFromNodeToTarget[i] = sqrDistanceFromNodeToTarget[i + 1];
+                    sqrDistanceFromNodeToTarget[i + 1] = tempPatrolDist;
+
                     tempPatrolPoint = patrolPoints[i];
                     patrolPoints[i] = patrolPoints[i + 1];
                     patrolPoints[i + 1] = tempPatrolPoint;
+
+
+                    //continue sort
+                    isOrderingNodes = true;
                 }
             }
         } while (isOrderingNodes);
-        agent.Warp(patrolPoints[2].transform.position);
+        agent.Warp(patrolPoints[1].transform.position);
+        targetNodeIndex = 0;
+
         //function reused to make MM go to where the player is
-        TargetLost();
         isEnraged = true;
     }
 }
