@@ -48,6 +48,11 @@ public class ProximityAlerts_Jack : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
+        if(!mmTargetingScript)
+        {
+            mmTargetingScript = FindObjectOfType<MMTargeting_Morgan>();
+        }
+
         proximityVignette = FindObjectOfType<Vignette>();
         proximityVignette.opacity.Override(1);
 
@@ -63,39 +68,39 @@ public class ProximityAlerts_Jack : MonoBehaviour
         // Vignette
         if (!fadedOut 
             && !fadingOut
-            && mmTargetingScript.distanceToPlayerSquared > minVignetteDistanceSquared 
+            && mmTargetingScript.sqrDistanceToPlayer > minVignetteDistanceSquared 
             && proximityVignette.opacity > 0)
         {
             StartCoroutine(FadeOut());
         }
         else if(fadedIn)
         {
-            opacity.value = 1 - (mmTargetingScript.distanceToPlayerSquared / minVignetteDistanceSquared);
+            opacity.value = 1 - (mmTargetingScript.sqrDistanceToPlayer / minVignetteDistanceSquared);
             proximityVignette.opacity = opacity;
         }
         else if(fadingIn)
         {
-            targetOpacity = 1 - (mmTargetingScript.distanceToPlayerSquared / minVignetteDistanceSquared);
+            targetOpacity = 1 - (mmTargetingScript.sqrDistanceToPlayer / minVignetteDistanceSquared);
         }
-        else if (!fadingIn && mmTargetingScript.isWithPlayer && mmTargetingScript.distanceToPlayerSquared <= minVignetteDistanceSquared)
+        else if (!fadingIn && mmTargetingScript.isWithPlayer && mmTargetingScript.sqrDistanceToPlayer <= minVignetteDistanceSquared)
         {
-            targetOpacity = 1 - (mmTargetingScript.distanceToPlayerSquared / minVignetteDistanceSquared);
+            targetOpacity = 1 - (mmTargetingScript.sqrDistanceToPlayer / minVignetteDistanceSquared);
             StartCoroutine(FadeIn());
         }
 
         // Whispers
-        if(!whispersAudioSource.isPlaying && mmTargetingScript.isWithPlayer && mmTargetingScript.distanceToPlayerSquared <= minWhispersDistanceSquared)
+        if(!whispersAudioSource.isPlaying && mmTargetingScript.isWithPlayer && mmTargetingScript.sqrDistanceToPlayer <= minWhispersDistanceSquared)
         {
             whispersAudioSource.Play();
         }
         else if(whispersAudioSource.isPlaying 
-                && (!mmTargetingScript.isWithPlayer || mmTargetingScript.distanceToPlayerSquared > minWhispersDistanceSquared))
+                && (!mmTargetingScript.isWithPlayer || mmTargetingScript.sqrDistanceToPlayer > minWhispersDistanceSquared))
         {
             whispersAudioSource.Stop();
         }
 
         // Breath
-        if(!breathActive && mmTargetingScript.isWithPlayer && mmTargetingScript.distanceToPlayerSquared <= minBreathDistanceSquared)
+        if(!breathActive && mmTargetingScript.isWithPlayer && mmTargetingScript.sqrDistanceToPlayer <= minBreathDistanceSquared)
         {
             breathActive = true;
             breathTimer = 0f;
@@ -104,7 +109,7 @@ public class ProximityAlerts_Jack : MonoBehaviour
 
         if(breathActive)
         {
-            if(!mmTargetingScript.isWithPlayer || mmTargetingScript.distanceToPlayerSquared > minBreathDistanceSquared)
+            if(!mmTargetingScript.isWithPlayer || mmTargetingScript.sqrDistanceToPlayer > minBreathDistanceSquared)
             {
                 breathActive = false;
             }

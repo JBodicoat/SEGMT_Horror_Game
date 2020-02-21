@@ -119,11 +119,11 @@ public class MMTargeting_Morgan : MonoBehaviour
                 playerCandleScript.ExtinguishCandle();
             }
             //Midnight Man Audio Tests
-            if (distanceToPlayerSquared < iceCrackingDistance)
+            if (sqrDistanceToPlayer < iceCrackingDistance)
             {
                 SoundManager.GetComponent<SFXManager_LW>().PlayMidnightManSFX(SFXManager_LW.MMSFX.IceCracking);
             }
-            if (distanceToPlayerSquared < breathingDistance)
+            if (sqrDistanceToPlayer < breathingDistance)
             {
                 SoundManager.GetComponent<SFXManager_LW>().PlayMidnightManSFX(SFXManager_LW.MMSFX.Breathing);
             }
