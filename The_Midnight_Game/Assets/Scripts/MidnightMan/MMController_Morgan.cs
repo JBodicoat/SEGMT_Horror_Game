@@ -4,6 +4,8 @@
 // Jack : 11/02/2020 Optimized TargetLost function removing use of Mathf.Min and altering the for loop.
 //                   Minor tweaks to declerations and naming to follow good practice.
 //                   Fixed issue where MM would get stuck at one node.
+// Jack : 23/02 Fixed loop sorting nodes based on distance by initializing i to 0 instead of 1.
+//              Implemented MM speed being based on distance to player.
 ///
 /// This is the AI for the Midnight Man
 /// 
@@ -96,7 +98,30 @@ public class MMController_Morgan : MonoBehaviour
         /// save these comments, Im working on making the MM slow down as he gets closer
         //speed = (Mathf.Sqrt(targetScript.sqrDistanceToPlayer));
         //speed = ((defaultSpeed * targetScript.sqrDistanceToPlayer)/targetScript.sqrDistanceToPlayer);
+
+        // At minDist and lower MM speed = minSpeed. At maxDist and higher MM speed = maxSpeed
+        float maxSpeed = 2f;
+        float minSpeed = 0.8f;
+
+        float maxDist = 400f;
+        float minDist = 100f;
+
+        if(targetScript.sqrDistanceToPlayer > maxDist)
+        {
+            speed = maxSpeed;
+        }
+        else if(targetScript.sqrDistanceToPlayer < minDist)
+        {
+            speed = minSpeed;
+        }
+        else
+        {
+            float t = (targetScript.sqrDistanceToPlayer - minDist) / (maxDist - minDist);
+            speed = minSpeed * (1 - t) + maxSpeed * t;
+        }
+
         agent.speed = speed;
+        Debug.Log(speed);
 
         //penalties logic
         if (isEnraged && !isAdjustedForEnrage)
@@ -200,7 +225,7 @@ public class MMController_Morgan : MonoBehaviour
         {
             isOrderingNodes = false;
             //sort algorithm?
-            for (ushort i = 1; i < sqrDistanceFromNodeToTarget.Length - 1; i++)
+            for (ushort i = 0; i < sqrDistanceFromNodeToTarget.Length - 1; i++)
             {
                 if (sqrDistanceFromNodeToTarget[i] > sqrDistanceFromNodeToTarget[i + 1])
                 {
@@ -219,7 +244,7 @@ public class MMController_Morgan : MonoBehaviour
                 }
             }
         } while (isOrderingNodes);
-        agent.Warp(patrolPoints[1].transform.position);
+        agent.Warp(patrolPoints[0].transform.position);
         targetNodeIndex = 0;
 
         //function reused to make MM go to where the player is
