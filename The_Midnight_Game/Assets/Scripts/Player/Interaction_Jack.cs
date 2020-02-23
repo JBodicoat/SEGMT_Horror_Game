@@ -1,4 +1,5 @@
 ﻿// Jack 16/02/2020 - Abstracted salt system from FirstPersonController
+// Jack 23/02/2020 - Added interaction with books in Interact()
 
 using System.Collections;
 using System.Collections.Generic;
@@ -27,6 +28,8 @@ public class Interaction_Jack : MonoBehaviour
 
     // Interactable objects
     private readonly LayerMask interactableObjectsLayer = 1 << 9;
+    private const string tabletSlotTag = "Tablet Slot";
+    private const string bookTag = "Book";
 
     // Start is called before the first frame update
     void Start()
@@ -73,9 +76,17 @@ public class Interaction_Jack : MonoBehaviour
     {
         if (Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out RaycastHit hit, interactDistance, interactableObjectsLayer))
         {
-            if (hit.transform.CompareTag("Tablet Slot"))
+            if (hit.transform.CompareTag(tabletSlotTag))
             {
                 hit.transform.gameObject.GetComponent<TabletSlot_Jack>().RotateTablet();
+            }
+            else if (hit.transform.CompareTag(bookTag))
+            {
+                Book_Jack bookScript = hit.transform.gameObject.GetComponent<Book_Jack>();
+                if (!bookScript.IsPulledOut())
+                {
+                    bookScript.PullOutBook();
+                }
             }
         }
     }
