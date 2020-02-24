@@ -5,13 +5,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityStandardAssets.Characters.FirstPerson;
 
-public enum ItemType
-{
-    matches,
-    salt,
-    sizeOf
-}
-
 /// Used for pickup items.
 /// 
 /// Attatch this script to any items that can be picked up by the player.
