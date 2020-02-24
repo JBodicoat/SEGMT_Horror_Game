@@ -10,12 +10,13 @@ public class PauseGame_Louie : MonoBehaviour
     {
         isGamePaused = false;
         pauseAnim = gameObject.GetComponent<Animator>();
+        Cursor.visible = false;
     }
 
     void Update()
     {
 
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.P))
         {
             //if game is not paused and escape is pressed, pause the game and display pause menu
             if (!isGamePaused)
@@ -28,17 +29,28 @@ public class PauseGame_Louie : MonoBehaviour
                 ResumeGame();
             }
         }
+
+        //if the game is paused, show the cursor and make sure its not locked
+        if (isGamePaused)
+        {
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+        }
+        //if its not paused, hide the cursor and lock it to the centre of the screen
+        else
+        {
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
+        }
     }
     /// <summary>
     /// Pauses the game and enables the pause menu "in" animation
     /// </summary>
     public void PauseGame()
     {
-        pauseAnim.SetTrigger("In");
+        pauseAnim.SetBool("Paused", true);
         Time.timeScale = 0;
         isGamePaused = true;
-        Cursor.visible = true;
-        print("PAUSE");
     }
 
     /// <summary>
@@ -46,10 +58,32 @@ public class PauseGame_Louie : MonoBehaviour
     /// </summary>
     public void ResumeGame()
     {
-        pauseAnim.SetTrigger("Out");
+        pauseAnim.SetBool("Paused", false);
         Time.timeScale = 1;
         isGamePaused = false;
-        Cursor.visible = true;
-        print("UNPAUSE");
+    }
+
+    /// <summary>
+    /// Launch the options menu (used by the pause menu button)
+    /// </summary>
+    public void Options()
+    {
+        //insert launching options menu here
+    }
+
+    /// <summary>
+    /// Save the Game (used by the pause menu button)
+    /// </summary>
+    public void SaveGame()
+    {
+        //insert saving game here
+    }
+
+    /// <summary>
+    /// Quits the game (used by the pause menu button)
+    /// </summary>
+    public void QuitGame()
+    {
+        //insert quitting game here
     }
 }

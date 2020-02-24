@@ -11,7 +11,7 @@ public class Clock_3D_LW : MonoBehaviour
 {
     //Constants for watch hand movement
     private const int degreesPerGameMinute = 6;
-    private const int secondsPerGameMinute = 1;
+    private const int secondsPerGameMinute = 3;
     private const int degreesPerHourHandMove = 2;
     private const int minutesPerHourHandMove = 4;
 
@@ -31,8 +31,20 @@ public class Clock_3D_LW : MonoBehaviour
     private Animator anim;
     private bool isClockOnScreen;
 
+    //Variables to calculate/store the current time
+    private string time;
+    private int minutesGone;
+    private int hoursGone;
+    private string textMinutes;
+    private string textHours;
+    public string textTime;
+
+    private GameObject gameStateManager;
     void Start()
     {
+        gameStateManager = GameObject.FindGameObjectWithTag("Manager");
+        minutesGone = 0;
+        hoursGone = 0;
         isClockOn = true;
         minutePivot = GameObject.Find("MinutePivot").transform;
         hourPivot = GameObject.Find("HourPivot").transform;
@@ -60,7 +72,10 @@ public class Clock_3D_LW : MonoBehaviour
                 //move minute hand once           
                 minutePivot.Rotate(minuteHandRoatation);
                 minutesTicked++;
+                minutesGone++;
                 timer = 0;
+                gameStateManager.GetComponent<GameStates_Louie>().CheckTime();
+                TrackTime();
             }
 
             //every 4 minutes moves the hour hand 2 degrees
@@ -71,9 +86,8 @@ public class Clock_3D_LW : MonoBehaviour
             }
         }
     }
-    
 
-    /// Toggles the clock animations
+    ///Toggles the clock animations
     void ToggleClockAnim()
     {
         //if the clock is on the screen, then enable out animation and update boolean
@@ -91,4 +105,39 @@ public class Clock_3D_LW : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// Keeps track of the current time and stores it in a string using the HH : MM format
+    /// </summary>
+    void TrackTime()
+    {
+        //if 60 minutes passed
+        if (minutesGone == 60)
+        {
+            //add 1 to hours gone
+            minutesGone = 0;
+            hoursGone++;
+        }
+
+        //Sets HH:MM time format
+        if (minutesGone < 10)
+        {
+            textMinutes = "0" + minutesGone;
+        }
+        else
+        {
+            textMinutes = "" + minutesGone;
+        }
+
+        if (hoursGone < 10)
+        {
+            textHours = "0" + hoursGone;
+        }
+        else
+        {
+            textHours = "" + hoursGone;
+        }
+
+        //store actual time in textTime
+        textTime = textHours + " : " + textMinutes;
+    }
 }
