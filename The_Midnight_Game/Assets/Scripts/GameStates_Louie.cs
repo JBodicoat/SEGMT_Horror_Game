@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿//Louie Williamson
+// 24/02 - Handles the Win and Lose states of the game.
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,7 +9,7 @@ public class GameStates_Louie : MonoBehaviour
     // Start is called before the first frame update
     private const string endTime = "03 : 33";
     private GameObject watch;
-    private const int maxMinutesPassed = 10;
+    private const int maxSecondsPassed = 10;
     void Start()
     {
         watch = GameObject.Find("WatchPrefab");
@@ -37,9 +39,9 @@ public class GameStates_Louie : MonoBehaviour
     /// </summary>
     /// <param name="minutesPassed"></param>
     /// <param name="isSaltDown"></param>
-    public void CaughtByMidnightMan(int minutesPassed, bool isSaltDown)
+    public void CaughtByMidnightMan(int secondsPassed, bool isSaltDown)
     {
-        if (minutesPassed >= maxMinutesPassed && !isSaltDown)
+        if (secondsPassed >= maxSecondsPassed && !isSaltDown)
         {
             GameOver();
         }

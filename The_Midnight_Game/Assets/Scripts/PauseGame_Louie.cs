@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿//Louie - 24/02 - Handles the game being paused and unpaused, aswell as the pause menu animations.
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 

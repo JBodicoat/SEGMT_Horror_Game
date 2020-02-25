@@ -1,12 +1,9 @@
-﻿// Louie
+﻿// Louie 14/02 - Controls the pocket watch's animation and hand rotations.
 // Jack : 16/02/2020 - Reviewed. Cached minute & hour hand rotation Vector3s. Cached animation trigger strings.
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// Controls the pocket watch's animation and hand rotations.
-/// </summary>
 public class Clock_3D_LW : MonoBehaviour
 {
     //Constants for watch hand movement
