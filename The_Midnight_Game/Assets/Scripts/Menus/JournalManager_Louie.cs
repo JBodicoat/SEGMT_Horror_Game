@@ -1,5 +1,6 @@
-﻿// Louie
+﻿// Louie : Handles Journal data and display.
 // Jack : 12/02/2020 QA Review - renamed function, removed magic number, removed unecessary GameObject.Find
+//Louie : Added automatic journal entries.
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,6 +11,14 @@ public class JournalManager_Louie : MonoBehaviour
 	private bool isJournalOn;
     private CanvasGroup journal;
     private float journalDisplayAlpha = 0.8f;
+
+    //Minutes left
+    //Inventory - candles, matches, salt, keys
+    private int minutesLeft;
+    //private int ;
+    //private int candles;
+    //private int candles;
+    //private int candles;
 
     void Start()
     {
