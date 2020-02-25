@@ -115,8 +115,9 @@ public class MMTargeting_Morgan : MonoBehaviour
             sqrDistanceToPlayer = xDistance * xDistance + zDistance * zDistance;
 
             if(sqrDistanceToPlayer < 10)
-            {
-                playerCandleScript.ExtinguishCandle();
+            { 
+                playerScript.ExtinguishCandle();
+                controllerScript.TeleportMidnightManAway();
             }
             //Midnight Man Audio Tests
             if (sqrDistanceToPlayer < iceCrackingDistance)

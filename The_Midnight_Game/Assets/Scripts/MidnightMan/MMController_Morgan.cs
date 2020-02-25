@@ -4,6 +4,8 @@
 // Jack : 11/02/2020 Optimized TargetLost function removing use of Mathf.Min and altering the for loop.
 //                   Minor tweaks to declerations and naming to follow good practice.
 //                   Fixed issue where MM would get stuck at one node.
+// Jack : 23/02 Fixed loop sorting nodes based on distance by initializing i to 0 instead of 1.
+//              Implemented MM speed being based on distance to player.
 ///
 /// This is the AI for the Midnight Man
 /// 
@@ -27,10 +29,28 @@ public class MMController_Morgan : MonoBehaviour
     private int targetNodeIndex;
     //change target
     internal bool isAtTarget = false;
+    
+    //check correct node
+
 
     //node data disection
     private float[] sqrDistanceFromNodeToTarget;
     private float minValue;
+    private float maxValue;
+    private int maxValueIndex;
+
+    //speed smoothing
+    private int baseSpeed = 2;
+    private float speed;
+
+    //enrage logic
+    private bool isEnraged = false;
+    private bool isAdjustedForEnrage = false;
+    private const int standardEnrageTime = 5;
+    private float currentEnrageTime = 0;
+    private bool isOrderingNodes = false;
+    private Transform tempPatrolPoint;
+    private float tempPatrolDist;
 
     // Start is called before the first frame update
     void Start()
@@ -42,6 +62,7 @@ public class MMController_Morgan : MonoBehaviour
         //random patrol target
         targetNodeIndex = Random.Range(0, patrolPoints.Length);
         sqrDistanceFromNodeToTarget = new float[patrolPoints.Length];
+        speed = baseSpeed;
     }
 
     // Update is called once per frame
@@ -58,19 +79,84 @@ public class MMController_Morgan : MonoBehaviour
         
         if (isAtTarget)
         {
-            int newTarget;
-            do
+            float xDistance = patrolPoints[targetNodeIndex].transform.position.x - gameObject.transform.position.x;
+            float zDistance = patrolPoints[targetNodeIndex].transform.position.z - gameObject.transform.position.z;
+            float SqrDistanceFromPlayerToNode = xDistance * xDistance + zDistance * zDistance;
+            Debug.Log(SqrDistanceFromPlayerToNode);
+            if (SqrDistanceFromPlayerToNode < 2)
             {
-                newTarget = Random.Range(0, patrolPoints.Length);
-            } while (newTarget == targetNodeIndex);
-            targetNodeIndex = newTarget;
-            isAtTarget = false;
+                int newTarget;
+                do
+                {
+
+                    newTarget = Random.Range(0, patrolPoints.Length);
+                } while (newTarget == targetNodeIndex);
+                targetNodeIndex = newTarget;
+                isAtTarget = false;
+            }
+            else { isAtTarget = false; }
         }
 
+        /// save these comments, Im working on making the MM slow down as he gets closer
+        //speed = (Mathf.Sqrt(targetScript.sqrDistanceToPlayer));
+        //speed = ((defaultSpeed * targetScript.sqrDistanceToPlayer)/targetScript.sqrDistanceToPlayer);
+
+        // At minDist and lower MM speed = minSpeed. At maxDist and higher MM speed = maxSpeed
+        float maxSpeed = 2f;
+        float minSpeed = 0.8f;
+
+        float maxDist = 400f;
+        float minDist = 100f;
+
+        if(targetScript.sqrDistanceToPlayer > maxDist)
+        {
+            speed = maxSpeed;
+        }
+        else if(targetScript.sqrDistanceToPlayer < minDist)
+        {
+            speed = minSpeed;
+        }
+        else
+        {
+            float t = (targetScript.sqrDistanceToPlayer - minDist) / (maxDist - minDist);
+            speed = minSpeed * (1 - t) + maxSpeed * t;
+        }
+
+        agent.speed = speed;
+        Debug.Log(speed);
+
+        //penalties logic
+        if (isEnraged && !isAdjustedForEnrage)
+        {
+            baseSpeed *= 2;
+            isAdjustedForEnrage = true;
+        }
+        if(isEnraged)
+        {
+            agent.speed = baseSpeed;
+            currentEnrageTime += Time.deltaTime;
+            if (currentEnrageTime > standardEnrageTime)
+            {
+                isEnraged = false;
+                currentEnrageTime = 0;
+            }
+        }
+        if (!isEnraged && isAdjustedForEnrage)
+        {
+            baseSpeed /= 2;
+            isAdjustedForEnrage = false;
+        }
+
+        //debugging penalties
+        if(Input.GetKeyDown(KeyCode.K))
+        {
+            EnrageMidnightMan();
+        }
 
     }
 
-    /// This should be commented.
+    //use this function to set the target to the closest node to the player
+
     public void TargetLost()
     {
         //get all values
@@ -96,5 +182,77 @@ public class MMController_Morgan : MonoBehaviour
             }
         }
     }
+
+    // use this function to teleport the MM away after the candle is blown out
+
+    public void TeleportMidnightManAway()
+    {
+        //get all values
+        for (int i = 0; i < patrolPoints.Length; i++)
+        {
+            float xDistance = patrolPoints[i].transform.position.x - targetScript.player.transform.position.x;
+            float zDistance = patrolPoints[i].transform.position.z - targetScript.player.transform.position.z;
+            sqrDistanceFromNodeToTarget[i] = xDistance * xDistance + zDistance * zDistance;
+        }
+
+        //store max value
+        maxValue = sqrDistanceFromNodeToTarget[0];
+        targetNodeIndex = 0;
+        //find max value in array
+        for (ushort i = 1; i < sqrDistanceFromNodeToTarget.Length; i++)
+        {
+            if (sqrDistanceFromNodeToTarget[i] > maxValue)
+            {
+                maxValue = sqrDistanceFromNodeToTarget[i];
+                maxValueIndex = i;
+                //teleport the mm to the furthest node
+            }
+        }
+        agent.Warp(patrolPoints[maxValueIndex].transform.position);
+    }
+
+    //use this function to teleport the MM close to the player and trigger a chase sequence
+    public void EnrageMidnightMan()
+    {
+        //get all values
+        for (int i = 0; i < patrolPoints.Length; i++)
+        {
+            float xDistance = patrolPoints[i].transform.position.x - targetScript.player.transform.position.x;
+            float zDistance = patrolPoints[i].transform.position.z - targetScript.player.transform.position.z;
+            sqrDistanceFromNodeToTarget[i] = xDistance * xDistance + zDistance * zDistance;
+        }
+
+        //looping until a value is never changed in the loop
+        do
+        {
+            isOrderingNodes = false;
+            //sort algorithm?
+            for (ushort i = 0; i < sqrDistanceFromNodeToTarget.Length - 1; i++)
+            {
+                if (sqrDistanceFromNodeToTarget[i] > sqrDistanceFromNodeToTarget[i + 1])
+                {
+                    //flip values if x > x + 1 for both nodes and distancesToNodes
+                    tempPatrolDist = sqrDistanceFromNodeToTarget[i];
+                    sqrDistanceFromNodeToTarget[i] = sqrDistanceFromNodeToTarget[i + 1];
+                    sqrDistanceFromNodeToTarget[i + 1] = tempPatrolDist;
+
+                    tempPatrolPoint = patrolPoints[i];
+                    patrolPoints[i] = patrolPoints[i + 1];
+                    patrolPoints[i + 1] = tempPatrolPoint;
+
+
+                    //continue sort
+                    isOrderingNodes = true;
+                }
+            }
+        } while (isOrderingNodes);
+        agent.Warp(patrolPoints[0].transform.position);
+        targetNodeIndex = 0;
+
+        //function reused to make MM go to where the player is
+        isEnraged = true;
+    }
 }
+
+
 
