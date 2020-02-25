@@ -1,10 +1,12 @@
 ﻿//Dan - Created 25/02/2020
+// Jack 25/02/2020 Reviewed
 using UnityEngine;
 
 [RequireComponent(typeof(AudioSource))]
 public class PlayVoiceOver_Dan : MonoBehaviour
 {
     private AudioSource audioSource;
+    private const string playerTag = "Player";
 
     private void Awake()
     {
@@ -17,7 +19,7 @@ public class PlayVoiceOver_Dan : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag(playerTag))
         {
             audioSource.Play();
         }

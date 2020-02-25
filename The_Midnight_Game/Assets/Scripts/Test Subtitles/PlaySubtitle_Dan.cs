@@ -1,4 +1,5 @@
 ﻿//Dan - Created 25/02/2020
+// Jack 25/02/2020 Reviewed - cached playerTag
 using System.Collections;
 using UnityEngine;
 
@@ -8,6 +9,7 @@ public class PlaySubtitle_Dan : MonoBehaviour
     private AudioSource audioSource;
     private Scriptmanager_Dan scriptmanager;
     private SubtitleGUIManager_Dan guiManager;
+    private const string playerTag = "Player";
 
     private void Awake()
     {
@@ -18,7 +20,7 @@ public class PlaySubtitle_Dan : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag(playerTag))
         {
             StartCoroutine(PlaySubtitle());
         }
@@ -27,7 +29,7 @@ public class PlaySubtitle_Dan : MonoBehaviour
     private IEnumerator PlaySubtitle()
     {
         //Get and set text
-        var script = scriptmanager.GetText(audioSource.clip.name);
+        string script = scriptmanager.GetText(audioSource.clip.name);
         guiManager.SetText(script);
 
         //Get Value
