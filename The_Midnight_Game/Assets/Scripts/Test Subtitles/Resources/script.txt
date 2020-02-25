@@ -1,0 +1,14 @@
+{
+	"lines":
+	[
+		{
+		"key": "cube-trigger",
+		"line": "Now this is a game"
+		},
+		{
+		"key": "door-trigger",
+		"line": "This is the best door I've ever seen"
+		}
+	]
+
+}

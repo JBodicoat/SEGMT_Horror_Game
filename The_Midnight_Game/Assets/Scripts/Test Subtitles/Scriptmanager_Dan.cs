@@ -15,11 +15,13 @@ public class Scriptmanager_Dan : MonoBehaviour
     //E.g. 'audio-trigger' audio clip and 'audio-trigger' key in script.txt
     public string GetText(string textKey)
     {
+        //Displays text
         string tmp = "";
         if (lines.TryGetValue(textKey, out tmp))
             return tmp;
 
-        return string.Empty;
+        //DEBUG if text is missing + where it's missing from
+        return "<color=#ff0000>TEXT MISSING FROM '" + textKey + "'</color>";
     }
     private void Awake()
     {

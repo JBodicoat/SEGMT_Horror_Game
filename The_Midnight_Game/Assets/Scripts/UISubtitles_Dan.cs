@@ -12,10 +12,10 @@ public class UISubtitles_Dan : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        StartCoroutine(TheSequence());
+        StartCoroutine(TextSequence());
     }
 
-   IEnumerator TheSequence()
+   IEnumerator TextSequence()
     {
         yield return new WaitForSeconds(1);
         textBox.GetComponent<Text>().text = "Where am I?";
