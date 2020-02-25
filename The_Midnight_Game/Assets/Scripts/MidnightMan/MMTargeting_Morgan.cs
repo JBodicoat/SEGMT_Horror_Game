@@ -66,6 +66,7 @@ public class MMTargeting_Morgan : MonoBehaviour
 
     void Update()
     {
+
         //defining if the player is in the same room as the midnight man
         {
             if (string.Compare(playerRoom, midnightManRoom) == 0 && !isAdjustedWithPlayer)
@@ -115,10 +116,10 @@ public class MMTargeting_Morgan : MonoBehaviour
             sqrDistanceToPlayer = xDistance * xDistance + zDistance * zDistance;
 
             if(sqrDistanceToPlayer < 10)
-            { 
-                playerScript.ExtinguishCandle();
+            {
                 controllerScript.TeleportMidnightManAway();
             }
+
             //Midnight Man Audio Tests
             if (sqrDistanceToPlayer < iceCrackingDistance)
             {
@@ -134,5 +135,9 @@ public class MMTargeting_Morgan : MonoBehaviour
             //if not in same room as player, distance to player is set to a arbitrary high number
             sqrDistanceToPlayer = highNumber;
         }
+
+
     }
+
+
 }

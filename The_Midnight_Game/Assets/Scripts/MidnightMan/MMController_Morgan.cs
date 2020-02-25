@@ -123,7 +123,7 @@ public class MMController_Morgan : MonoBehaviour
         }
 
         agent.speed = speed;
-        Debug.Log(speed);
+
 
         //penalties logic
         if (isEnraged && !isAdjustedForEnrage)
