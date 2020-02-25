@@ -1,4 +1,5 @@
-﻿//Louie - 24/02 - Handles the game being paused and unpaused, aswell as the pause menu animations.
+//Louie - 24/02 - Handles the game being paused and unpaused, aswell as the pause menu animations.
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,6 +8,9 @@ public class PauseGame_Louie : MonoBehaviour
 {
     private bool isGamePaused;
     private Animator pauseAnim;
+
+    private const string animPauseBool = "Paused";
+
     void Start()
     {
         isGamePaused = false;
@@ -16,7 +20,6 @@ public class PauseGame_Louie : MonoBehaviour
 
     void Update()
     {
-
         if (Input.GetKeyDown(KeyCode.P))
         {
             //if game is not paused and escape is pressed, pause the game and display pause menu
@@ -25,7 +28,7 @@ public class PauseGame_Louie : MonoBehaviour
                 PauseGame();
             }
             //if game is paused and escape is pressed, resume the game
-            else if (isGamePaused)
+            else
             {
                 ResumeGame();
             }
@@ -49,7 +52,7 @@ public class PauseGame_Louie : MonoBehaviour
     /// </summary>
     public void PauseGame()
     {
-        pauseAnim.SetBool("Paused", true);
+        pauseAnim.SetBool(animPauseBool, true);
         Time.timeScale = 0;
         isGamePaused = true;
     }
@@ -59,7 +62,7 @@ public class PauseGame_Louie : MonoBehaviour
     /// </summary>
     public void ResumeGame()
     {
-        pauseAnim.SetBool("Paused", false);
+        pauseAnim.SetBool(animPauseBool, false);
         Time.timeScale = 1;
         isGamePaused = false;
     }

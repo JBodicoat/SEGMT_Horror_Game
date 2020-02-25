@@ -1,5 +1,6 @@
-﻿//Louie Williamson
+//Louie Williamson
 // 24/02 - Handles the Win and Lose states of the game.
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,12 +14,6 @@ public class GameStates_Louie : MonoBehaviour
     void Start()
     {
         watch = GameObject.Find("WatchPrefab");
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
     /// <summary>
