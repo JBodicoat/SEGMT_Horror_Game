@@ -1,24 +1,44 @@
 ﻿//Louie Williamson
 // 24/02 - Handles the Win and Lose states of the game.
+// Morgan pryor - 26/02/2020 - Added eggs for bart
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Video;
 
 public class GameStates_Louie : MonoBehaviour
 {
+    //eggs for bart functionality
+    public Camera mainCamera;
+    public Camera scareCamera;
+    VideoPlayer eggsForBart;
+    float count;
+    Candle_Jack candleScript;
+    SaltPouring_Jack saltScript;
+    bool isScarePlayed = false;
+
     // Start is called before the first frame update
     private const string endTime = "03 : 33";
     private GameObject watch;
     private const int maxSecondsPassed = 10;
-    void Start()
+
+    void Awake()
     {
         watch = GameObject.Find("WatchPrefab");
+        candleScript = FindObjectOfType<Candle_Jack>();
+        saltScript = FindObjectOfType<SaltPouring_Jack>();
+        eggsForBart = FindObjectOfType<VideoPlayer>();
+        scareCamera.enabled = false;
+        //eggsForBart.Prepare();
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        if (!candleScript.IsCandleLit())
+        { 
+            CaughtByMidnightMan();
+        }
     }
 
     /// <summary>
@@ -39,13 +59,17 @@ public class GameStates_Louie : MonoBehaviour
     /// </summary>
     /// <param name="minutesPassed"></param>
     /// <param name="isSaltDown"></param>
-    public void CaughtByMidnightMan(int secondsPassed, bool isSaltDown)
+    public void CaughtByMidnightMan()//float secondsPassed, bool isSaltDown, bool isCandleRelit)
     {
-        if (secondsPassed >= maxSecondsPassed && !isSaltDown)
+        count += Time.deltaTime;
+
+        if (count >= maxSecondsPassed && !saltScript.IsInSaltCircle() && !isScarePlayed)
         {
             GameOver();
+            isScarePlayed = true;
         }
     }
+
 
     /// <summary>
     /// This function will start the end game sequence for when the player completes the game.
@@ -63,5 +87,8 @@ public class GameStates_Louie : MonoBehaviour
     public void GameOver()
     {
         print("GAME OVER");
+        mainCamera.enabled = false;
+        scareCamera.enabled = true;
+        eggsForBart.Play();
     }
 }
