@@ -13,7 +13,6 @@ public class Level1DataManager_Jack : MonoBehaviour
 {
     // Player Data
     public FirstPersonController_Jack playerScript;
-    public GameObject playerPrefab;
 
     // Tablet Puzzle Data
     public GameObject tablet1;
@@ -85,12 +84,12 @@ public class Level1DataManager_Jack : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.P))
+        if(Input.GetKeyDown(KeyCode.KeypadPlus))
         {
             SaveGameData(); 
         }
 
-        if(Input.GetKeyDown(KeyCode.L))
+        if(Input.GetKeyDown(KeyCode.KeypadMinus))
         {
             LoadGameData();
         }

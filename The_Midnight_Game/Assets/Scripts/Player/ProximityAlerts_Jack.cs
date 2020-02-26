@@ -45,6 +45,8 @@ public class ProximityAlerts_Jack : MonoBehaviour
     private const float timeBetweenBreaths = 4f;
     private float breathTimer = 0f;
 
+    private SFXManager_LW soundManager;
+
     // Start is called before the first frame update
     private void Start()
     {
@@ -60,6 +62,8 @@ public class ProximityAlerts_Jack : MonoBehaviour
 
         opacity.value = 0;
         proximityVignette.opacity = opacity;
+
+        soundManager = FindObjectOfType<SFXManager_LW>();
     }
 
     // Update is called once per frame
@@ -121,6 +125,7 @@ public class ProximityAlerts_Jack : MonoBehaviour
                 {
                     breathTimer = 0f;
                     breathParticleSystem.Play(false);
+                    soundManager.PlayMidnightManSFX(SFXManager_LW.MMSFX.Breathing);
                 }
             }
         }

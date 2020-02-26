@@ -156,7 +156,7 @@ public class InputSettingsManager_Jack : MonoBehaviour
         else
         {
             // Keyboard Inputs
-            if (Input.GetKeyDown(KeyCode.Escape))
+            if (Input.GetKeyDown(KeyCode.K))
             {
                 inputSettingsMenu.SetActive(!inputSettingsMenu.activeSelf);
             }
@@ -178,7 +178,8 @@ public class InputSettingsManager_Jack : MonoBehaviour
                     {
                         if (Input.GetKeyDown(keyCode) && keyCode != KeyCode.Escape
                                                      && keyCode != KeyCode.UpArrow
-                                                     && keyCode != KeyCode.DownArrow)
+                                                     && keyCode != KeyCode.DownArrow
+                                                     && keyCode != KeyCode.K)// To be removed
                         {
                             if (ChangeKey(selected, keyCode))
                             {

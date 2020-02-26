@@ -8,7 +8,7 @@ public class SFXManager_LW : MonoBehaviour
     public enum SFX {   CandleBlow, ClockChiming, ClockTick, Death, Floorboards, MatchLighting,
                         SaltPour, StoneOnStone, Thud1, Thud2, Wind, WindowOpen };
 
-    public enum MMSFX { Breathing, IceCracking, Whispers };
+    public enum MMSFX { Breathing, Whispers };
 
     public List<AudioClip> ListOfAudioClips = new List<AudioClip>();
 
@@ -17,7 +17,6 @@ public class SFXManager_LW : MonoBehaviour
     public GameObject SFXPrefab;
 
     private AudioSource mmWhispers;
-    private AudioSource mmIceCracking;
     private AudioSource mmBreathing;
 
     void Start()
@@ -38,7 +37,6 @@ public class SFXManager_LW : MonoBehaviour
 
         //Gets the Midnight Man SFX audio sources
         mmWhispers = GameObject.Find("Whispers").GetComponent<AudioSource>();
-        mmIceCracking = GameObject.Find("IceCracking").GetComponent<AudioSource>();
         mmBreathing = GameObject.Find("Breathing").GetComponent<AudioSource>();
 }
 
@@ -52,12 +50,6 @@ public class SFXManager_LW : MonoBehaviour
                 if (!mmBreathing.isPlaying)
                 {
                     mmBreathing.PlayOneShot(mmBreathing.clip);
-                }
-                break;
-            case MMSFX.IceCracking:
-                if (!mmIceCracking.isPlaying)
-                {
-                    mmIceCracking.PlayOneShot(mmIceCracking.clip);
                 }
                 break;
             case MMSFX.Whispers:

@@ -24,8 +24,8 @@ public class TabletSlot_Jack : MonoBehaviour
     public Door_Jack doorScript;
 
     private const string tabletTag = "Tablet";
-    public bool holdingTablet = false;
-    public GameObject heldTablet = null;
+    private bool holdingTablet = false;
+    private GameObject heldTablet = null;
     private Interaction_Jack playerInteractScript;
     private LayerMask interactableLayer;
     private const RigidbodyConstraints tabletConstraints = RigidbodyConstraints.FreezeAll;

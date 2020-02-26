@@ -117,17 +117,8 @@ public class MMTargeting_Morgan : MonoBehaviour
 
             if(sqrDistanceToPlayer < 10)
             {
+                playerCandleScript.ExtinguishCandle();
                 controllerScript.TeleportMidnightManAway();
-            }
-
-            //Midnight Man Audio Tests
-            if (sqrDistanceToPlayer < iceCrackingDistance)
-            {
-                SoundManager.GetComponent<SFXManager_LW>().PlayMidnightManSFX(SFXManager_LW.MMSFX.IceCracking);
-            }
-            if (sqrDistanceToPlayer < breathingDistance)
-            {
-                SoundManager.GetComponent<SFXManager_LW>().PlayMidnightManSFX(SFXManager_LW.MMSFX.Breathing);
             }
         }
         else if (sqrDistanceToPlayer != highNumber)
@@ -135,7 +126,6 @@ public class MMTargeting_Morgan : MonoBehaviour
             //if not in same room as player, distance to player is set to a arbitrary high number
             sqrDistanceToPlayer = highNumber;
         }
-
 
     }
 
