@@ -30,6 +30,7 @@ public class Interaction_Jack : MonoBehaviour
     private readonly LayerMask interactableObjectsLayer = 1 << 9;
     private const string tabletSlotTag = "Tablet Slot";
     private const string bookTag = "Book";
+    private const string alcoholPlacementTag = "Alcohol Placement";
 
     // Start is called before the first frame update
     void Start()
@@ -82,11 +83,11 @@ public class Interaction_Jack : MonoBehaviour
             }
             else if (hit.transform.CompareTag(bookTag))
             {
-                Book_Jack bookScript = hit.transform.gameObject.GetComponent<Book_Jack>();
-                if (!bookScript.IsPulledOut())
-                {
-                    bookScript.PullOutBook();
-                }
+                hit.transform.gameObject.GetComponent<Book_Jack>().PullOutBook();
+            }
+            else if(hit.transform.CompareTag(alcoholPlacementTag))
+            {
+                hit.transform.gameObject.GetComponent<BottlePlacementManager_Jack>().Interact();                
             }
         }
     }
