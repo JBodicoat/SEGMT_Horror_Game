@@ -8,17 +8,21 @@ using UnityEngine.Audio;
 public class AudioSettings_Louie : MonoBehaviour
 {
     public AudioMixer mixer;
+    private float volumeLevel;
 
     public void SetAmbientVolume(float sliderVal)
     {
-        mixer.SetFloat("AmbientVolume", Mathf.Log10(sliderVal)*20);
+        volumeLevel = Mathf.Log10(sliderVal) * 20;
+        mixer.SetFloat("AmbientVolume", volumeLevel);
     }
     public void SetMasterVolume(float sliderVal)
     {
-        mixer.SetFloat("MasterVolume", Mathf.Log10(sliderVal) * 20);
+        volumeLevel = Mathf.Log10(sliderVal) * 20;
+        mixer.SetFloat("MasterVolume", volumeLevel);
     }
     public void SetSFXVolume(float sliderVal)
     {
-        mixer.SetFloat("SFXVolume", Mathf.Log10(sliderVal) * 20);
+        volumeLevel = Mathf.Log10(sliderVal) * 20;
+        mixer.SetFloat("SFXVolume", volumeLevel);
     }
 }
