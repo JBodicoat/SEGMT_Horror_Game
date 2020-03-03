@@ -1,5 +1,6 @@
 ﻿// Jack 16/02/2020 - Abstracted salt system from FirstPersonController
 // Jack 23/02/2020 - Added interaction with books in Interact()
+// Morgan 03/03/2020 - added door interaction & tag
 
 using System.Collections;
 using System.Collections.Generic;
@@ -30,6 +31,7 @@ public class Interaction_Jack : MonoBehaviour
     private readonly LayerMask interactableObjectsLayer = 1 << 9;
     private const string tabletSlotTag = "Tablet Slot";
     private const string bookTag = "Book";
+    private const string doorTag = "Door";
 
     // Start is called before the first frame update
     void Start()
@@ -87,6 +89,10 @@ public class Interaction_Jack : MonoBehaviour
                 {
                     bookScript.PullOutBook();
                 }
+            }
+            else if (hit.transform.CompareTag(doorTag))
+            {
+                hit.transform.gameObject.GetComponent<DoorOpenClose_Dan>().DoorMechanism();
             }
         }
     }
