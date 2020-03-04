@@ -3,10 +3,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+
 public class PauseGame_Louie : MonoBehaviour
 {
+
+    public enum Resolution { NineteenTwenty, ThirteenSixtySix, TwelveEighty };
+    public enum TextureQuality { low, medium, high };
+
     private bool isGamePaused;
     private Animator pauseAnim;
+
+    public GameObject OptionsMenu;
+    private Resolution res;
+    private TextureQuality tQuality;
     void Start()
     {
         isGamePaused = false;
@@ -68,8 +78,16 @@ public class PauseGame_Louie : MonoBehaviour
     /// Launch the options menu (used by the pause menu button)
     /// </summary>
     public void Options()
+    {   
+        OptionsMenu.SetActive(true);
+    }
+
+    /// <summary>
+    /// Used by the back button in the options menu to go back to the airport
+    /// </summary>
+    public void backOptions()
     {
-        //insert launching options menu here
+        OptionsMenu.SetActive(false);
     }
 
     /// <summary>
