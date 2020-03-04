@@ -12,7 +12,12 @@ public class BunnyAI_Louie : MonoBehaviour
     {
         
     }
-
+    /// <summary>
+    /// array of node positions
+    /// check if bunny is at target position, if yes, new position
+    /// make sure the new target isnt same as old target
+    /// gl hf
+    /// </summary>
     // Update is called once per frame
     void Update()
     {
