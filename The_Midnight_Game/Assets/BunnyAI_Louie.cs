@@ -7,7 +7,7 @@ public class BunnyAI_Louie : MonoBehaviour
 {
     // Start is called before the first frame update
     public NavMeshAgent nav;
-
+    private Transform[] nodes;
     void Start()
     {
         
