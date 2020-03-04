@@ -7,10 +7,16 @@ public class BunnyAI_Louie : MonoBehaviour
 {
     // Start is called before the first frame update
     public NavMeshAgent nav;
-    private Transform[] nodes;
+    public Transform[] nodes;
+    private Transform targetNode;
+    private bool isAtNode;
+    private int targetNumber;
+    private int speed = 3;
     void Start()
     {
-        
+        isAtNode = false;
+        GetNewTarget();
+        nav.speed = speed;
     }
     /// <summary>
     /// array of node positions
@@ -21,6 +27,17 @@ public class BunnyAI_Louie : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (isAtNode)
+        {
+            GetNewTarget();
+        }
+        nav.SetDestination(targetNode.position);
+    }
+    void GetNewTarget()
+    {
+        targetNumber = Random.Range(0, nodes.Length);
+
+        targetNode = nodes[targetNumber];
+
     }
 }
