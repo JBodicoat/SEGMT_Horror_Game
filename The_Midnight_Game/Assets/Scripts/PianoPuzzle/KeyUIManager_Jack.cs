@@ -1,9 +1,18 @@
-﻿using InControl;
+﻿// Jack 05/03/2020 Created script
+// Jack 06/03/2020 Updated script to allow UI to be closed
+
+using InControl;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityStandardAssets.Characters.FirstPerson;
 
+/// <summary>
+/// Handles the piano puzzle.
+/// </summary>
+/// Displays key UI upon interaction with piano keys. Player must repeat the
+/// sequence specified in "tune" to complete the puzzle.
 public class KeyUIManager_Jack : MonoBehaviour
 {
     public GameObject keyUIObject;
@@ -24,110 +33,158 @@ public class KeyUIManager_Jack : MonoBehaviour
     private bool playingTune = false;
 
     private int numNotesCorrect = 0;
+    private bool puzzleSolved = false;
 
     private InputDevice inputDevice;
+
+    public FirstPersonController_Jack playerControllerScript;
+    public Transform playerTransform;
+    private const float maxSqrDistance = 10.0f;
+
+    private bool wasClosed = false;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        if(!playerControllerScript)
+        {
+            playerControllerScript = FindObjectOfType<FirstPersonController_Jack>();
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
+        wasClosed = false;
+
         if(keyUIObject.activeSelf)
         {
-            inputDevice = InputManager.ActiveDevice;
-            if(InputManager.Devices.Count > 0)
+            if ((playerTransform.position - gameObject.transform.position).sqrMagnitude > maxSqrDistance)
             {
-                if(inputDevice.Direction.Left.IsPressed)
-                {
-                    DecrementCurrentKeyID();
-                }
-                else if(inputDevice.Direction.Right.IsPressed)
-                {
-                    IncrementCurrentKeyID();
-                }
-
-                if(inputDevice.Action1.IsPressed)
-                {
-                    PressKey();
-                }
+                Close();
             }
             else
             {
-                if(Input.GetKeyDown(KeyCode.LeftArrow))
+                inputDevice = InputManager.ActiveDevice;
+                if (InputManager.Devices.Count > 0)
                 {
-                    DecrementCurrentKeyID();
-                }
-                else if(Input.GetKeyDown(KeyCode.RightArrow))
-                {
-                    IncrementCurrentKeyID();
-                }
+                    if (inputDevice.Action2.WasPressed)
+                    {
+                        Close();
+                    }
+                    else
+                    {
+                        if (inputDevice.Direction.Left.WasPressed)
+                        {
+                            SelectLeftKey();
+                        }
+                        else if (inputDevice.Direction.Right.WasPressed)
+                        {
+                            SelectRightKey();
+                        }
 
-                if(Input.GetKeyDown(KeyCode.Return))
+                        if (inputDevice.Action1.WasPressed)
+                        {
+                            PressKey();
+                        }
+                    }
+                }
+                else
                 {
-                    PressKey();
+                    if (Input.GetKeyDown(KeyCode.E))
+                    {
+                        Close();
+                    }
+                    else
+                    {
+                        if (Input.GetKeyDown(KeyCode.LeftArrow))
+                        {
+                            SelectLeftKey();
+                        }
+                        else if (Input.GetKeyDown(KeyCode.RightArrow))
+                        {
+                            SelectRightKey();
+                        }
+
+                        if (Input.GetKeyDown(KeyCode.Return))
+                        {
+                            PressKey();
+                        }
+                    }
                 }
             }
         }
         else
         {
             // Play tune
-            tuneTimer += Time.deltaTime;
-
-            if(playingTune)
+            if (!puzzleSolved)
             {
-                if(tuneTimer >= timeBetweenNotes)
+                tuneTimer += Time.deltaTime;
+
+                if (playingTune)
                 {
-                    tuneTimer = 0.0f;
-                    if(++currentTuneNote >= numTuneNotes)
+                    if (tuneTimer >= timeBetweenNotes)
                     {
-                        playingTune = false;
-                    }
-                    else
-                    {
-                        PlayTuneNote();
+                        tuneTimer = 0.0f;
+                        if (++currentTuneNote >= numTuneNotes)
+                        {
+                            playingTune = false;
+                        }
+                        else
+                        {
+                            PlayTuneNote();
+                        }
                     }
                 }
-            }
-            else if(tuneTimer >= timeBetweenTunes)
-            {
-                tuneTimer = 0.0f;
-                playingTune = true;
-                currentTuneNote = 0;
-                PlayTuneNote();
+                else if (tuneTimer >= timeBetweenTunes)
+                {
+                    tuneTimer = 0.0f;
+                    playingTune = true;
+                    currentTuneNote = 0;
+                    PlayTuneNote();
+                }
             }
         }
     }
 
+    /// <summary>
+    /// Plays the keys corresponding audio clip and checks if it's the next correct key in the sequence.
+    /// </summary>
     private void PressKey()
     {
         audioSource.clip = keyNotes[currentKeyID];
         audioSource.Play();
 
-        if (tune[numNotesCorrect] == currentKeyID)
+        if (!puzzleSolved)
         {
-            if (++numNotesCorrect >= numTuneNotes)
+            if (tune[numNotesCorrect] == currentKeyID)
             {
-                // Puzzle complete
-                print("YEAH BOI");
+                if (++numNotesCorrect >= numTuneNotes)
+                {
+                    puzzleSolved = true;
+                    print("YEAH BOI");
+                }
             }
-        }
-        else
-        {
-            numNotesCorrect = 0;
+            else
+            {
+                numNotesCorrect = 0;
+            }
         }
     }
 
+    /// <summary>
+    /// Plays the current note of the set tune.
+    /// </summary>
     private void PlayTuneNote()
     {
         audioSource.clip = keyNotes[tune[currentTuneNote]];
         audioSource.Play();
     }
 
-    private void IncrementCurrentKeyID()
+    /// <summary>
+    /// Unhighlights the current key and highlights the key to the right.
+    /// </summary>
+    private void SelectRightKey()
     {
         keyHighlights[currentKeyID].enabled = false;
         if (++currentKeyID >= numKeys)
@@ -137,7 +194,10 @@ public class KeyUIManager_Jack : MonoBehaviour
         keyHighlights[currentKeyID].enabled = true;
     }
 
-    private void DecrementCurrentKeyID()
+    /// <summary>
+    /// Unhighlights the current key and highlights the key to the left.
+    /// </summary>
+    private void SelectLeftKey()
     {
         keyHighlights[currentKeyID].enabled = false;
         if(--currentKeyID < 0)
@@ -147,14 +207,41 @@ public class KeyUIManager_Jack : MonoBehaviour
         keyHighlights[currentKeyID].enabled = true;
     }
 
-    public void OpenClose()
+    /// <summary>
+    /// Opens the key UI.
+    /// </summary>
+    public void Open()
     {
-        keyUIObject.SetActive(!keyUIObject.activeSelf);
-        tuneTimer = 0.0f;
+        keyUIObject.SetActive(true);
         playingTune = false;
 
         keyHighlights[currentKeyID].enabled = false;
         currentKeyID = 0;
         keyHighlights[currentKeyID].enabled = true;
+
+        playerControllerScript.SetInMenu(true);
+    }
+
+    /// <summary>
+    /// Closes the key UI.
+    /// </summary>
+    public void Close()
+    {
+        keyUIObject.SetActive(false);
+        tuneTimer = 0.0f;
+        playingTune = true;
+
+        wasClosed = true;
+
+        playerControllerScript.SetInMenu(false);
+    }
+
+    /// <summary>
+    /// Returns whether the key UI was closed this frame. Used for interaction.
+    /// </summary>
+    /// <returns></returns>
+    public bool WasClosed()
+    {
+        return wasClosed;
     }
 }

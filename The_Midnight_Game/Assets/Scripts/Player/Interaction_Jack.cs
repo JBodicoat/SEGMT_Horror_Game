@@ -47,6 +47,11 @@ public class Interaction_Jack : MonoBehaviour
         {
             characterController = GetComponent<CharacterController>();
         }
+
+        if(!keyManagerScript)
+        {
+            keyManagerScript = FindObjectOfType<KeyUIManager_Jack>();
+        }
     }
 
     void FixedUpdate()
@@ -94,7 +99,10 @@ public class Interaction_Jack : MonoBehaviour
             }
             else if(hit.transform.CompareTag(pianoKeysTag))
             {
-                keyManagerScript.OpenClose();
+                if(!keyManagerScript.WasClosed())
+                {
+                    keyManagerScript.Open();
+                }
             }
         }
     }

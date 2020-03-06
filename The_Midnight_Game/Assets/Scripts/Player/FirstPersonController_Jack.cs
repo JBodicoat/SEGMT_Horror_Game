@@ -6,6 +6,7 @@
 // Jack 13/02/2020 - Added saving of player's rotation & candle
 // Jack 15/02/2020 - Added support for changing input bindings for controller & keyboard & mouse.
 //Louie : 16/02/2020 - Added Match Light SFX where the candle is relit and candle blow SFX when its blown out.
+// Jack 06/032020 - Added code that can be used to prevent player from moving/looking whilst in a menu.
 
 using System;
 using UnityEngine;
@@ -57,11 +58,13 @@ namespace UnityStandardAssets.Characters.FirstPerson
         // Input
         private const string horizontalAxis = "Horizontal";
         private const string verticalAxis = "Vertical";
-        private const string interactButton = "Interact";
+
+        private bool inMenu = false;
 
         private InputControlType jumpControlType = InputControlType.Action1;
-        private InputControlType saltControlType = InputControlType.Action2;
-        private InputControlType candleControlType = InputControlType.Action3;
+        private InputControlType candleControlType = InputControlType.Action2;
+        private InputControlType interactControlType = InputControlType.Action3;
+        private InputControlType saltControlType = InputControlType.Action4;
         private InputControlType grabControlType = InputControlType.LeftTrigger;
         private InputControlType throwControlType = InputControlType.RightTrigger;
 
@@ -127,7 +130,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         // Update is called once per frame
         private void Update() 
         {
-            if (!dead)
+            if (!dead && !inMenu)
             {
                 GetInput();
 
@@ -171,7 +174,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         private void FixedUpdate()
         {
-            if (!dead)
+            if (!dead && !inMenu)
             {
                 RotateView();
 
@@ -277,102 +280,105 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         private void GetInput()
         {
-            // Read input
-            float horizontal = 0f;
-            float vertical = 0f;
-
-            // InControl input
-            inputDevice = InputManager.ActiveDevice;
-            if(InputManager.Devices.Count > 0)
+            if (!inMenu)
             {
-                // Game pad inputs
-                usingController = true;
+                // Read input
+                float horizontal = 0f;
+                float vertical = 0f;
 
-                if(inputDevice.GetControl(saltControlType).WasPressed)
+                // InControl input
+                inputDevice = InputManager.ActiveDevice;
+                if (InputManager.Devices.Count > 0)
                 {
-                    saltPouringScript.PourSaltCirlce();
-                }
+                    // Game pad inputs
+                    usingController = true;
 
-                if (!saltPouringScript.IsPouringSalt())
-                {
-                    horizontal = inputDevice.LeftStick.X;
-                    vertical = inputDevice.LeftStick.Y;
-
-                    if (inputDevice.GetControl(candleControlType).WasPressed)
+                    if (inputDevice.GetControl(saltControlType).WasPressed)
                     {
-                        candleScript.LightCandle();
+                        saltPouringScript.PourSaltCirlce();
                     }
 
-                    if (inputDevice.Action2.WasPressed)
+                    if (!saltPouringScript.IsPouringSalt())
                     {
-                        interactionScript.Interact();
-                    }
+                        horizontal = inputDevice.LeftStick.X;
+                        vertical = inputDevice.LeftStick.Y;
 
-                    if(inputDevice.GetControl(throwControlType).WasPressed && interactionScript.GetHeldObject())
-                    {
-                        interactionScript.ThrowObject();
-                    }
-                    else if (inputDevice.GetControl(grabControlType).WasPressed)
-                    {
-                        if (interactionScript.GetHeldObject())
+                        if (inputDevice.GetControl(candleControlType).WasPressed)
                         {
-                            interactionScript.DropObject();
+                            candleScript.LightCandle();
                         }
-                        else
+
+                        if (inputDevice.GetControl(interactControlType).WasPressed)
                         {
-                            interactionScript.PickupObject();
+                            interactionScript.Interact();
                         }
-                    }
-                }
-            }
-            else
-            {
-                // Keyboard & mouse inputs
-                usingController = false;
 
-                if (Input.GetKeyDown(saltKey))
-                {
-                    saltPouringScript.PourSaltCirlce();
-                }
-
-                if (!saltPouringScript.IsPouringSalt())
-                {
-                    horizontal = CrossPlatformInputManager.GetAxis(horizontalAxis);
-                    vertical = CrossPlatformInputManager.GetAxis(verticalAxis);
-
-                    if (Input.GetKeyDown(candleKey))
-                    {
-                        candleScript.LightCandle();
-                    }
-
-                    if (Input.GetKeyDown(interactKey))
-                    {
-                        interactionScript.Interact();
-                    }
-
-                    if(Input.GetKeyDown(throwKey) && interactionScript.GetHeldObject())
-                    {
-                        interactionScript.ThrowObject();
-                    }
-                    else if (Input.GetKeyDown(grabKey))
-                    {
-                        if (interactionScript.GetHeldObject())
+                        if (inputDevice.GetControl(throwControlType).WasPressed && interactionScript.GetHeldObject())
                         {
-                            interactionScript.DropObject();
+                            interactionScript.ThrowObject();
                         }
-                        else
+                        else if (inputDevice.GetControl(grabControlType).WasPressed)
                         {
-                            interactionScript.PickupObject();
+                            if (interactionScript.GetHeldObject())
+                            {
+                                interactionScript.DropObject();
+                            }
+                            else
+                            {
+                                interactionScript.PickupObject();
+                            }
                         }
                     }
                 }
-            }
+                else
+                {
+                    // Keyboard & mouse inputs
+                    usingController = false;
 
-            m_Input = new Vector2(horizontal, vertical);
-            // normalize input if it exceeds 1 in combined length:
-            if (m_Input.sqrMagnitude > 1)
-            {
-                m_Input.Normalize();
+                    if (Input.GetKeyDown(saltKey))
+                    {
+                        saltPouringScript.PourSaltCirlce();
+                    }
+
+                    if (!saltPouringScript.IsPouringSalt())
+                    {
+                        horizontal = CrossPlatformInputManager.GetAxis(horizontalAxis);
+                        vertical = CrossPlatformInputManager.GetAxis(verticalAxis);
+
+                        if (Input.GetKeyDown(candleKey))
+                        {
+                            candleScript.LightCandle();
+                        }
+
+                        if (Input.GetKeyDown(interactKey))
+                        {
+                            interactionScript.Interact();
+                        }
+
+                        if (Input.GetKeyDown(throwKey) && interactionScript.GetHeldObject())
+                        {
+                            interactionScript.ThrowObject();
+                        }
+                        else if (Input.GetKeyDown(grabKey))
+                        {
+                            if (interactionScript.GetHeldObject())
+                            {
+                                interactionScript.DropObject();
+                            }
+                            else
+                            {
+                                interactionScript.PickupObject();
+                            }
+                        }
+                    }
+                }
+
+                m_Input = new Vector2(horizontal, vertical);
+                // normalize input if it exceeds 1 in combined length:
+                if (m_Input.sqrMagnitude > 1)
+                {
+                    m_Input.Normalize();
+                }
             }
         }
 
@@ -449,16 +455,21 @@ namespace UnityStandardAssets.Characters.FirstPerson
             jumpControlType = newJumpControlType;
         }
 
-        /// Sets the pour salt InputControlType.
-        public void SetSaltControlType(InputControlType newSaltControlType)
+        public void SetInteractControlType(InputControlType newInteractControlType)
         {
-            saltControlType = newSaltControlType;
+            interactControlType = newInteractControlType;
         }
 
         /// Sets the light candle InputControlType.
         public void SetCandleControlType(InputControlType newCandleControlType)
         {
             candleControlType = newCandleControlType;
+        }
+
+        /// Sets the pour salt InputControlType.
+        public void SetSaltControlType(InputControlType newSaltControlType)
+        {
+            saltControlType = newSaltControlType;
         }
 
         /// Sets the grab/drop InputControlType.
@@ -482,13 +493,9 @@ namespace UnityStandardAssets.Characters.FirstPerson
             jumpKey = newJumpKey;
         }
 
-        /// <summary>
-        /// Sets the salt KeyCode.
-        /// </summary>
-        /// <param name="newSaltKey"></param>
-        public void SetSaltKey(KeyCode newSaltKey)
+        public void SetInteractKey(KeyCode newInteractKey)
         {
-            saltKey = newSaltKey;
+            interactKey = newInteractKey;
         }
 
         /// <summary>
@@ -498,6 +505,15 @@ namespace UnityStandardAssets.Characters.FirstPerson
         public void SetCandleKey(KeyCode newCandleKey)
         {
             candleKey = newCandleKey;
+        }
+
+        /// <summary>
+        /// Sets the salt KeyCode.
+        /// </summary>
+        /// <param name="newSaltKey"></param>
+        public void SetSaltKey(KeyCode newSaltKey)
+        {
+            saltKey = newSaltKey;
         }
 
         /// <summary>
@@ -516,6 +532,15 @@ namespace UnityStandardAssets.Characters.FirstPerson
         public void SetThrowKey(KeyCode newThrowKey)
         {
             throwKey = newThrowKey;
+        }
+
+        /// <summary>
+        /// Sets inMenu. Used for preventing player movement whilst menus are open.
+        /// </summary>
+        /// <param name="newInMenu"></param>
+        public void SetInMenu(bool newInMenu)
+        {
+            inMenu = newInMenu;
         }
     }
 }
