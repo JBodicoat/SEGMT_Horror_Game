@@ -1,6 +1,7 @@
 ﻿//Louie Williamson
 // 24/02 - Handles the Win and Lose states of the game.
 // Morgan pryor - 26/02/2020 - Added eggs for bart
+// Jack 09/03/2020 - Reviewed Jump-Scare
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,11 +12,11 @@ public class GameStates_Louie : MonoBehaviour
     //eggs for bart functionality
     public Camera mainCamera;
     public Camera scareCamera;
-    VideoPlayer eggsForBart;
+    private VideoPlayer jumpScare;
     float count;
     Candle_Jack candleScript;
     SaltPouring_Jack saltScript;
-    bool isScarePlayed = false;
+    bool gameOver = false;
 
     // Start is called before the first frame update
     private const string endTime = "03 : 33";
@@ -27,9 +28,8 @@ public class GameStates_Louie : MonoBehaviour
         watch = GameObject.Find("WatchPrefab");
         candleScript = FindObjectOfType<Candle_Jack>();
         saltScript = FindObjectOfType<SaltPouring_Jack>();
-        eggsForBart = FindObjectOfType<VideoPlayer>();
+        jumpScare = FindObjectOfType<VideoPlayer>();
         scareCamera.enabled = false;
-        //eggsForBart.Prepare();
     }
 
     // Update is called once per frame
@@ -61,12 +61,14 @@ public class GameStates_Louie : MonoBehaviour
     /// <param name="isSaltDown"></param>
     public void CaughtByMidnightMan()//float secondsPassed, bool isSaltDown, bool isCandleRelit)
     {
-        count += Time.deltaTime;
-
-        if (count >= maxSecondsPassed && !saltScript.IsInSaltCircle() && !isScarePlayed)
+        if (!gameOver)
         {
-            GameOver();
-            isScarePlayed = true;
+            count += Time.deltaTime;
+
+            if (count >= maxSecondsPassed && !saltScript.IsInSaltCircle())
+            {
+                GameOver();
+            }
         }
     }
 
@@ -86,9 +88,10 @@ public class GameStates_Louie : MonoBehaviour
     /// </summary>
     public void GameOver()
     {
-        print("GAME OVER");
+        gameOver = true;
+
         mainCamera.enabled = false;
         scareCamera.enabled = true;
-        eggsForBart.Play();
+        jumpScare.Play();
     }
 }
