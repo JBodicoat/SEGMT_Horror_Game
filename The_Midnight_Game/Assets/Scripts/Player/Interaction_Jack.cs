@@ -1,6 +1,6 @@
 ﻿// Jack 16/02/2020 - Abstracted salt system from FirstPersonController
 // Jack 23/02/2020 - Added interaction with books in Interact()
-
+// Louie 10/02/2020 - Added interaction with rabbit
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -30,7 +30,7 @@ public class Interaction_Jack : MonoBehaviour
     private readonly LayerMask interactableObjectsLayer = 1 << 9;
     private const string tabletSlotTag = "Tablet Slot";
     private const string bookTag = "Book";
-
+    private const string rabbitTag = "Rabbit";
     // Start is called before the first frame update
     void Start()
     {
@@ -88,6 +88,11 @@ public class Interaction_Jack : MonoBehaviour
                     bookScript.PullOutBook();
                 }
             }
+            else if (hit.transform.CompareTag(rabbitTag))
+            {
+                hit.transform.gameObject.GetComponent<BunnyAI_Louie>().CatchRabbit();
+            }
+
         }
     }
 
