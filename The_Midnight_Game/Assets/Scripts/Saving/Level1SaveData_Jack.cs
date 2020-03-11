@@ -8,7 +8,7 @@ using UnityStandardAssets.Characters.FirstPerson;
 public class Level1SaveData_Jack
 {
     public static Level1SaveData_Jack current;
-    public FirstPersonControllerSaveData_Jack playerSaveData;
+    public PlayerSaveData_Jack playerSaveData;
 
     public float tablet1xPos;
     public float tablet1yPos;

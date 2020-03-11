@@ -7,7 +7,7 @@ using UnityEngine;
 /// Used for the first puzzle. 
 /// 
 /// When all the tablets are in the correct orientation the door opens.
-public class Door_Jack : MonoBehaviour
+public class TabletDoor_Jack : MonoBehaviour
 {
     private readonly Vector3 moveAmount = new Vector3(0, -4, 0);
     

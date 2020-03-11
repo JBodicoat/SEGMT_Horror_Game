@@ -53,7 +53,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         // ===== My variables ===== //
         // Saving game data
-        public FirstPersonControllerSaveData_Jack saveData = new FirstPersonControllerSaveData_Jack();
+        public PlayerSaveData_Jack saveData = new PlayerSaveData_Jack();
 
         // Input
         private const string horizontalAxis = "Horizontal";
@@ -81,15 +81,12 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private InputDevice inputDevice = InputManager.ActiveDevice; // InControl input
 
         // Health
-        public bool dead = false;
+        private bool dead = false;
 
         private Inventory_Jack inventoryScript;
         private Candle_Jack candleScript;
         private SaltPouring_Jack saltPouringScript;
         private Interaction_Jack interactionScript;
-
-        //Match Lighting Audio
-        private GameObject SoundManager;
 
         // Use this for initialization
         private void Awake()
@@ -163,15 +160,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
             }
         }
 
-
-        private void PlayLandingSound()
-        {
-            m_AudioSource.clip = m_LandSound;
-            m_AudioSource.Play();
-            m_NextStep = m_StepCycle + .5f;
-        }
-
-
         private void FixedUpdate()
         {
             if (!dead && !inMenu)
@@ -213,6 +201,13 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
                 m_MouseLook.UpdateCursorLock();
             }
+        }
+
+        private void PlayLandingSound()
+        {
+            m_AudioSource.clip = m_LandSound;
+            m_AudioSource.Play();
+            m_NextStep = m_StepCycle + .5f;
         }
 
         private void PlayJumpSound()
@@ -418,7 +413,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         // ===== Saving game data ===== //
         /// Loads the currently saved player data.
-        public void LoadSaveData(FirstPersonControllerSaveData_Jack loadData)
+        public void LoadSaveData(PlayerSaveData_Jack loadData)
         {
             transform.position = new Vector3(loadData.xPos, loadData.yPos, loadData.zPos);
             transform.localRotation = Quaternion.Euler(loadData.xRot, loadData.yRot, loadData.zRot);
@@ -430,7 +425,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         }
 
         /// Returns the data of the player that needs saving.
-        public FirstPersonControllerSaveData_Jack GetSaveData()
+        public PlayerSaveData_Jack GetSaveData()
         {
             saveData.xPos = transform.position.x;
             saveData.yPos = transform.position.y;

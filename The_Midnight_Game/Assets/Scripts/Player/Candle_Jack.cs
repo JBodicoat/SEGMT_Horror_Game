@@ -6,16 +6,13 @@ using UnityEngine;
 public class Candle_Jack : MonoBehaviour
 {
     public GameObject candleFlame;
-
     private Inventory_Jack inventoryScript;
-
-	private GameObject SoundManager;
+	private SFXManager_LW soundManager;
 
     private void Start()
     {
         inventoryScript = FindObjectOfType<Inventory_Jack>();
-		//Audio
-        SoundManager = GameObject.Find("SFX_Manager");
+        soundManager = FindObjectOfType<SFXManager_LW>();
     }
 
     /// Attempts to light the player's candle.
@@ -26,7 +23,7 @@ public class Candle_Jack : MonoBehaviour
         {
             candleFlame.SetActive(true);
             inventoryScript.RemoveItems(ItemType.matches, 1);
-			SoundManager.GetComponent<SFXManager_LW>().PlaySFX(SFXManager_LW.SFX.MatchLighting);
+			soundManager.PlaySFX(SFXManager_LW.SFX.MatchLighting);
         }
 
         return false;
@@ -39,7 +36,7 @@ public class Candle_Jack : MonoBehaviour
         if (candleFlame.activeSelf)
         {
             candleFlame.SetActive(false);
-			SoundManager.GetComponent<SFXManager_LW>().PlaySFX(SFXManager_LW.SFX.CandleBlow);
+			soundManager.PlaySFX(SFXManager_LW.SFX.CandleBlow);
 
             return true;
         }

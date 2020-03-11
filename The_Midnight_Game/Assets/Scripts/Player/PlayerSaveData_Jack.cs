@@ -8,7 +8,7 @@ using UnityEngine;
 /// 
 /// Unity data types cannot be saved so they must be broken up into standard data type such as floats.
 [System.Serializable]
-public class FirstPersonControllerSaveData_Jack
+public class PlayerSaveData_Jack
 {
     public float xPos;
     public float yPos;

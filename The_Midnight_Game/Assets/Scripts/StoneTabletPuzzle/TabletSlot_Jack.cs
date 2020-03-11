@@ -21,7 +21,7 @@ public enum Orientation
 /// correct orientation the door opens.
 public class TabletSlot_Jack : MonoBehaviour
 {
-    public Door_Jack doorScript;
+    public TabletDoor_Jack doorScript;
 
     private const string tabletTag = "Tablet";
     private bool holdingTablet = false;
