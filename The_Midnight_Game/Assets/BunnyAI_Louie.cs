@@ -6,9 +6,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
+    public enum BunnyState { patrolling, idle, running, caught };
 public class BunnyAI_Louie : MonoBehaviour
 {
-    public enum BunnyState { patrolling, idle, running, caught };
 
     // Start is called before the first frame update
     public NavMeshAgent nav;
@@ -32,15 +32,19 @@ public class BunnyAI_Louie : MonoBehaviour
         {
             case BunnyState.patrolling:
                 //move to target node, then get new target and repeat
+                Patrolling();
                 break;
             case BunnyState.idle:
                 //stand still at current target node
+                Idle();
                 break;
             case BunnyState.running:
                 //run to nearest node and then go idle
+                Running();
                 break;
             case BunnyState.caught:
                 //parent to player(so theyre holding it) no movement
+                Caught();
                 break;
             default:
                 break;
@@ -93,9 +97,9 @@ public class BunnyAI_Louie : MonoBehaviour
     /// <summary>
     /// Used in the interaction script when the rabbit is caught
     /// </summary>
-    public void CatchRabbit()
+    public void ChangeRabbitState(BunnyState b)
     {
-        bunnyState = BunnyState.caught;
+        bunnyState = b;
     }
     private void Caught()
     {

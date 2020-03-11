@@ -90,7 +90,7 @@ public class Interaction_Jack : MonoBehaviour
             }
             else if (hit.transform.CompareTag(rabbitTag))
             {
-                hit.transform.gameObject.GetComponent<BunnyAI_Louie>().CatchRabbit();
+                hit.transform.gameObject.GetComponent<BunnyAI_Louie>().ChangeRabbitState(BunnyState.caught);
             }
 
         }
