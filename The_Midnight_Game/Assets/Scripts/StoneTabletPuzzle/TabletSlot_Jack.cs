@@ -14,11 +14,11 @@ public enum Orientation
     sizeOf
 }
 
-/// Holds tablet objects in place.
-/// 
+/// <summary>
 /// Used for the first puzzle. Holds tablets in place when they collide and
 /// allows the player to rotate the tablets. When all the tablets are in the
 /// correct orientation the door opens.
+/// </summary>
 public class TabletSlot_Jack : MonoBehaviour
 {
     public TabletDoor_Jack doorScript;

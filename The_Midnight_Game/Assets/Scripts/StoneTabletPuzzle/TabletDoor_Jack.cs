@@ -4,9 +4,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
 /// Used for the first puzzle. 
-/// 
 /// When all the tablets are in the correct orientation the door opens.
+/// </summary>
 public class TabletDoor_Jack : MonoBehaviour
 {
     private readonly Vector3 moveAmount = new Vector3(0, -4, 0);

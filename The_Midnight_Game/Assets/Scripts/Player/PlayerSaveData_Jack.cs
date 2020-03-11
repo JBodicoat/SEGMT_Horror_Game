@@ -4,9 +4,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
 /// Stores the save data for the player.
-/// 
 /// Unity data types cannot be saved so they must be broken up into standard data type such as floats.
+/// </summary>
 [System.Serializable]
 public class PlayerSaveData_Jack
 {

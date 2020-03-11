@@ -4,6 +4,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+/// <summary>
+/// Handles the creation of salt circles and related animations and functions.
+/// </summary>
 public class SaltPouring_Jack : MonoBehaviour
 {
     public GameObject saltCirclePrefab;

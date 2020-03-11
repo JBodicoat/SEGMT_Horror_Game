@@ -6,9 +6,10 @@ using UnityEngine.SceneManagement;
 using UnityStandardAssets.Characters.FirstPerson;
 using InControl;
 
+/// <summary>
 /// Handles save data for level 1.
-/// 
 /// Save data is retrieved from the player and the level then stored in a binary file.
+/// </summary>
 public class Level1DataManager_Jack : MonoBehaviour
 {
     // Player Data

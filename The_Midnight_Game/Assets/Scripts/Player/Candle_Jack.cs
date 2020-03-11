@@ -3,6 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Contains functions related to the players held candle. Allows for the candle to be lit or extinguished.
+/// </summary>
 public class Candle_Jack : MonoBehaviour
 {
     public GameObject candleFlame;
