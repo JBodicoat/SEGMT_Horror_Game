@@ -3,27 +3,28 @@
 
 // Morgan 03/03/2020 - modified to work with the interaction key
 
+// Jack 11/03/2020 - Reviewed. Cached strings and removed unnecessary if statements.
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Description of class here.
+/// </summary>
 public class DoorOpenClose_Dan : MonoBehaviour
 {
-    bool isOpen = false;
+    private bool isOpen = false;
+    private const string animOpenBool = "open";
 
     public Animator DoorAnimator;
 
+    /// <summary>
+    /// Description of function here.
+    /// </summary>
     public void DoorMechanism()
     {
-        if (isOpen)
-        {
-            DoorAnimator.SetBool("open", false);
-            isOpen = false;
-        }
-        else if (!isOpen)
-        {
-            DoorAnimator.SetBool("open", true);
-            isOpen = true;
-        }
+        isOpen = !isOpen;
+        DoorAnimator.SetBool(animOpenBool, isOpen);
     }
 }
