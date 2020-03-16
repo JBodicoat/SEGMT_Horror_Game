@@ -23,6 +23,7 @@ public class BunnyAI_Louie : MonoBehaviour
         bunnyState = BunnyState.patrolling;
         nav = GetComponent<NavMeshAgent>();
         GetNewTarget();
+        nav.SetDestination(targetNode.position);
         nav.speed = speed;
     }
     // Update is called once per frame
@@ -121,7 +122,8 @@ public class BunnyAI_Louie : MonoBehaviour
         if (IsAtTarget())
         {
             GetNewTarget();
+            nav.SetDestination(targetNode.position);
         }
-        nav.SetDestination(targetNode.position);
+        print("Target" + targetNode.gameObject.name);
     }
 }

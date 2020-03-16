@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.Audio;
 
 /// <summary>
-/// Description of the class here.
+/// This class handles the audio settings in the options menu.
 /// </summary>
 public class AudioSettings_Louie : MonoBehaviour
 {
@@ -19,7 +19,7 @@ public class AudioSettings_Louie : MonoBehaviour
     private const string sfxChannel = "SFXVolume";
 
     /// <summary>
-    /// Description of the function here.
+    /// Used by the slider to set the ambient volume level
     /// </summary>
     /// <param name="sliderVal"></param>
     public void SetAmbientVolume(float sliderVal)
@@ -27,11 +27,19 @@ public class AudioSettings_Louie : MonoBehaviour
         volumeLevel = Mathf.Log10(sliderVal) * volumeMultiplier;
         mixer.SetFloat(ambientChannel, volumeLevel);
     }
+    /// <summary>
+    /// Used by the slider to set the master volume level
+    /// </summary>
+    /// <param name="sliderVal"></param>
     public void SetMasterVolume(float sliderVal)
     {
         volumeLevel = Mathf.Log10(sliderVal) * volumeMultiplier;
         mixer.SetFloat(masterChannel, volumeLevel);
     }
+    /// <summary>
+    /// Used by the slider to set the SFX volume level
+    /// </summary>
+    /// <param name="sliderVal"></param>
     public void SetSFXVolume(float sliderVal)
     {
         volumeLevel = Mathf.Log10(sliderVal) * volumeMultiplier;

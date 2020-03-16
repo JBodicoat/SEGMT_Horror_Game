@@ -7,21 +7,18 @@ using UnityEngine;
 
 public class PauseGame_Louie : MonoBehaviour
 {
-
-    public enum Resolution { NineteenTwenty, ThirteenSixtySix, TwelveEighty };
-    public enum TextureQuality { low, medium, high };
-
     private bool isGamePaused;
     private Animator pauseAnim;
 
     public GameObject OptionsMenu;
-    private Resolution res;
-    private TextureQuality tQuality;
+
+    private VideoSettings_LouieWilliamson vSettings;
     void Start()
     {
         isGamePaused = false;
         pauseAnim = gameObject.GetComponent<Animator>();
         Cursor.visible = false;
+        vSettings = gameObject.GetComponent<VideoSettings_LouieWilliamson>();
     }
 
     void Update()
@@ -103,6 +100,6 @@ public class PauseGame_Louie : MonoBehaviour
     /// </summary>
     public void QuitGame()
     {
-        //insert quitting game here
+        Application.Quit();
     }
 }
