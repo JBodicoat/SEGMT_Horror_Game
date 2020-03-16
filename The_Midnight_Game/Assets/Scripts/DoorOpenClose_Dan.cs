@@ -7,10 +7,8 @@ using UnityEngine;
 
 public class DoorOpenClose_Dan : MonoBehaviour
 {
-    private bool isDoorTrigger = false;
-
     public Animator DoorAnimator;
-
+    private bool isDoorTrigger = false;
 
     void OnTriggerEnter(Collider other)
     {

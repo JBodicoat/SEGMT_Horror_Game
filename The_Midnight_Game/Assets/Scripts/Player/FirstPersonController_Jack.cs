@@ -6,7 +6,8 @@
 // Jack 13/02/2020 - Added saving of player's rotation & candle
 // Jack 15/02/2020 - Added support for changing input bindings for controller & keyboard & mouse.
 //Louie : 16/02/2020 - Added Match Light SFX where the candle is relit and candle blow SFX when its blown out.
-// Jack 06/032020 - Added code that can be used to prevent player from moving/looking whilst in a menu.
+// Jack 06/03/2020 - Added code that can be used to prevent player from moving/looking whilst in a menu.
+// Jack 16/03/2020 - Added ability to push the latern.
 
 using System;
 using UnityEngine;
@@ -87,6 +88,10 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private Candle_Jack candleScript;
         private SaltPouring_Jack saltPouringScript;
         private Interaction_Jack interactionScript;
+
+        // Lantern movement
+        private const float pushForce = 2.0f;
+        private const string lanternTag = "MoveableLantern";
 
         // Use this for initialization
         private void Awake()
@@ -402,7 +407,17 @@ namespace UnityStandardAssets.Characters.FirstPerson
             {
                 return;
             }
-            body.AddForceAtPosition(m_CharacterController.velocity*0.1f, hit.point, ForceMode.Impulse);
+
+            if (hit.gameObject.CompareTag(lanternTag))
+            {
+                Vector3 pushDirection = new Vector3(hit.moveDirection.x, 0, hit.moveDirection.z);
+                pushDirection.Normalize();
+                body.velocity = pushDirection * pushForce;
+            }
+            else
+            {
+                body.AddForceAtPosition(m_CharacterController.velocity * 0.1f, hit.point, ForceMode.Impulse);
+            }
         }
 
         /// Returns usingController.

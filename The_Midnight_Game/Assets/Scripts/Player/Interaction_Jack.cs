@@ -35,6 +35,7 @@ public class Interaction_Jack : MonoBehaviour
     private const string bookTag = "Book";
     private const string alcoholPlacementTag = "Alcohol Placement";
     private const string pianoKeysTag = "Piano Keys";
+    private const string valveTag = "Valve";
 
     public KeyUIManager_Jack keyManagerScript;
 
@@ -106,6 +107,10 @@ public class Interaction_Jack : MonoBehaviour
                 {
                     keyManagerScript.Open();
                 }
+            }
+            else if(hit.transform.CompareTag(valveTag))
+            {
+                hit.transform.gameObject.GetComponentInParent<Valve_Jack>().StartTurn();
             }
         }
     }
