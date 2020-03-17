@@ -20,6 +20,9 @@ public class BottlePlacementManager_Jack : MonoBehaviour
 
     private Inventory_Jack inventoryScript;
 
+    //Test
+    public GameObject fireObject;
+
     private void Start()
     {
         inventoryScript = FindObjectOfType<Inventory_Jack>();
@@ -67,8 +70,12 @@ public class BottlePlacementManager_Jack : MonoBehaviour
     private IEnumerator StartFire()
     {
         inventoryScript.RemoveItems(ItemType.matches, 1);
-        fireParticleSystem.Play();
+        //fireParticleSystem.Play();
+        //Test
+        fireObject.SetActive(true);
         burning = true;
+
+
 
         yield return new WaitForSeconds(burnDuration);
         
