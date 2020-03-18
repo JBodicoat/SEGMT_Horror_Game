@@ -1,42 +1,30 @@
 ﻿//Dan
 //Script to open/close doors
 
+// Morgan 03/03/2020 - modified to work with the interaction key
+
+// Jack 11/03/2020 - Reviewed. Cached strings and removed unnecessary if statements.
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Description of class here.
+/// </summary>
 public class DoorOpenClose_Dan : MonoBehaviour
 {
-    private bool isDoorTrigger = false;
+    private bool isOpen = false;
+    private const string animOpenBool = "open";
 
     public Animator DoorAnimator;
 
-
-    void OnTriggerEnter(Collider other)
+    /// <summary>
+    /// Description of function here.
+    /// </summary>
+    public void DoorMechanism()
     {
-        if (other.tag == "Player")
-        {
-            isDoorTrigger = true;
-        }
-    }
-
-    void OnTriggerExit(Collider other)
-    {
-        if (other.tag == "Player")
-        {
-            isDoorTrigger = false;
-            DoorAnimator.SetBool("open", false);
-        }
-    }
-
-
-    // Update is called once per frame
-    void Update()
-    {
-
-            if (Input.GetKeyDown(KeyCode.E))
-            {
-                DoorAnimator.SetBool("open", true);
-            }
+        isOpen = !isOpen;
+        DoorAnimator.SetBool(animOpenBool, isOpen);
     }
 }
