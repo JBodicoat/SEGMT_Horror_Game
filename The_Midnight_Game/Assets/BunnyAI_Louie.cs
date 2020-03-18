@@ -1,5 +1,6 @@
 ﻿//Louie - Created script - 06/03/2020
 //Louie - Improved Script - 10/03/2020
+// Jack 18/03/2020 - Reviewed. Optimized distance calculation. Set speed to const. Reformatting.
 
 using System.Collections;
 using System.Collections.Generic;
@@ -9,15 +10,15 @@ using UnityEngine.AI;
     public enum BunnyState { patrolling, idle, running, caught };
 public class BunnyAI_Louie : MonoBehaviour
 {
-
     // Start is called before the first frame update
     public NavMeshAgent nav;
     public Transform[] nodes;
     private Transform targetNode;
     private int targetNumber;
-    private int speed = 3;
+    private const int speed = 3;
     private BunnyState bunnyState;
-    private float distance;
+    private float sqrDistance;
+
     void Start()
     {
         bunnyState = BunnyState.patrolling;
@@ -26,6 +27,7 @@ public class BunnyAI_Louie : MonoBehaviour
         nav.SetDestination(targetNode.position);
         nav.speed = speed;
     }
+
     // Update is called once per frame
     void Update()
     {
@@ -51,21 +53,16 @@ public class BunnyAI_Louie : MonoBehaviour
                 break;
         }
     }
+
     /// <summary>
     /// Returns true if rabbit gets to its target
     /// </summary>
     /// <returns></returns>
     bool IsAtTarget()
     {
-        if (nav.remainingDistance <= nav.stoppingDistance)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return (nav.remainingDistance <= nav.stoppingDistance);
     }
+
     /// <summary>
     /// Randomly picks a new target out of the array of nodes
     /// </summary>
@@ -80,21 +77,24 @@ public class BunnyAI_Louie : MonoBehaviour
     /// </summary>
     void GetNearestTarget()
     {
-        float currentMaxDistance = 0;
+        float currentMaxSqrDistance = 0;
         Transform closest = null;
 
         for (int i = 0; i < nodes.Length; i++)
         {
-            distance = Vector3.Distance(transform.position, nodes[i].transform.position);
+            float xDifference = transform.position.x - nodes[i].transform.position.x;
+            float zDifference = transform.position.z - nodes[i].transform.position.z;
+            sqrDistance = xDifference * xDifference + zDifference * zDifference;
 
-            if (distance > currentMaxDistance)
+            if (sqrDistance > currentMaxSqrDistance)
             {
                 closest = nodes[i];
-                currentMaxDistance = distance;
+                currentMaxSqrDistance = sqrDistance;
             }
         }
         targetNode = closest;
     }
+
     /// <summary>
     /// Used in the interaction script when the rabbit is caught
     /// </summary>
@@ -102,6 +102,7 @@ public class BunnyAI_Louie : MonoBehaviour
     {
         bunnyState = b;
     }
+
     private void Caught()
     {
 
