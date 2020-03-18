@@ -1,8 +1,13 @@
-﻿using System.Collections;
+﻿// Jack
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityStandardAssets.Characters.FirstPerson;
 
+/// <summary>
+/// Tests if the player is inside the salt circle or not.
+/// </summary>
 public class SaltCircle_Jack : MonoBehaviour
 {
     private SaltPouring_Jack playerSaltScript;
@@ -14,6 +19,10 @@ public class SaltCircle_Jack : MonoBehaviour
         playerSaltScript = FindObjectOfType<SaltPouring_Jack>();
     }
 
+    /// <summary>
+    /// Marks the player as being inside the salt circle on collison.
+    /// </summary>
+    /// <param name="other"></param>
     private void OnTriggerEnter(Collider other)
     {
         if(other.CompareTag(playerTag))
@@ -22,6 +31,10 @@ public class SaltCircle_Jack : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Marks the player as being outside the salt circle on exiting the collider.
+    /// </summary>
+    /// <param name="other"></param>
     private void OnTriggerExit(Collider other)
     {
         if(other.CompareTag(playerTag))

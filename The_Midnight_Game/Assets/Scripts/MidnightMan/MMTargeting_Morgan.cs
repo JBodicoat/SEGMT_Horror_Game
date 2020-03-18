@@ -4,6 +4,8 @@
 // Jack : 11/02/2020 Tweaks to variable names & optimization on raycast
 //                   
 //Louie : 16/02/2020 added Candle blow SFX to the same place its extinguished and added ice cracking and breathing
+// Jack 16/03/2020 removed unused audio variables
+
 ///
 /// This script works out how close to the player the midnight man is and checks if the midnight man is in the same room
 ///
@@ -53,15 +55,6 @@ public class MMTargeting_Morgan : MonoBehaviour
     private void Awake()
     {
         controllerScript = FindObjectOfType<MMController_Morgan>();
-    }
-
-    //MM Audio Testing
-    private GameObject SoundManager;
-    private int breathingDistance = 50;
-    private int iceCrackingDistance = 30;
-    private void Start()
-    {
-        SoundManager = GameObject.Find("SFX_Manager");
     }
 
     void Update()

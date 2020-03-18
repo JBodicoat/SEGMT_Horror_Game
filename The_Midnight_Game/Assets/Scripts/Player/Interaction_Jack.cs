@@ -7,6 +7,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Deals with picking up, moving and throwing objects as well as any other item interactions done with a raycast.
+/// </summary>
 public class Interaction_Jack : MonoBehaviour
 {
     public Camera playerCamera;
@@ -36,6 +39,7 @@ public class Interaction_Jack : MonoBehaviour
     private const string alcoholPlacementTag = "Alcohol Placement";
     private const string pianoKeysTag = "Piano Keys";
     private const string rabbitTag = "Rabbit";
+    private const string valveTag = "Valve";
 
     public KeyUIManager_Jack keyManagerScript;
 
@@ -97,13 +101,13 @@ public class Interaction_Jack : MonoBehaviour
             {
                 hit.transform.gameObject.GetComponent<Book_Jack>().PullOutBook();
             }
-            else if(hit.transform.CompareTag(alcoholPlacementTag))
+            else if (hit.transform.CompareTag(alcoholPlacementTag))
             {
-                hit.transform.gameObject.GetComponent<BottlePlacementManager_Jack>().Interact();                
+                hit.transform.gameObject.GetComponent<BottlePlacementManager_Jack>().Interact();
             }
-            else if(hit.transform.CompareTag(pianoKeysTag))
+            else if (hit.transform.CompareTag(pianoKeysTag))
             {
-                if(!keyManagerScript.WasClosed())
+                if (!keyManagerScript.WasClosed())
                 {
                     keyManagerScript.Open();
                 }
@@ -115,6 +119,10 @@ public class Interaction_Jack : MonoBehaviour
             else if (hit.transform.CompareTag(rabbitTag))
             {
                 hit.transform.gameObject.GetComponent<BunnyAI_Louie>().ChangeRabbitState(BunnyState.caught);
+            }
+            else if (hit.transform.CompareTag(valveTag))
+            {
+                hit.transform.gameObject.GetComponentInParent<Valve_Jack>().StartTurn();
             }
         }
     }
@@ -154,6 +162,10 @@ public class Interaction_Jack : MonoBehaviour
         heldObject = null;
     }
 
+    /// <summary>
+    /// Throws the currently held object forward relative to where the player is looking.
+    /// Check if there is an object held before using this function.
+    /// </summary>
     public void ThrowObject()
     {
         heldObjectRigidbody.AddForce(playerCamera.transform.forward * throwForce, ForceMode.Impulse);

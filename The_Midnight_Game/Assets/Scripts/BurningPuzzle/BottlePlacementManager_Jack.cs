@@ -4,6 +4,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Manages the placement of bottles infront of the flamable wooden panel for the "Burning the way" puzzle.
+/// </summary>
 public class BottlePlacementManager_Jack : MonoBehaviour
 {
     private const ushort maxBottles = 6;
@@ -17,6 +20,9 @@ public class BottlePlacementManager_Jack : MonoBehaviour
 
     private Inventory_Jack inventoryScript;
 
+    //Test
+    public GameObject fireObject;
+
     private void Start()
     {
         inventoryScript = FindObjectOfType<Inventory_Jack>();
@@ -25,6 +31,10 @@ public class BottlePlacementManager_Jack : MonoBehaviour
     // Placements
     public GameObject[] placedBottles = new GameObject[maxBottles];
 
+    /// <summary>
+    /// Places all the players bottles in front of the panel.
+    /// If enough bottles have already been placed, a match is used to set the bottles on fire.
+    /// </summary>
     public void Interact()
     {
         if (currentNumBottles < maxBottles)
@@ -37,6 +47,9 @@ public class BottlePlacementManager_Jack : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Enables the corresponding number of bottle objects and removes them from the players inventory.
+    /// </summary>
     private void PlaceBottles()
     {
         ushort numToPlace = inventoryScript.GetNumOf(ItemType.bottles);
@@ -50,11 +63,19 @@ public class BottlePlacementManager_Jack : MonoBehaviour
         inventoryScript.RemoveItems(ItemType.bottles, numToPlace);
     }
 
+    /// <summary>
+    /// A coroutine that sets the wooden panel on fire and after a set time destroying it.
+    /// </summary>
+    /// <returns></returns>
     private IEnumerator StartFire()
     {
         inventoryScript.RemoveItems(ItemType.matches, 1);
-        fireParticleSystem.Play();
+        //fireParticleSystem.Play();
+        //Test
+        fireObject.SetActive(true);
         burning = true;
+
+
 
         yield return new WaitForSeconds(burnDuration);
         

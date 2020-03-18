@@ -21,6 +21,10 @@ public enum ItemType
     sizeOf
 }
 
+
+/// <summary>
+/// Contains inventory logic and data. Is used for the players inventory.
+/// </summary>
 public class Inventory_Jack : MonoBehaviour
 {
     public InventoryMenu_Jack inventoryMenuScript;

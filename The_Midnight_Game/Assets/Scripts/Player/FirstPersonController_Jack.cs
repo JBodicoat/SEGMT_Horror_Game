@@ -6,7 +6,8 @@
 // Jack 13/02/2020 - Added saving of player's rotation & candle
 // Jack 15/02/2020 - Added support for changing input bindings for controller & keyboard & mouse.
 //Louie : 16/02/2020 - Added Match Light SFX where the candle is relit and candle blow SFX when its blown out.
-// Jack 06/032020 - Added code that can be used to prevent player from moving/looking whilst in a menu.
+// Jack 06/03/2020 - Added code that can be used to prevent player from moving/looking whilst in a menu.
+// Jack 16/03/2020 - Added ability to push the latern.
 
 using System;
 using UnityEngine;
@@ -53,7 +54,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         // ===== My variables ===== //
         // Saving game data
-        public FirstPersonControllerSaveData_Jack saveData = new FirstPersonControllerSaveData_Jack();
+        public PlayerSaveData_Jack saveData = new PlayerSaveData_Jack();
 
         // Input
         private const string horizontalAxis = "Horizontal";
@@ -81,15 +82,16 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private InputDevice inputDevice = InputManager.ActiveDevice; // InControl input
 
         // Health
-        public bool dead = false;
+        private bool dead = false;
 
         private Inventory_Jack inventoryScript;
         private Candle_Jack candleScript;
         private SaltPouring_Jack saltPouringScript;
         private Interaction_Jack interactionScript;
 
-        //Match Lighting Audio
-        private GameObject SoundManager;
+        // Lantern movement
+        private const float pushForce = 2.0f;
+        private const string lanternTag = "MoveableLantern";
 
         // Use this for initialization
         private void Awake()
@@ -163,15 +165,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
             }
         }
 
-
-        private void PlayLandingSound()
-        {
-            m_AudioSource.clip = m_LandSound;
-            m_AudioSource.Play();
-            m_NextStep = m_StepCycle + .5f;
-        }
-
-
         private void FixedUpdate()
         {
             if (!dead && !inMenu)
@@ -213,6 +206,13 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
                 m_MouseLook.UpdateCursorLock();
             }
+        }
+
+        private void PlayLandingSound()
+        {
+            m_AudioSource.clip = m_LandSound;
+            m_AudioSource.Play();
+            m_NextStep = m_StepCycle + .5f;
         }
 
         private void PlayJumpSound()
@@ -407,7 +407,17 @@ namespace UnityStandardAssets.Characters.FirstPerson
             {
                 return;
             }
-            body.AddForceAtPosition(m_CharacterController.velocity*0.1f, hit.point, ForceMode.Impulse);
+
+            if (hit.gameObject.CompareTag(lanternTag))
+            {
+                Vector3 pushDirection = new Vector3(hit.moveDirection.x, 0, hit.moveDirection.z);
+                pushDirection.Normalize();
+                body.velocity = pushDirection * pushForce;
+            }
+            else
+            {
+                body.AddForceAtPosition(m_CharacterController.velocity * 0.1f, hit.point, ForceMode.Impulse);
+            }
         }
 
         /// Returns usingController.
@@ -418,7 +428,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         // ===== Saving game data ===== //
         /// Loads the currently saved player data.
-        public void LoadSaveData(FirstPersonControllerSaveData_Jack loadData)
+        public void LoadSaveData(PlayerSaveData_Jack loadData)
         {
             transform.position = new Vector3(loadData.xPos, loadData.yPos, loadData.zPos);
             transform.localRotation = Quaternion.Euler(loadData.xRot, loadData.yRot, loadData.zRot);
@@ -430,7 +440,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         }
 
         /// Returns the data of the player that needs saving.
-        public FirstPersonControllerSaveData_Jack GetSaveData()
+        public PlayerSaveData_Jack GetSaveData()
         {
             saveData.xPos = transform.position.x;
             saveData.yPos = transform.position.y;
