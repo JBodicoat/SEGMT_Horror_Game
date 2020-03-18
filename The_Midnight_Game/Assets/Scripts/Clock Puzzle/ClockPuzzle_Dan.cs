@@ -7,10 +7,7 @@ public class ClockPuzzle_Dan : MonoBehaviour
 
     // private int gameTime;
     // private bool clockMove;
-    // private Animator clockPuzzle;
-
-
-    private bool isOpen = false;
+    public Animator anim;
 
     void Start()
     {
@@ -18,7 +15,7 @@ public class ClockPuzzle_Dan : MonoBehaviour
        // Invoke("ClockDoorMove", 3.0f);
 
 
-        //clockPuzzle = GetComponent<Animator>();
+        anim = GetComponent<Animator>();
 
         StartCoroutine(ClockSequence());
     }
@@ -33,10 +30,10 @@ public class ClockPuzzle_Dan : MonoBehaviour
 
     }
 
-    void ClockDoorMove()
-    {
-        GameObject.Find("BodyDoor").GetComponent<Animator>().SetBool("isOpen", true);
-    }
+    //void ClockDoorMove()
+    //{
+    //    GameObject.Find("BodyDoor").GetComponent<Animator>().SetBool("isOpen", true);
+    //}
 
     //void ToggleClockDoorMove()
     //{
@@ -48,9 +45,14 @@ public class ClockPuzzle_Dan : MonoBehaviour
 
     IEnumerator ClockSequence()
     {
-        Invoke("ClockDoorMove", 3.0f);
-        isOpen = false;
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(2);
+        anim.SetBool("isOpen", true);
+        yield return new WaitForSeconds(6);
+        anim.SetBool("isOpen", false);
+        yield return new WaitForSeconds(10);
+        anim.SetBool("isOpen", true);
+        yield return new WaitForSeconds(5);
+        anim.SetBool("isOpen", false);
     }
 }
 
