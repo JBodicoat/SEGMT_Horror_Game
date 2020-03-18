@@ -3,15 +3,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+
 public class PauseGame_Louie : MonoBehaviour
 {
     private bool isGamePaused;
     private Animator pauseAnim;
+
+    public GameObject OptionsMenu;
+
+    private VideoSettings_LouieWilliamson vSettings;
     void Start()
     {
         isGamePaused = false;
         pauseAnim = gameObject.GetComponent<Animator>();
         Cursor.visible = false;
+        vSettings = gameObject.GetComponent<VideoSettings_LouieWilliamson>();
     }
 
     void Update()
@@ -68,8 +75,16 @@ public class PauseGame_Louie : MonoBehaviour
     /// Launch the options menu (used by the pause menu button)
     /// </summary>
     public void Options()
+    {   
+        OptionsMenu.SetActive(true);
+    }
+
+    /// <summary>
+    /// Used by the back button in the options menu to go back to the airport
+    /// </summary>
+    public void backOptions()
     {
-        //insert launching options menu here
+        OptionsMenu.SetActive(false);
     }
 
     /// <summary>
@@ -85,6 +100,6 @@ public class PauseGame_Louie : MonoBehaviour
     /// </summary>
     public void QuitGame()
     {
-        //insert quitting game here
+        Application.Quit();
     }
 }

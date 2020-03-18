@@ -1,6 +1,7 @@
 ﻿// Jack 16/02/2020 - Abstracted salt system from FirstPersonController
 // Jack 23/02/2020 - Added interaction with books in Interact()
 // Morgan 03/03/2020 - added door interaction & tag
+// Louie 10/02/2020 - Added interaction with rabbit
 
 using System.Collections;
 using System.Collections.Generic;
@@ -34,6 +35,7 @@ public class Interaction_Jack : MonoBehaviour
     private const string doorTag = "Door";
     private const string alcoholPlacementTag = "Alcohol Placement";
     private const string pianoKeysTag = "Piano Keys";
+    private const string rabbitTag = "Rabbit";
 
     public KeyUIManager_Jack keyManagerScript;
 
@@ -109,6 +111,10 @@ public class Interaction_Jack : MonoBehaviour
             else if (hit.transform.CompareTag(doorTag))
             {
                 hit.transform.gameObject.GetComponent<DoorOpenClose_Dan>().DoorMechanism();
+            }
+            else if (hit.transform.CompareTag(rabbitTag))
+            {
+                hit.transform.gameObject.GetComponent<BunnyAI_Louie>().ChangeRabbitState(BunnyState.caught);
             }
         }
     }

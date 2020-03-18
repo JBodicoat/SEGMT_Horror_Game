@@ -148,10 +148,10 @@ public class MMController_Morgan : MonoBehaviour
         }
 
         //debugging penalties
-        if(Input.GetKeyDown(KeyCode.K))
-        {
-            EnrageMidnightMan();
-        }
+        //if (Input.GetKeyDown(KeyCode.K))
+        //{
+        //    EnrageMidnightMan();
+        //}
 
     }
 
