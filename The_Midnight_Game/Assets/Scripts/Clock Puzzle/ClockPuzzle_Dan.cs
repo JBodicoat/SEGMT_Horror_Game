@@ -5,20 +5,17 @@ using UnityEngine;
 public class ClockPuzzle_Dan : MonoBehaviour
 {
 
-    public int gameTime;
-    private Animator keyAnim;
+    private Animator ClockPuzzle;
 
-    private void Start()
-    {
-        GameObject gameTime = GameObject.Find("hoursGone");
+    void Start()
+    {        
+        StartCoroutine(ClockSequence());
     }
-
-    void Update()
+    
+    IEnumerator ClockSequence()
     {
-        if (gameTime != 0)
-        {
-            keyAnim.SetTrigger("Clock Puzzle Trigger");
-        }
+        yield return new WaitForSeconds(10);
+        ClockPuzzle.Play("Clock Puzzle");
     }
 }
 
