@@ -145,6 +145,9 @@ public class InputSettingsManager_Jack : MonoBehaviour
                                 case PlayerAction.Throw:
                                     playerScript.SetThrowControlType(button.Target);
                                     break;
+                                case PlayerAction.Interact:
+                                    playerScript.SetInteractControlType(button.Target);
+                                    break;
                                 default:
                                     break;
                             }
@@ -198,6 +201,9 @@ public class InputSettingsManager_Jack : MonoBehaviour
                                         playerScript.SetGrabKey(keyCode);
                                         break;
                                     case PlayerAction.Throw:
+                                        playerScript.SetThrowKey(keyCode);
+                                        break;
+                                    case PlayerAction.Interact:
                                         playerScript.SetThrowKey(keyCode);
                                         break;
                                     default:

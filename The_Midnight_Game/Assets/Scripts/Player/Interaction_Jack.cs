@@ -32,6 +32,10 @@ public class Interaction_Jack : MonoBehaviour
     private const string tabletSlotTag = "Tablet Slot";
     private const string bookTag = "Book";
     private const string doorTag = "Door";
+    private const string alcoholPlacementTag = "Alcohol Placement";
+    private const string pianoKeysTag = "Piano Keys";
+
+    public KeyUIManager_Jack keyManagerScript;
 
     // Start is called before the first frame update
     void Start()
@@ -44,6 +48,11 @@ public class Interaction_Jack : MonoBehaviour
         if(!characterController)
         {
             characterController = GetComponent<CharacterController>();
+        }
+
+        if(!keyManagerScript)
+        {
+            keyManagerScript = FindObjectOfType<KeyUIManager_Jack>();
         }
     }
 
@@ -84,10 +93,17 @@ public class Interaction_Jack : MonoBehaviour
             }
             else if (hit.transform.CompareTag(bookTag))
             {
-                Book_Jack bookScript = hit.transform.gameObject.GetComponent<Book_Jack>();
-                if (!bookScript.IsPulledOut())
+                hit.transform.gameObject.GetComponent<Book_Jack>().PullOutBook();
+            }
+            else if(hit.transform.CompareTag(alcoholPlacementTag))
+            {
+                hit.transform.gameObject.GetComponent<BottlePlacementManager_Jack>().Interact();                
+            }
+            else if(hit.transform.CompareTag(pianoKeysTag))
+            {
+                if(!keyManagerScript.WasClosed())
                 {
-                    bookScript.PullOutBook();
+                    keyManagerScript.Open();
                 }
             }
             else if (hit.transform.CompareTag(doorTag))

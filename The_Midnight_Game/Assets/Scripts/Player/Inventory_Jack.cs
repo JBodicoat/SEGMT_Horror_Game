@@ -9,7 +9,7 @@ public enum ItemType
     matches,
     salt,
     dolls,
-    alcohol,
+    bottles,
     item5,
     item6,
     item7,

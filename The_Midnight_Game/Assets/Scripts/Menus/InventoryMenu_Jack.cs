@@ -389,7 +389,7 @@ public class InventoryMenu_Jack : MonoBehaviour
                 dollsHighlight.enabled = false;
                 break;
 
-            case ItemType.alcohol:
+            case ItemType.bottles:
                 item4Highlight.enabled = false;
                 break;
 
@@ -470,7 +470,7 @@ public class InventoryMenu_Jack : MonoBehaviour
                 descriptionText.text = dollsDescription;
                 break;
 
-            case ItemType.alcohol:
+            case ItemType.bottles:
                 item4Highlight.enabled = true;
                 descriptionText.text = item4Description;
                 break;
@@ -555,14 +555,14 @@ public class InventoryMenu_Jack : MonoBehaviour
                 break;
 
             // All other items will only appear if their quantity is above 0.
-            case ItemType.alcohol:
+            case ItemType.bottles:
                 if(newQuantity > 0)
                 {
                     if(!item4Panel.activeSelf)
                     {
                         item4Panel.SetActive(true);
                         ++displayedItemsCount;
-                        itemsDisplayed[(ushort)ItemType.alcohol] = true;
+                        itemsDisplayed[(ushort)ItemType.bottles] = true;
                     }
                     
                     item4Quantity.text = newQuantity.ToString();
@@ -571,7 +571,7 @@ public class InventoryMenu_Jack : MonoBehaviour
                 {
                     item4Panel.SetActive(false);
                     --displayedItemsCount;
-                    itemsDisplayed[(ushort)ItemType.alcohol] = false;
+                    itemsDisplayed[(ushort)ItemType.bottles] = false;
                 }
                 break;
 
