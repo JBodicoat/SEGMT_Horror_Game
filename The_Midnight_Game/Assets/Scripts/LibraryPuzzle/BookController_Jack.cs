@@ -55,7 +55,7 @@ public class BookController_Jack : MonoBehaviour
             if(i == numOfBooks - 1)
             {
                 // Check order
-                if(pulledOutBooks[0] == BookType.Ghost && pulledOutBooks[1] == BookType.Mouse && pulledOutBooks[2] == BookType.Rabbit)
+                if(pulledOutBooks[0] == BookType.Circle && pulledOutBooks[1] == BookType.Dash && pulledOutBooks[2] == BookType.Cross)
                 {
                     // Open door
                     libraryDoorAnimator.enabled = true;

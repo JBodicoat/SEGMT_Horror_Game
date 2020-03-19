@@ -1,4 +1,5 @@
 ﻿// Jack : 15/02/2020 - Created script
+// Jack 19/03/2020 - Removed jump
 
 using System.Collections;
 using System.Collections.Generic;
@@ -10,7 +11,6 @@ using UnityStandardAssets.Characters.FirstPerson;
 /// Types of possible actions the player can do.
 public enum PlayerAction
 {
-    Jump,
     PourSalt,
     LightCandle,
     Interact,
@@ -26,14 +26,13 @@ public class InputSettingsManager_Jack : MonoBehaviour
 
     public GameObject inputSettingsMenu;
 
-    public Image jumpSelect;
     public Image saltSelect;
     public Image candleSelect;
     public Image interactSelect;
     public Image grabSelect;
     public Image throwSelect;
 
-    private PlayerAction selected = PlayerAction.Jump;
+    private PlayerAction selected = 0;
 
     private InputDevice inputDevice;
    
@@ -57,42 +56,36 @@ public class InputSettingsManager_Jack : MonoBehaviour
     void Start()
     {
         // Set default controller bindings
-        controllerBindings[0].action = PlayerAction.Jump;
-        controllerBindings[0].controlType = InputControlType.Action1;
+        controllerBindings[0].action = PlayerAction.PourSalt;
+        controllerBindings[0].controlType = InputControlType.Action2;
 
-        controllerBindings[1].action = PlayerAction.PourSalt;
-        controllerBindings[1].controlType = InputControlType.Action2;
+        controllerBindings[1].action = PlayerAction.LightCandle;
+        controllerBindings[1].controlType = InputControlType.Action4;
 
-        controllerBindings[2].action = PlayerAction.LightCandle;
-        controllerBindings[2].controlType = InputControlType.Action4;
+        controllerBindings[2].action = PlayerAction.Interact;
+        controllerBindings[2].controlType = InputControlType.Action3;
 
-        controllerBindings[3].action = PlayerAction.Interact;
-        controllerBindings[3].controlType = InputControlType.Action3;
+        controllerBindings[3].action = PlayerAction.GrabDrop;
+        controllerBindings[3].controlType = InputControlType.LeftTrigger;
 
-        controllerBindings[4].action = PlayerAction.GrabDrop;
-        controllerBindings[4].controlType = InputControlType.LeftTrigger;
-
-        controllerBindings[5].action = PlayerAction.Throw;
-        controllerBindings[5].controlType = InputControlType.RightTrigger;
+        controllerBindings[4].action = PlayerAction.Throw;
+        controllerBindings[4].controlType = InputControlType.RightTrigger;
 
         // Set default keyboard + mouse bindings
-        keyBindings[0].action = PlayerAction.Jump;
-        keyBindings[0].code = KeyCode.Space;
+        keyBindings[0].action = PlayerAction.PourSalt;
+        keyBindings[0].code = KeyCode.Q;
 
-        keyBindings[1].action = PlayerAction.PourSalt;
-        keyBindings[1].code = KeyCode.Q;
+        keyBindings[1].action = PlayerAction.LightCandle;
+        keyBindings[1].code = KeyCode.F;
 
-        keyBindings[2].action = PlayerAction.LightCandle;
-        keyBindings[2].code = KeyCode.F;
+        keyBindings[2].action = PlayerAction.Interact;
+        keyBindings[2].code = KeyCode.E;
 
-        keyBindings[3].action = PlayerAction.Interact;
-        keyBindings[3].code = KeyCode.E;
+        keyBindings[3].action = PlayerAction.GrabDrop;
+        keyBindings[3].code = KeyCode.Mouse0;
 
-        keyBindings[4].action = PlayerAction.GrabDrop;
-        keyBindings[4].code = KeyCode.Mouse0;
-
-        keyBindings[5].action = PlayerAction.Throw;
-        keyBindings[5].code = KeyCode.Mouse1;
+        keyBindings[4].action = PlayerAction.Throw;
+        keyBindings[4].code = KeyCode.Mouse1;
 
         inputDevice = InputManager.ActiveDevice;
     }
@@ -130,9 +123,6 @@ public class InputSettingsManager_Jack : MonoBehaviour
                         {
                             switch (selected)
                             {
-                                case PlayerAction.Jump:
-                                    playerScript.SetJumpControlType(button.Target);
-                                    break;
                                 case PlayerAction.PourSalt:
                                     playerScript.SetSaltControlType(button.Target);
                                     break;
@@ -188,9 +178,6 @@ public class InputSettingsManager_Jack : MonoBehaviour
                             {
                                 switch (selected)
                                 {
-                                    case PlayerAction.Jump:
-                                        playerScript.SetJumpKey(keyCode);
-                                        break;
                                     case PlayerAction.PourSalt:
                                         playerScript.SetSaltKey(keyCode);
                                         break;
@@ -299,14 +286,8 @@ public class InputSettingsManager_Jack : MonoBehaviour
     {
         switch (selected)
         {
-            case PlayerAction.Jump:
-                throwSelect.enabled = false;
-                jumpSelect.enabled = true;
-                saltSelect.enabled = false;
-                break;
-
             case PlayerAction.PourSalt:
-                jumpSelect.enabled = false;
+                throwSelect.enabled = false;
                 saltSelect.enabled = true;
                 candleSelect.enabled = false;
                 break;
@@ -332,7 +313,7 @@ public class InputSettingsManager_Jack : MonoBehaviour
             case PlayerAction.Throw:
                 grabSelect.enabled = false;
                 throwSelect.enabled = true;
-                jumpSelect.enabled = false;
+                saltSelect.enabled = false;
                 break;
         }
     }

@@ -1,4 +1,5 @@
 ﻿// Jack 23/02/2020 Script created.
+// Jack 19/03/2020 Renamed eums to match puzzle hints.
 
 using System.Collections;
 using System.Collections.Generic;
@@ -7,9 +8,9 @@ using UnityEngine;
 public enum BookType
 {
     None,
-    Ghost,
-    Rabbit,
-    Mouse
+    Circle,
+    Dash,
+    Cross
 }
 
 /// <summary>

@@ -82,7 +82,7 @@ public class MMController_Morgan : MonoBehaviour
             float xDistance = patrolPoints[targetNodeIndex].transform.position.x - gameObject.transform.position.x;
             float zDistance = patrolPoints[targetNodeIndex].transform.position.z - gameObject.transform.position.z;
             float SqrDistanceFromPlayerToNode = xDistance * xDistance + zDistance * zDistance;
-            Debug.Log(SqrDistanceFromPlayerToNode);
+
             if (SqrDistanceFromPlayerToNode < 2)
             {
                 int newTarget;

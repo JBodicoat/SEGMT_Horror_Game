@@ -2,6 +2,7 @@
 // Jack 23/02/2020 - Added interaction with books in Interact()
 // Morgan 03/03/2020 - added door interaction & tag
 // Louie 10/02/2020 - Added interaction with rabbit
+// Jack 19/03/2020 increased throw force
 
 using System.Collections;
 using System.Collections.Generic;
@@ -29,7 +30,7 @@ public class Interaction_Jack : MonoBehaviour
     private readonly Vector3 zeroVector3 = new Vector3(0, 0, 0);
 
     // Throwing objects
-    private const float throwForce = 15f;
+    private const float throwForce = 20f;
 
     // Interactable objects
     private readonly LayerMask interactableObjectsLayer = 1 << 9;

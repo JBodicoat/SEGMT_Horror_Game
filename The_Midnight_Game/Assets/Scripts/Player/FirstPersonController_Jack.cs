@@ -8,6 +8,7 @@
 //Louie : 16/02/2020 - Added Match Light SFX where the candle is relit and candle blow SFX when its blown out.
 // Jack 06/03/2020 - Added code that can be used to prevent player from moving/looking whilst in a menu.
 // Jack 16/03/2020 - Added ability to push the latern.
+// Jack 19/03/2020 - Fully removed jumping.
 
 using System;
 using UnityEngine;
@@ -27,8 +28,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
     {
         // Unity's variables
         [SerializeField] private float m_WalkSpeed = 0;
-        [SerializeField] private float m_JumpSpeed = 0;
-        [SerializeField] private float m_StickToGroundForce = 0;
         [SerializeField] private float m_GravityMultiplier = 0;
         [SerializeField] private MouseLook_Jack m_MouseLook = null;
         [SerializeField] private bool m_UseHeadBob = false;
@@ -36,11 +35,9 @@ namespace UnityStandardAssets.Characters.FirstPerson
         [SerializeField] private LerpControlledBob m_JumpBob = new LerpControlledBob();
         [SerializeField] private float m_StepInterval = 0;
         [SerializeField] private AudioClip[] m_FootstepSounds = null;    // an array of footstep sounds that will be randomly selected from.
-        [SerializeField] private AudioClip m_JumpSound = null;           // the sound played when character leaves the ground.
         [SerializeField] private AudioClip m_LandSound = null;           // the sound played when character touches back on ground.
 
         private Camera m_Camera;
-        private bool m_Jump;
         private Vector2 m_Input;
         private Vector3 m_MoveDir = Vector3.zero;
         private CharacterController m_CharacterController;
@@ -49,7 +46,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private Vector3 m_OriginalCameraPosition;
         private float m_StepCycle;
         private float m_NextStep;
-        private bool m_Jumping;
         private AudioSource m_AudioSource;
 
         // ===== My variables ===== //
@@ -62,14 +58,12 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         private bool inMenu = false;
 
-        private InputControlType jumpControlType = InputControlType.Action1;
         private InputControlType candleControlType = InputControlType.Action2;
         private InputControlType interactControlType = InputControlType.Action3;
         private InputControlType saltControlType = InputControlType.Action4;
         private InputControlType grabControlType = InputControlType.LeftTrigger;
         private InputControlType throwControlType = InputControlType.RightTrigger;
 
-        private KeyCode jumpKey = KeyCode.Space;
         private KeyCode saltKey = KeyCode.Q;
         private KeyCode candleKey = KeyCode.F;
         private KeyCode interactKey = KeyCode.E;
@@ -103,7 +97,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
             m_HeadBob.Setup(m_Camera, m_StepInterval);
             m_StepCycle = 0f;
             m_NextStep = m_StepCycle/2f;
-            m_Jumping = false;
             m_AudioSource = GetComponent<AudioSource>();
 			m_MouseLook.Init(transform , m_Camera.transform);
 
@@ -136,27 +129,13 @@ namespace UnityStandardAssets.Characters.FirstPerson
             {
                 GetInput();
 
-                // the jump state needs to read here to make sure it is not missed
-                if (!m_Jump)
-                {
-                    if(usingController)
-                    {
-                       // m_Jump = inputDevice.GetControl(jumpControlType).WasPressed;
-                    }
-                    else
-                    {
-                        //m_Jump = Input.GetKeyDown(jumpKey);
-                    }
-                }
-
                 if (!m_PreviouslyGrounded && m_CharacterController.isGrounded)
                 {
                     StartCoroutine(m_JumpBob.DoBobCycle());
                     PlayLandingSound();
                     m_MoveDir.y = 0f;
-                    m_Jumping = false;
                 }
-                if (!m_CharacterController.isGrounded && !m_Jumping && m_PreviouslyGrounded)
+                if (!m_CharacterController.isGrounded && m_PreviouslyGrounded)
                 {
                     m_MoveDir.y = 0f;
                 }
@@ -183,19 +162,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 m_MoveDir.z = desiredMove.z * m_WalkSpeed;
 
 
-                if (m_CharacterController.isGrounded)
-                {
-                    m_MoveDir.y = -m_StickToGroundForce;
-
-                    if (m_Jump)
-                    {
-                        m_MoveDir.y = m_JumpSpeed;
-                        PlayJumpSound();
-                        m_Jump = false;
-                        m_Jumping = true;
-                    }
-                }
-                else
+                if (!m_CharacterController.isGrounded)
                 {
                     m_MoveDir += Physics.gravity * m_GravityMultiplier * Time.fixedDeltaTime;
                 }
@@ -213,12 +180,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
             m_AudioSource.clip = m_LandSound;
             m_AudioSource.Play();
             m_NextStep = m_StepCycle + .5f;
-        }
-
-        private void PlayJumpSound()
-        {
-            m_AudioSource.clip = m_JumpSound;
-            m_AudioSource.Play();
         }
 
         private void ProgressStepCycle()
@@ -459,12 +420,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
         }
 
         // ===== Input Settings ===== //
-        /// Sets the jump InputControlType.
-        public void SetJumpControlType(InputControlType newJumpControlType)
-        {
-            jumpControlType = newJumpControlType;
-        }
-
         public void SetInteractControlType(InputControlType newInteractControlType)
         {
             interactControlType = newInteractControlType;
@@ -495,14 +450,9 @@ namespace UnityStandardAssets.Characters.FirstPerson
         }
 
         /// <summary>
-        /// Sets the jump KeyCode.
+        /// Sets the interact KeyCode.
         /// </summary>
-        /// <param name="newJumpKey"></param>
-        public void SetJumpKey(KeyCode newJumpKey)
-        {
-            jumpKey = newJumpKey;
-        }
-
+        /// <param name="newInteractKey"></param>
         public void SetInteractKey(KeyCode newInteractKey)
         {
             interactKey = newInteractKey;
