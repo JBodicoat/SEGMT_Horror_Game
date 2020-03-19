@@ -141,11 +141,11 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 {
                     if(usingController)
                     {
-                        m_Jump = inputDevice.GetControl(jumpControlType).WasPressed;
+                       // m_Jump = inputDevice.GetControl(jumpControlType).WasPressed;
                     }
                     else
                     {
-                        m_Jump = Input.GetKeyDown(jumpKey);
+                        //m_Jump = Input.GetKeyDown(jumpKey);
                     }
                 }
 
