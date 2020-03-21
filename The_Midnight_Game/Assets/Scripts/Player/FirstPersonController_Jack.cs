@@ -8,7 +8,7 @@
 //Louie : 16/02/2020 - Added Match Light SFX where the candle is relit and candle blow SFX when its blown out.
 // Jack 06/03/2020 - Added code that can be used to prevent player from moving/looking whilst in a menu.
 // Jack 16/03/2020 - Added ability to push the latern.
-// Jack 19/03/2020 - Fully removed jumping.
+// Jack 19/03/2020 - Removed jump.
 
 using System;
 using UnityEngine;
@@ -20,8 +20,8 @@ using System.Collections.Generic;
 
 namespace UnityStandardAssets.Characters.FirstPerson
 {
-    [RequireComponent(typeof (CharacterController))]
-    [RequireComponent(typeof (AudioSource))]
+    [RequireComponent(typeof(CharacterController))]
+    [RequireComponent(typeof(AudioSource))]
     [System.Serializable]
     /// Controls players movement, inventory system & candle.
     public class FirstPersonController_Jack : MonoBehaviour
@@ -35,6 +35,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         [SerializeField] private LerpControlledBob m_JumpBob = new LerpControlledBob();
         [SerializeField] private float m_StepInterval = 0;
         [SerializeField] private AudioClip[] m_FootstepSounds = null;    // an array of footstep sounds that will be randomly selected from.
+        [SerializeField] private AudioClip m_JumpSound = null;           // the sound played when character leaves the ground.
         [SerializeField] private AudioClip m_LandSound = null;           // the sound played when character touches back on ground.
 
         private Camera m_Camera;
@@ -96,9 +97,9 @@ namespace UnityStandardAssets.Characters.FirstPerson
             m_OriginalCameraPosition = m_Camera.transform.localPosition;
             m_HeadBob.Setup(m_Camera, m_StepInterval);
             m_StepCycle = 0f;
-            m_NextStep = m_StepCycle/2f;
+            m_NextStep = m_StepCycle / 2f;
             m_AudioSource = GetComponent<AudioSource>();
-			m_MouseLook.Init(transform , m_Camera.transform);
+            m_MouseLook.Init(transform, m_Camera.transform);
 
             // ===== My Setup ===== //
 
@@ -115,7 +116,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             saveData.inSaltCirlce = saltPouringScript.IsInSaltCircle();
 
             // Movement
-            if(!rigidBody )
+            if (!rigidBody)
             {
                 rigidBody = GetComponent<Rigidbody>();
             }
@@ -123,7 +124,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
 
         // Update is called once per frame
-        private void Update() 
+        private void Update()
         {
             if (!dead && !inMenu)
             {
@@ -345,7 +346,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         private void RotateView()
         {
-            if(usingController)
+            if (usingController)
             {
                 m_MouseLook.LookRotation(transform, m_Camera.transform, inputDevice);
             }
@@ -420,6 +421,10 @@ namespace UnityStandardAssets.Characters.FirstPerson
         }
 
         // ===== Input Settings ===== //
+        /// <summary>
+        /// Sets the interact InputControlType.
+        /// </summary>
+        /// <param name="newInteractControlType"></param>
         public void SetInteractControlType(InputControlType newInteractControlType)
         {
             interactControlType = newInteractControlType;

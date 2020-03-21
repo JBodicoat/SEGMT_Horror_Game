@@ -9,7 +9,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 public class ChangeScene_Morgan : MonoBehaviour
 {
-    public void button()
+    public void Button()
     {
         SceneManager.LoadScene("Pre-Beta");
     }
