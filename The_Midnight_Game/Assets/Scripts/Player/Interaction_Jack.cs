@@ -3,6 +3,7 @@
 // Morgan 03/03/2020 - added door interaction & tag
 // Louie 10/02/2020 - Added interaction with rabbit
 // Jack 19/03/2020 increased throw force
+// Jack 23/03/2020 Started intergrating glow shader.
 
 using System.Collections;
 using System.Collections.Generic;
@@ -17,8 +18,11 @@ public class Interaction_Jack : MonoBehaviour
     public CharacterController characterController;
 
     // Picking up objects
-    private readonly LayerMask moveableObjectsLayer = 1 << 8;
-    private const ushort interactDistance = 10;
+    private int defaultLayer;
+    private readonly LayerMask moveableObjectsLayerMask = 1 << 8;
+    private int moveableObjectsLayer;
+    private const ushort interactDistance = 5;
+    private bool moveHitSucceeded = false;
     private GameObject heldObject = null;
     private Collider heldObjectCollider = null;
     private Rigidbody heldObjectRigidbody = null;
@@ -34,8 +38,11 @@ public class Interaction_Jack : MonoBehaviour
 
     // Interactable objects
     private RaycastHit hit;
-    private bool hitSucceeded = false;
-    private readonly LayerMask interactableObjectsLayer = 1 << 9;
+    private OnHoverGlow_Dan lastHitGlowScript = null;
+    private bool interactionHitSucceeded = false;
+    private readonly LayerMask interactableObjectsLayerMask = 1 << 9;
+    private int interactableObjectsLayer;
+    private LayerMask raycastFilterLayerMask;
 
     private const string pickupTag = "Pickup";
     private const string tabletSlotTag = "Tablet Slot";
@@ -65,19 +72,44 @@ public class Interaction_Jack : MonoBehaviour
         {
             keyManagerScript = FindObjectOfType<KeyUIManager_Jack>();
         }
+
+        raycastFilterLayerMask = moveableObjectsLayerMask | interactableObjectsLayerMask;
+
+        defaultLayer = LayerMask.NameToLayer("Default");
+        moveableObjectsLayer = LayerMask.NameToLayer("Moveable Object");
+        interactableObjectsLayer = LayerMask.NameToLayer("Interactable Object");
     }
 
     private void Update()
     {
-        if(Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out hit, interactDistance, interactableObjectsLayer))
+        if(Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out hit, interactDistance, raycastFilterLayerMask))
         {
-            hitSucceeded = true;
+            if (hit.collider.gameObject.layer == interactableObjectsLayer)
+            {
+                interactionHitSucceeded = true;
+            }
+            else
+            {
+                moveHitSucceeded = true;
+            }
 
+            if (lastHitGlowScript)
+            {
+                lastHitGlowScript.StopGlow();
+            }
 
+            lastHitGlowScript = hit.transform.gameObject.GetComponent<OnHoverGlow_Dan>();
+            lastHitGlowScript.Glow();
         }
         else
         {
-            hitSucceeded = false;
+            interactionHitSucceeded = false;
+            moveHitSucceeded = false;
+
+            if (lastHitGlowScript)
+            {
+                lastHitGlowScript.StopGlow();
+            }
         }
     }
 
@@ -110,7 +142,7 @@ public class Interaction_Jack : MonoBehaviour
     /// it will be activated.
     public void Interact()
     {
-        if (hitSucceeded)
+        if (interactionHitSucceeded)
         {
             if(hit.transform.CompareTag(pickupTag))
             {
@@ -156,10 +188,11 @@ public class Interaction_Jack : MonoBehaviour
     /// object that can be held it will be picked up.
     public void PickupObject()
     {
-        Debug.DrawRay(playerCamera.transform.position, playerCamera.transform.forward * interactDistance, Color.red, 2f);
-        if (Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out RaycastHit hit, interactDistance, moveableObjectsLayer))
+        if (moveHitSucceeded)
         {
             heldObject = hit.transform.gameObject;
+
+            heldObject.layer = defaultLayer;
 
             heldObjectCollider = heldObject.GetComponent<Collider>();
             Physics.IgnoreCollision(heldObjectCollider, characterController);
@@ -174,6 +207,8 @@ public class Interaction_Jack : MonoBehaviour
     /// Drops the held object if there is one.
     public void DropObject()
     {
+        heldObject.layer = moveableObjectsLayer;
+
         heldObjectRigidbody.constraints = heldObjectConstraints;
         heldObjectRigidbody.useGravity = true;
 
