@@ -2,6 +2,7 @@
 // Jack 13/02/2020 - Added saving of tablet puzzle, player's rotation & candle
 // Jack 23/03/2020 - Added saving of piano puzzle, library puzzle, attic puzzle, valve puzzle, burning puzzle & lantern puzzle.
 //                   Removed door from stone tablets puzzle.
+//                   Added saving for the Midnight Man.
 
 using UnityEngine;
 using System.Collections;
@@ -18,6 +19,9 @@ public class LevelDataManager_Jack : MonoBehaviour
 
     // Player Data
     public FirstPersonController_Jack playerScript;
+
+    // Midnight Man Data
+    public MMController_Morgan mmControllerScript;
 
     // Tablet Puzzle Data
     public GameObject tablet1;
@@ -92,6 +96,10 @@ public class LevelDataManager_Jack : MonoBehaviour
             playerScript = FindObjectOfType<FirstPersonController_Jack>();
             playerScript.LoadSaveData(LevelSaveData_Jack.current.playerSaveData);
 
+            // Midnight Man Data
+            mmControllerScript = FindObjectOfType<MMController_Morgan>();
+            mmControllerScript.LoadSaveData(LevelSaveData_Jack.current.mmSaveData);
+
             // ===== Tablet Puzzle Data ===== //
             // Tablet Data
             tablet1.transform.position = new Vector3(LevelSaveData_Jack.current.tablet1xPos,
@@ -139,20 +147,20 @@ public class LevelDataManager_Jack : MonoBehaviour
 
             if(LevelSaveData_Jack.current.libraryPuzzleSolved)
             {
+                book1Script.SetPulledOut(true);
                 book1Mesh.transform.localPosition = new Vector3(book1Mesh.transform.localPosition.x, 
                                                             book1Mesh.transform.localPosition.y, 
                                                             LevelSaveData_Jack.current.book1LocalZPos);
-                book1Script.SetPulledOut(true);
 
+                book2Script.SetPulledOut(true);
                 book2Mesh.transform.localPosition = new Vector3(book2Mesh.transform.localPosition.x, 
                                                             book2Mesh.transform.localPosition.y,
                                                             LevelSaveData_Jack.current.book2LocalZPos);
-                book2Script.SetPulledOut(true);
 
+                book3Script.SetPulledOut(true);
                 book3Mesh.transform.localPosition = new Vector3(book3Mesh.transform.localPosition.x, 
                                                             book3Mesh.transform.localPosition.y, 
                                                             LevelSaveData_Jack.current.book3LocalZPos);
-                book3Script.SetPulledOut(true);
             }
 
             // ===== Attic Puzzle Data ===== //
@@ -249,6 +257,9 @@ public class LevelDataManager_Jack : MonoBehaviour
 
         // Player Data
         LevelSaveData_Jack.current.playerSaveData = playerScript.GetSaveData();
+
+        // Midnight Man Data
+        LevelSaveData_Jack.current.mmSaveData = mmControllerScript.GetSaveData();
 
         // ===== Tablet Puzzle Data ===== //
         // Tablet Data
@@ -347,19 +358,34 @@ public class LevelDataManager_Jack : MonoBehaviour
         LevelSaveData_Jack.current.valve5LightOn = valve5Script.IsLightOn();
 
         // ===== Burning Puzzle Data  ===== //
-        LevelSaveData_Jack.current.woodenPanelDestroyed = woodenPanel;
 
-        LevelSaveData_Jack.current.bottlesPlaced = bottlePlacementManager.GetNumPlacedBottles();
+        if (!woodenPanel)
+        {
+            LevelSaveData_Jack.current.woodenPanelDestroyed = true;
+        }
+        else
+        {
+            LevelSaveData_Jack.current.bottlesPlaced = bottlePlacementManager.GetNumPlacedBottles();
 
-        LevelSaveData_Jack.current.bottle1PickedUp = bottle1;
-        LevelSaveData_Jack.current.bottle2PickedUp = bottle2;
-        LevelSaveData_Jack.current.bottle3PickedUp = bottle3;
-        LevelSaveData_Jack.current.bottle4PickedUp = bottle4;
-        LevelSaveData_Jack.current.bottle5PickedUp = bottle5;
-        LevelSaveData_Jack.current.bottle6PickedUp = bottle6;
+            if (bottlePlacementManager.IsBurning())
+            {
+                LevelSaveData_Jack.current.woodenPanelDestroyed = true;
+            }
+            else
+            {
+                LevelSaveData_Jack.current.woodenPanelDestroyed = false;
+            }
+        }
+
+        LevelSaveData_Jack.current.bottle1PickedUp = !bottle1;
+        LevelSaveData_Jack.current.bottle2PickedUp = !bottle2;
+        LevelSaveData_Jack.current.bottle3PickedUp = !bottle3;
+        LevelSaveData_Jack.current.bottle4PickedUp = !bottle4;
+        LevelSaveData_Jack.current.bottle5PickedUp = !bottle5;
+        LevelSaveData_Jack.current.bottle6PickedUp = !bottle6;
 
         // ===== Lantern Puzzle Data ===== //
-        LevelSaveData_Jack.current.lanternPuzzleSolved = lanternSlotScript;
+        LevelSaveData_Jack.current.lanternPuzzleSolved = !lanternSlotScript;
 
         LevelSaveData_Jack.current.lanternXPos = lantern.transform.position.x;
         LevelSaveData_Jack.current.lanternZPos = lantern.transform.position.z;

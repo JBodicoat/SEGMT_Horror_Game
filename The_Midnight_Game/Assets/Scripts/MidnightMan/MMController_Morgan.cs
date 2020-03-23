@@ -6,46 +6,52 @@
 //                   Fixed issue where MM would get stuck at one node.
 // Jack : 23/02 Fixed loop sorting nodes based on distance by initializing i to 0 instead of 1.
 //              Implemented MM speed being based on distance to player.
-///
-/// This is the AI for the Midnight Man
-/// 
-/// 
+// Morgan : ? Implemented enraged mechanic.
+// Jack 23/03/2020 Optimized enraged mechanic, speed changes and isAtTarget check.
+//                 Cleaned up script - comments, naming, spacing etc.
+//                 Added saving support.
 
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
+/// <summary>
+/// This is the AI for the Midnight Man
+/// </summary>
 [System.Serializable]
 public class MMController_Morgan : MonoBehaviour
 {
-    public MMTargeting_Morgan targetScript;
+    // Saving game data
+    public MMSaveData_Jack mmSaveData = new MMSaveData_Jack();
 
+    public MMTargeting_Morgan mmTargetingScript;
     public NavMeshAgent agent;
-    //player target
-    public Transform target;
+
+    public Transform playerTransform;
+    
     //places MM will nav to
     public Transform[] patrolPoints;
     private int targetNodeIndex;
-    //change target
     internal bool isAtTarget = false;
-    
-    //check correct node
-
 
     //node data disection
     private float[] sqrDistanceFromNodeToTarget;
-    private float minValue;
-    private float maxValue;
-    private int maxValueIndex;
 
     //speed smoothing
-    private int baseSpeed = 2;
+    const float maxSpeed = 2f;
+    const float minSpeed = 0.8f;
+
+    const float maxDist = 400.0f;
+    const float minDist = 100.0f;
+
+    private const float enragedSpeedMultiplier = 2.0f;
+    private const float enragedSpeed = maxSpeed * enragedSpeedMultiplier;
+
     private float speed;
 
     //enrage logic
     private bool isEnraged = false;
-    private bool isAdjustedForEnrage = false;
     private const int standardEnrageTime = 5;
     private float currentEnrageTime = 0;
     private bool isOrderingNodes = false;
@@ -53,7 +59,7 @@ public class MMController_Morgan : MonoBehaviour
     private float tempPatrolDist;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         if (!agent)
         {
@@ -62,19 +68,19 @@ public class MMController_Morgan : MonoBehaviour
         //random patrol target
         targetNodeIndex = Random.Range(0, patrolPoints.Length);
         sqrDistanceFromNodeToTarget = new float[patrolPoints.Length];
-        speed = baseSpeed;
+        speed = enragedSpeed;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (!targetScript.isSeen)
+        if (!mmTargetingScript.isSeen)
         {
             agent.SetDestination(patrolPoints[targetNodeIndex].position);
         }
         else
         {
-            agent.SetDestination(target.position);
+            agent.SetDestination(playerTransform.position);
         }
         
         if (isAtTarget)
@@ -88,52 +94,17 @@ public class MMController_Morgan : MonoBehaviour
                 int newTarget;
                 do
                 {
-
                     newTarget = Random.Range(0, patrolPoints.Length);
                 } while (newTarget == targetNodeIndex);
                 targetNodeIndex = newTarget;
-                isAtTarget = false;
             }
-            else { isAtTarget = false; }
+
+            isAtTarget = false;
         }
-
-        /// save these comments, Im working on making the MM slow down as he gets closer
-        //speed = (Mathf.Sqrt(targetScript.sqrDistanceToPlayer));
-        //speed = ((defaultSpeed * targetScript.sqrDistanceToPlayer)/targetScript.sqrDistanceToPlayer);
-
-        // At minDist and lower MM speed = minSpeed. At maxDist and higher MM speed = maxSpeed
-        float maxSpeed = 2f;
-        float minSpeed = 0.8f;
-
-        float maxDist = 400f;
-        float minDist = 100f;
-
-        if(targetScript.sqrDistanceToPlayer > maxDist)
-        {
-            speed = maxSpeed;
-        }
-        else if(targetScript.sqrDistanceToPlayer < minDist)
-        {
-            speed = minSpeed;
-        }
-        else
-        {
-            float t = (targetScript.sqrDistanceToPlayer - minDist) / (maxDist - minDist);
-            speed = minSpeed * (1 - t) + maxSpeed * t;
-        }
-
-        agent.speed = speed;
-
 
         //penalties logic
-        if (isEnraged && !isAdjustedForEnrage)
-        {
-            baseSpeed *= 2;
-            isAdjustedForEnrage = true;
-        }
         if(isEnraged)
         {
-            agent.speed = baseSpeed;
             currentEnrageTime += Time.deltaTime;
             if (currentEnrageTime > standardEnrageTime)
             {
@@ -141,34 +112,42 @@ public class MMController_Morgan : MonoBehaviour
                 currentEnrageTime = 0;
             }
         }
-        if (!isEnraged && isAdjustedForEnrage)
+        else
         {
-            baseSpeed /= 2;
-            isAdjustedForEnrage = false;
+            // At minDist and lower MM speed = minSpeed. At maxDist and higher MM speed = maxSpeed
+            if (mmTargetingScript.sqrDistanceToPlayer > maxDist)
+            {
+                speed = maxSpeed;
+            }
+            else if (mmTargetingScript.sqrDistanceToPlayer < minDist)
+            {
+                speed = minSpeed;
+            }
+            else
+            {
+                float t = (mmTargetingScript.sqrDistanceToPlayer - minDist) / (maxDist - minDist);
+                speed = minSpeed * (1 - t) + maxSpeed * t;
+            }
+
+            agent.speed = speed;
         }
-
-        //debugging penalties
-        //if (Input.GetKeyDown(KeyCode.K))
-        //{
-        //    EnrageMidnightMan();
-        //}
-
     }
 
-    //use this function to set the target to the closest node to the player
-
+    /// <summary>
+    /// Use this function to set the target to the closest node to the player.
+    /// </summary>
     public void TargetLost()
     {
         //get all values
         for (int i = 0; i < patrolPoints.Length; i++)
         {
-            float xDistance = patrolPoints[i].transform.position.x - targetScript.player.transform.position.x;
-            float zDistance = patrolPoints[i].transform.position.z - targetScript.player.transform.position.z;
+            float xDistance = patrolPoints[i].transform.position.x - mmTargetingScript.player.transform.position.x;
+            float zDistance = patrolPoints[i].transform.position.z - mmTargetingScript.player.transform.position.z;
             sqrDistanceFromNodeToTarget[i] = xDistance * xDistance + zDistance * zDistance;
         }
 
         //store min value
-        minValue = sqrDistanceFromNodeToTarget[0];
+        float minValue = sqrDistanceFromNodeToTarget[0];
         targetNodeIndex = 0;
 
         //find min value in array
@@ -183,21 +162,24 @@ public class MMController_Morgan : MonoBehaviour
         }
     }
 
-    // use this function to teleport the MM away after the candle is blown out
-
+    /// <summary>
+    /// Use this function to teleport the MM away after the candle is blown out.
+    /// </summary>
     public void TeleportMidnightManAway()
     {
         //get all values
         for (int i = 0; i < patrolPoints.Length; i++)
         {
-            float xDistance = patrolPoints[i].transform.position.x - targetScript.player.transform.position.x;
-            float zDistance = patrolPoints[i].transform.position.z - targetScript.player.transform.position.z;
+            float xDistance = patrolPoints[i].transform.position.x - mmTargetingScript.player.transform.position.x;
+            float zDistance = patrolPoints[i].transform.position.z - mmTargetingScript.player.transform.position.z;
             sqrDistanceFromNodeToTarget[i] = xDistance * xDistance + zDistance * zDistance;
         }
 
         //store max value
-        maxValue = sqrDistanceFromNodeToTarget[0];
+        float maxValue = sqrDistanceFromNodeToTarget[0];
+        int maxValueIndex = 0;
         targetNodeIndex = 0;
+
         //find max value in array
         for (ushort i = 1; i < sqrDistanceFromNodeToTarget.Length; i++)
         {
@@ -211,14 +193,16 @@ public class MMController_Morgan : MonoBehaviour
         agent.Warp(patrolPoints[maxValueIndex].transform.position);
     }
 
-    //use this function to teleport the MM close to the player and trigger a chase sequence
+    /// <summary>
+    /// Use this function to teleport the MM close to the player and trigger a chase sequence.
+    /// </summary>
     public void EnrageMidnightMan()
     {
         //get all values
         for (int i = 0; i < patrolPoints.Length; i++)
         {
-            float xDistance = patrolPoints[i].transform.position.x - targetScript.player.transform.position.x;
-            float zDistance = patrolPoints[i].transform.position.z - targetScript.player.transform.position.z;
+            float xDistance = patrolPoints[i].transform.position.x - mmTargetingScript.player.transform.position.x;
+            float zDistance = patrolPoints[i].transform.position.z - mmTargetingScript.player.transform.position.z;
             sqrDistanceFromNodeToTarget[i] = xDistance * xDistance + zDistance * zDistance;
         }
 
@@ -249,10 +233,56 @@ public class MMController_Morgan : MonoBehaviour
         agent.Warp(patrolPoints[0].transform.position);
         targetNodeIndex = 0;
 
+        speed = enragedSpeed;
+        agent.speed = speed;
+
         //function reused to make MM go to where the player is
         isEnraged = true;
     }
+
+    /// <summary>
+    /// Returns all the 1ave data needed for the Midnight Man.
+    /// </summary>
+    /// <returns></returns>
+    public MMSaveData_Jack GetSaveData()
+    {
+        mmSaveData.xPos = transform.position.x;
+        mmSaveData.yPos = transform.position.y;
+        mmSaveData.zPos = transform.position.z;
+
+        mmSaveData.targetNodeIndex = targetNodeIndex;
+        mmSaveData.isAtTarget = isAtTarget;
+
+        mmSaveData.sqrDistanceFromNodesToTarget = sqrDistanceFromNodeToTarget;
+
+        mmSaveData.speed = speed;
+
+        mmSaveData.isEnraged = isEnraged;
+        mmSaveData.currentEnrageTime = currentEnrageTime;
+
+        mmSaveData = mmTargetingScript.GetSaveData(mmSaveData);
+
+        return mmSaveData;
+    }
+
+    /// <summary>
+    /// Loads in all the passed save data.
+    /// </summary>
+    /// <param name="loadData"></param>
+    public void LoadSaveData(MMSaveData_Jack loadData)
+    {
+        agent.Warp(new Vector3(loadData.xPos, loadData.yPos, loadData.zPos));
+
+        targetNodeIndex = loadData.targetNodeIndex;
+        isAtTarget = loadData.isAtTarget;
+
+        sqrDistanceFromNodeToTarget = loadData.sqrDistanceFromNodesToTarget;
+
+        speed = loadData.speed;
+
+        isEnraged = loadData.isEnraged;
+        currentEnrageTime = loadData.currentEnrageTime;
+
+        mmTargetingScript.LoadSaveData(loadData);
+    }
 }
-
-
-

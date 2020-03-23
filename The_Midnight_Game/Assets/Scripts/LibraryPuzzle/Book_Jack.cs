@@ -100,11 +100,12 @@ public class Book_Jack : MonoBehaviour
     }
 
     /// <summary>
-    /// Sets pulledOut to the passed parameter.
+    /// Sets pulledOut to the passed parameter and disables the animator if false.
     /// </summary>
     /// <param name="newPulledOut"></param>
     public void SetPulledOut(bool newPulledOut)
     {
         pulledOut = newPulledOut;
+        bookAnimator.enabled = !newPulledOut;
     }
 }

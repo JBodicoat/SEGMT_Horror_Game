@@ -15,7 +15,7 @@ public class NodeHit_Morgan : MonoBehaviour
 
     private void Awake()
     {
-        controllerScript = FindObjectOfType<MMController_Morgan>(); //GetComponent<MMTargeting_Morgan>()
+        controllerScript = FindObjectOfType<MMController_Morgan>();
 }
     private void OnTriggerEnter(Collider other)
     {

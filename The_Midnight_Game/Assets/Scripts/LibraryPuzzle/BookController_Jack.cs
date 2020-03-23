@@ -1,5 +1,6 @@
 ﻿// Jack 23/02/2020 Script created.
 // Jack 23/03/2020 Added saving support.
+//                 Removed door.
 
 using System.Collections;
 using System.Collections.Generic;
@@ -21,8 +22,6 @@ public class BookController_Jack : MonoBehaviour
 
     private const ushort numOfBooks = 3;
     private BookType[] pulledOutBooks = new BookType[numOfBooks];
-
-    public Animator libraryDoorAnimator;
 
     private void Awake()
     {
@@ -58,8 +57,6 @@ public class BookController_Jack : MonoBehaviour
                 // Check order
                 if(pulledOutBooks[0] == BookType.Circle && pulledOutBooks[1] == BookType.Dash && pulledOutBooks[2] == BookType.Cross)
                 {
-                    // Open door
-                    libraryDoorAnimator.enabled = true;
                     puzzleSolved = true;
                 }
                 else
@@ -75,14 +72,6 @@ public class BookController_Jack : MonoBehaviour
                 }
             }
         }
-    }
-
-    /// <summary>
-    /// To be called at the end of the hidden library doors open animaton.
-    /// </summary>
-    public void DoorOpened()
-    {
-        libraryDoorAnimator.enabled = false;
     }
 
     /// <summary>

@@ -5,16 +5,19 @@
 //                   
 //Louie : 16/02/2020 added Candle blow SFX to the same place its extinguished and added ice cracking and breathing
 // Jack 16/03/2020 removed unused audio variables
+// Jack 23/03/2020 Removed isAdjustedWithPlayer as it wasn't doing anything different than isWithPlayer
+//                 Added saving support.
 
-///
-/// This script works out how close to the player the midnight man is and checks if the midnight man is in the same room
-///
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityStandardAssets.Characters.FirstPerson;
 
+/// <summary>
+/// This script works out how close to the player the midnight man is and checks 
+/// if the midnight man is in the same room
+/// </summary>
 [System.Serializable]
 public class MMTargeting_Morgan : MonoBehaviour
 {
@@ -37,8 +40,6 @@ public class MMTargeting_Morgan : MonoBehaviour
 
     //true if player room = midnightman room
     internal bool isWithPlayer = false;
-    //adjusted value is so it doesnt run the check constantly
-    private bool isAdjustedWithPlayer = false;
 
     //Line Of Sight Code
     internal bool isSeen = false;
@@ -62,15 +63,13 @@ public class MMTargeting_Morgan : MonoBehaviour
 
         //defining if the player is in the same room as the midnight man
         {
-            if (string.Compare(playerRoom, midnightManRoom) == 0 && !isAdjustedWithPlayer)
+            if (string.Compare(playerRoom, midnightManRoom) == 0 && !isWithPlayer)
             {
                 isWithPlayer = true;
-                isAdjustedWithPlayer = true;
             }
-            else if (string.Compare(playerRoom, midnightManRoom) != 0 && isAdjustedWithPlayer)
+            else if (string.Compare(playerRoom, midnightManRoom) != 0 && isWithPlayer)
             {
                 isWithPlayer = false;
-                isAdjustedWithPlayer = false;
             }
         }
 
@@ -119,8 +118,41 @@ public class MMTargeting_Morgan : MonoBehaviour
             //if not in same room as player, distance to player is set to a arbitrary high number
             sqrDistanceToPlayer = highNumber;
         }
-
     }
 
+    /// <summary>
+    /// Updates the passed in save data with the relevant data from the Midnight Man's
+    /// targeting script. Used by MMController.GetSaveData().
+    /// </summary>
+    /// <param name="mmSaveData"></param>
+    /// <returns> Returns the updated save data. </returns>
+    public MMSaveData_Jack GetSaveData(MMSaveData_Jack mmSaveData)
+    {
+        mmSaveData.playerRoom = playerRoom;
+        mmSaveData.midnigthManRoom = midnightManRoom;
 
+        mmSaveData.sqrDistanceToPlayer = sqrDistanceToPlayer;
+        mmSaveData.isWithPlayer = isWithPlayer;
+        mmSaveData.isSeen = isSeen;
+
+        mmSaveData.currentTrackTime = currentTrackTime;
+
+        return mmSaveData;
+    }
+
+    /// <summary>
+    /// Loads the passed in save data for the Midnight Man's targeting script.
+    /// </summary>
+    /// <param name="loadData"></param>
+    public void LoadSaveData(MMSaveData_Jack loadData)
+    {
+        playerRoom = loadData.playerRoom;
+        midnightManRoom = loadData.midnigthManRoom;
+
+        sqrDistanceToPlayer = loadData.sqrDistanceToPlayer;
+        isWithPlayer = loadData.isWithPlayer;
+        isSeen = loadData.isSeen;
+
+        currentTrackTime = loadData.currentTrackTime;
+    }
 }

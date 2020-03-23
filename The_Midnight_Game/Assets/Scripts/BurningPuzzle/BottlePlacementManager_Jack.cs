@@ -80,6 +80,16 @@ public class BottlePlacementManager_Jack : MonoBehaviour
         {
             placedBottles[i].SetActive(true);
         }
+        currentNumBottles = (ushort)numPlaced;
+    }
+
+    /// <summary>
+    /// Returns burning.
+    /// </summary>
+    /// <returns></returns>
+    public bool IsBurning()
+    {
+        return burning;
     }
 
     /// <summary>

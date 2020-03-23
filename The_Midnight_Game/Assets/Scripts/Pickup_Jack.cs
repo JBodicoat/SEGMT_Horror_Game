@@ -1,5 +1,7 @@
 ﻿// Jack
 // Jack : 05/02/2020 cached player script & changed to CompareTag
+// Jack 23/03/2020 Changed implementation for pickup upon interaction.
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -23,13 +25,12 @@ public class Pickup_Jack : MonoBehaviour
         playerInventoryScript = FindObjectOfType<Inventory_Jack>();
     }
 
-    /// On collision with player, add to player's inventory and destroy self.
-    private void OnTriggerEnter(Collider other)
+    /// <summary>
+    /// Add this item to the player's inventory and destroy this object.
+    /// </summary>
+    public void Pickup()
     {
-        if(other.CompareTag(playerTag))
-        {
-            playerInventoryScript.AddItems(itemType, quantity);
-            Destroy(gameObject);
-        }
+        playerInventoryScript.AddItems(itemType, quantity);
+        Destroy(gameObject);
     }
 }

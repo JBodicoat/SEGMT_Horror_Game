@@ -33,7 +33,11 @@ public class Interaction_Jack : MonoBehaviour
     private const float throwForce = 20f;
 
     // Interactable objects
+    private RaycastHit hit;
+    private bool hitSucceeded = false;
     private readonly LayerMask interactableObjectsLayer = 1 << 9;
+
+    private const string pickupTag = "Pickup";
     private const string tabletSlotTag = "Tablet Slot";
     private const string bookTag = "Book";
     private const string doorTag = "Door";
@@ -60,6 +64,20 @@ public class Interaction_Jack : MonoBehaviour
         if(!keyManagerScript)
         {
             keyManagerScript = FindObjectOfType<KeyUIManager_Jack>();
+        }
+    }
+
+    private void Update()
+    {
+        if(Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out hit, interactDistance, interactableObjectsLayer))
+        {
+            hitSucceeded = true;
+
+
+        }
+        else
+        {
+            hitSucceeded = false;
         }
     }
 
@@ -92,9 +110,13 @@ public class Interaction_Jack : MonoBehaviour
     /// it will be activated.
     public void Interact()
     {
-        if (Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out RaycastHit hit, interactDistance, interactableObjectsLayer))
+        if (hitSucceeded)
         {
-            if (hit.transform.CompareTag(tabletSlotTag))
+            if(hit.transform.CompareTag(pickupTag))
+            {
+                hit.transform.gameObject.GetComponent<Pickup_Jack>().Pickup();
+            }
+            else if (hit.transform.CompareTag(tabletSlotTag))
             {
                 hit.transform.gameObject.GetComponent<TabletSlot_Jack>().RotateTablet();
             }

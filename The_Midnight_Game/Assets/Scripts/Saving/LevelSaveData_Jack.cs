@@ -9,6 +9,7 @@ public class LevelSaveData_Jack
 {
     public static LevelSaveData_Jack current;
     public PlayerSaveData_Jack playerSaveData;
+    public MMSaveData_Jack mmSaveData;
 
     // Stone Tablet Puzzle
     public float tablet1xPos;
