@@ -1,5 +1,6 @@
 ﻿// Jack 05/03/2020 Created script
 // Jack 06/03/2020 Updated script to allow UI to be closed
+// Jack 23/03/2020 Added saving support.
 
 using InControl;
 using System.Collections;
@@ -243,5 +244,23 @@ public class KeyUIManager_Jack : MonoBehaviour
     public bool WasClosed()
     {
         return wasClosed;
+    }
+
+    /// <summary>
+    /// Returns puzzleSolved.
+    /// </summary>
+    /// <returns></returns>
+    public bool GetPuzzleSolved()
+    {
+        return puzzleSolved;
+    }
+
+    /// <summary>
+    /// Sets puzzleSolved to the passed parameter.
+    /// </summary>
+    /// <param name="newPuzzleSolved"></param>
+    public void SetPuzzleSolved(bool newPuzzleSolved)
+    {
+        puzzleSolved = newPuzzleSolved;
     }
 }

@@ -1,4 +1,5 @@
 ﻿// Jack 23/02/2020 Script created.
+// Jack 23/03/2020 Added saving support.
 
 using System.Collections;
 using System.Collections.Generic;
@@ -16,7 +17,7 @@ public class BookController_Jack : MonoBehaviour
     public Book_Jack book2Script;
     public Book_Jack book3Script;
 
-    private bool doorOpen = false;
+    private bool puzzleSolved = false;
 
     private const ushort numOfBooks = 3;
     private BookType[] pulledOutBooks = new BookType[numOfBooks];
@@ -40,7 +41,7 @@ public class BookController_Jack : MonoBehaviour
     /// <param name="bookType"></param>
     public void BookPulledOut(BookType bookType)
     {
-        if(!doorOpen)
+        if(!puzzleSolved)
         {
             ushort i;
             for (i = 0; i < numOfBooks; ++i)
@@ -59,7 +60,7 @@ public class BookController_Jack : MonoBehaviour
                 {
                     // Open door
                     libraryDoorAnimator.enabled = true;
-                    doorOpen = true;
+                    puzzleSolved = true;
                 }
                 else
                 {
@@ -82,5 +83,23 @@ public class BookController_Jack : MonoBehaviour
     public void DoorOpened()
     {
         libraryDoorAnimator.enabled = false;
+    }
+
+    /// <summary>
+    /// Returns puzzleSolved.
+    /// </summary>
+    /// <returns></returns>
+    public bool GetPuzzleSolved()
+    {
+        return puzzleSolved;
+    }
+
+    /// <summary>
+    /// Sets puzzleSolved to the passed parameter.
+    /// </summary>
+    /// <param name="newPuzzleSolved"></param>
+    public void SetPuzzleSolved(bool newPuzzleSolved)
+    {
+        puzzleSolved = newPuzzleSolved;
     }
 }

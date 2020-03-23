@@ -1,4 +1,5 @@
 ﻿// Jack 16/03/2020 Created script
+// Jack 23/03/2020 Added saving support.
 
 using System.Collections;
 using System.Collections.Generic;
@@ -26,7 +27,7 @@ public class Valve_Jack : MonoBehaviour
     private bool lightOn = false;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         valveController = FindObjectOfType<ValveController_Jack>();
         lightRenderer = valveLightObject.GetComponent<Renderer>();
@@ -37,7 +38,7 @@ public class Valve_Jack : MonoBehaviour
     /// </summary>
     public void StartTurn()
     {
-        if (!turning)
+        if (!valveController.GetPuzzleSolved() && !turning)
         {
             animator.enabled = true;
             turning = true;
@@ -50,11 +51,14 @@ public class Valve_Jack : MonoBehaviour
     /// </summary>
     public void EndTurn()
     {
-        leftValve.SwitchLight();
-        SwitchLight();
-        rightValve.SwitchLight();
+        if (!valveController.GetPuzzleSolved())
+        {
+            leftValve.SwitchLight();
+            SwitchLight();
+            rightValve.SwitchLight();
 
-        valveController.CheckLights();
+            valveController.CheckLights();
+        }
 
         animator.enabled = false;
         turning = false;
@@ -82,6 +86,19 @@ public class Valve_Jack : MonoBehaviour
         else
         {
             lightOn = true;
+            lightRenderer.material = lightOnMaterial;
+        }
+    }
+
+    /// <summary>
+    /// If true is passed the valves light is turned on.
+    /// </summary>
+    /// <param name="newLightOn"></param>
+    public void SetLightOn(bool newLightOn)
+    {
+        lightOn = newLightOn;
+        if(lightOn)
+        {
             lightRenderer.material = lightOnMaterial;
         }
     }

@@ -32,7 +32,7 @@ public class Inventory_Jack : MonoBehaviour
 
     private void Awake()
     {
-        inventory[(ushort)ItemType.matches] = 3;
+        inventory[(ushort)ItemType.matches] = 9999;
         inventory[(ushort)ItemType.salt] = 2;
     }
 

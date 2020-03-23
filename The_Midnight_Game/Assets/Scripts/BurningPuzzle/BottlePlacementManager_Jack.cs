@@ -1,4 +1,5 @@
 ﻿// Jack : 02/03/2020 Created script
+// Jack 23/03/2020 Added saving support
 
 using System.Collections;
 using System.Collections.Generic;
@@ -51,13 +52,34 @@ public class BottlePlacementManager_Jack : MonoBehaviour
     {
         ushort numToPlace = inventoryScript.GetNumOf(ItemType.bottles);
 
-        for (int i = currentNumBottles; i < currentNumBottles + numToPlace; i++)
+        for (int i = currentNumBottles; i < currentNumBottles + numToPlace; ++i)
         {
             placedBottles[i].SetActive(true);
         }
 
         currentNumBottles += numToPlace;
         inventoryScript.RemoveItems(ItemType.bottles, numToPlace);
+    }
+
+    /// <summary>
+    /// Returns currentNumBottles.
+    /// </summary>
+    /// <returns></returns>
+    public int GetNumPlacedBottles()
+    {
+        return currentNumBottles;
+    }
+
+    /// <summary>
+    /// Enables the passed number of bottle objects.
+    /// </summary>
+    /// <param name="numPlaced"></param>
+    public void SetPlacedBottles(int numPlaced)
+    {
+        for (int i = 0; i < numPlaced; ++i)
+        {
+            placedBottles[i].SetActive(true);
+        }
     }
 
     /// <summary>

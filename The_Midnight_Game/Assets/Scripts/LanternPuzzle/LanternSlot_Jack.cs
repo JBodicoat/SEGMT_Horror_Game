@@ -38,10 +38,7 @@ public class LanternSlot_Jack : MonoBehaviour
             float sqrDistance = direction.x * direction.x + direction.z * direction.z;
             if (sqrDistance <= minDistance)
             {
-                // Set the lantern alight
-                lanternRigidbody.constraints = lanternConstraints;
-                lanternParticleSystem.Play();
-                Destroy(this);
+                CompletePuzzle();
             }
             else
             {
@@ -57,5 +54,15 @@ public class LanternSlot_Jack : MonoBehaviour
         {
             triggered = true;
         }
+    }
+
+    /// <summary>
+    /// Set alight the lantern and make it unmovable. Then destroy this script.
+    /// </summary>
+    public void CompletePuzzle()
+    {
+        lanternRigidbody.constraints = lanternConstraints;
+        lanternParticleSystem.Play();
+        Destroy(this);
     }
 }

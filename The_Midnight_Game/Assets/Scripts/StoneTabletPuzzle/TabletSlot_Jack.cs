@@ -1,5 +1,7 @@
 ﻿// Jack
 // Jack 13/02/2020 Added support for saving data.
+// Jack 23/03/2020 Removed the door.
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -21,7 +23,7 @@ public enum Orientation
 /// </summary>
 public class TabletSlot_Jack : MonoBehaviour
 {
-    public TabletDoor_Jack doorScript;
+    public TabletSlotController_Jack controllerScript;
 
     private const string tabletTag = "Tablet";
     private bool holdingTablet = false;
@@ -79,7 +81,7 @@ public class TabletSlot_Jack : MonoBehaviour
                     break;
             }
 
-            doorScript.CheckSlots();
+            controllerScript.CheckSlots();
         }
     }
 
@@ -127,7 +129,7 @@ public class TabletSlot_Jack : MonoBehaviour
             heldTablet.transform.position = transform.position + Vector3.up * 0.6f;
             heldTablet.transform.rotation = Quaternion.Euler(0, 0, 0);
 
-            doorScript.CheckSlots();
+            controllerScript.CheckSlots();
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿// Jack 16/03/2020 Created script
+// Jack 23/03/2020 Added saving support.
 
 using System.Collections;
 using System.Collections.Generic;
@@ -60,5 +61,23 @@ public class ValveController_Jack : MonoBehaviour
                 puzzleSolved = true;
             }
         }
+    }
+
+    /// <summary>
+    /// Sets puzzleSolved to the passed parameter.
+    /// </summary>
+    /// <param name="newPuzzleSolved"></param>
+    public void SetPuzzleSolved(bool newPuzzleSolved)
+    {
+        puzzleSolved = newPuzzleSolved;
+    }
+
+    /// <summary>
+    /// Returns puzzleSolved.
+    /// </summary>
+    /// <returns></returns>
+    public bool GetPuzzleSolved()
+    {
+        return puzzleSolved;
     }
 }

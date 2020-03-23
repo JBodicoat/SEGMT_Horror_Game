@@ -1,5 +1,6 @@
 ﻿// Jack 23/02/2020 Script created.
 // Jack 19/03/2020 Renamed eums to match puzzle hints.
+// Jack 23/03/2020 Added saving support.
 
 using System.Collections;
 using System.Collections.Generic;
@@ -96,5 +97,14 @@ public class Book_Jack : MonoBehaviour
     {
         pulledOut = false;
         pulling = false;
+    }
+
+    /// <summary>
+    /// Sets pulledOut to the passed parameter.
+    /// </summary>
+    /// <param name="newPulledOut"></param>
+    public void SetPulledOut(bool newPulledOut)
+    {
+        pulledOut = newPulledOut;
     }
 }

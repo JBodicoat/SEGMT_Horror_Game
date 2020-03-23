@@ -9,11 +9,11 @@ using System.IO;
 /// Handles saving and loading game data.
 public static class SaveLoad_Jack
 {
-    public static List<Level1SaveData_Jack> savedGames = new List<Level1SaveData_Jack>();
+    public static List<LevelSaveData_Jack> savedGames = new List<LevelSaveData_Jack>();
 
     public static void Save()
     {
-        savedGames.Add(Level1SaveData_Jack.current);
+        savedGames.Add(LevelSaveData_Jack.current);
         BinaryFormatter bf = new BinaryFormatter();
         FileStream file = File.Create(Application.persistentDataPath + "/savedGames.gd");
         bf.Serialize(file, savedGames);
@@ -26,7 +26,7 @@ public static class SaveLoad_Jack
         {
             BinaryFormatter bf = new BinaryFormatter();
             FileStream file = File.Open(Application.persistentDataPath + "/savedGames.gd", FileMode.Open);
-            savedGames = (List<Level1SaveData_Jack>)bf.Deserialize(file);
+            savedGames = (List<LevelSaveData_Jack>)bf.Deserialize(file);
             file.Close();
         }
     }

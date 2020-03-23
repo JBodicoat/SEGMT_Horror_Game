@@ -1,4 +1,5 @@
 ﻿// Jack 06/03/2020 Created script
+// Jack 23/03/2020 Added saving support.
 
 using System.Collections;
 using System.Collections.Generic;
@@ -14,14 +15,36 @@ public class AtticHatch_Jack : MonoBehaviour
 
     private const string ballTag = "Ball";
 
-    private bool open = false;
+    private bool hatchOpen = false;
+    public Vector3 hatchPivotOpenRotation;
 
     private void OnCollisionEnter(Collision collision)
     {
-        if(!open && collision.gameObject.CompareTag(ballTag) && collision.gameObject.GetComponent<Rigidbody>().velocity.sqrMagnitude >= 10)
+        if(!hatchOpen && collision.gameObject.CompareTag(ballTag) && collision.gameObject.GetComponent<Rigidbody>().velocity.sqrMagnitude >= 10)
         {
             hatchAnimationScript.BeginAnimation();
-            open = true;
+            hatchOpen = true;
+        }
+    }
+
+    /// <summary>
+    /// Returns hatchOpen.
+    /// </summary>
+    public bool IsHatchOpen()
+    {
+        return hatchOpen;
+    }
+
+    /// <summary>
+    /// If true is passed the hatch is set to it's open position.
+    /// </summary>
+    /// <param name="isHatchOpen"></param>
+    public void SetHatchOpen(bool isHatchOpen)
+    {
+        if(isHatchOpen)
+        {
+            hatchOpen = true;
+            hatchPivot.transform.localRotation = Quaternion.Euler(hatchPivotOpenRotation.x, hatchPivotOpenRotation.y, hatchPivotOpenRotation.z);
         }
     }
 }
