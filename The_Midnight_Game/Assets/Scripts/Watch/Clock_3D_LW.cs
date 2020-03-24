@@ -1,5 +1,7 @@
 ﻿// Louie 14/02 - Controls the pocket watch's animation and hand rotations.
 // Jack : 16/02/2020 - Reviewed. Cached minute & hour hand rotation Vector3s. Cached animation trigger strings.
+// Louie 24/02/2020 - Added functionality for Journal UI (showing time left)
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -37,6 +39,9 @@ public class Clock_3D_LW : MonoBehaviour
     public string textTime;
 
     private GameObject gameStateManager;
+
+    //Journal 
+    public JournalManager_Louie journalScript;
     void Start()
     {
         gameStateManager = GameObject.FindGameObjectWithTag("Manager");
@@ -136,5 +141,6 @@ public class Clock_3D_LW : MonoBehaviour
 
         //store actual time in textTime
         textTime = textHours + " : " + textMinutes;
+        journalScript.UpdateTimeLeft(hoursGone, minutesGone);
     }
 }
