@@ -29,11 +29,11 @@ public class MMController_Morgan : MonoBehaviour
     public NavMeshAgent agent;
 
     public Transform playerTransform;
-    
+
     //places MM will nav to
     public Transform[] patrolPoints;
     private int targetNodeIndex;
-    internal bool isAtTarget = false;
+    internal bool isAtTargetNode = false;
 
     //node data disection
     private float[] sqrDistanceFromNodeToTarget;
@@ -74,6 +74,11 @@ public class MMController_Morgan : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.N))
+        {
+            EnrageMidnightMan();
+        }
+
         if (!mmTargetingScript.isSeen)
         {
             agent.SetDestination(patrolPoints[targetNodeIndex].position);
@@ -82,8 +87,8 @@ public class MMController_Morgan : MonoBehaviour
         {
             agent.SetDestination(playerTransform.position);
         }
-        
-        if (isAtTarget)
+
+        if (isAtTargetNode)
         {
             float xDistance = patrolPoints[targetNodeIndex].transform.position.x - gameObject.transform.position.x;
             float zDistance = patrolPoints[targetNodeIndex].transform.position.z - gameObject.transform.position.z;
@@ -99,11 +104,11 @@ public class MMController_Morgan : MonoBehaviour
                 targetNodeIndex = newTarget;
             }
 
-            isAtTarget = false;
+            isAtTargetNode = false;
         }
 
         //penalties logic
-        if(isEnraged)
+        if (isEnraged)
         {
             currentEnrageTime += Time.deltaTime;
             if (currentEnrageTime > standardEnrageTime)
@@ -153,7 +158,7 @@ public class MMController_Morgan : MonoBehaviour
         //find min value in array
         for (ushort i = 1; i < sqrDistanceFromNodeToTarget.Length; i++)
         {
-            if(sqrDistanceFromNodeToTarget[i] < minValue)
+            if (sqrDistanceFromNodeToTarget[i] < minValue)
             {
                 minValue = sqrDistanceFromNodeToTarget[i];
                 //makes the "random target" fixed to the closet node
@@ -251,7 +256,7 @@ public class MMController_Morgan : MonoBehaviour
         mmSaveData.zPos = transform.position.z;
 
         mmSaveData.targetNodeIndex = targetNodeIndex;
-        mmSaveData.isAtTarget = isAtTarget;
+        mmSaveData.isAtTarget = isAtTargetNode;
 
         mmSaveData.sqrDistanceFromNodesToTarget = sqrDistanceFromNodeToTarget;
 
@@ -274,7 +279,7 @@ public class MMController_Morgan : MonoBehaviour
         agent.Warp(new Vector3(loadData.xPos, loadData.yPos, loadData.zPos));
 
         targetNodeIndex = loadData.targetNodeIndex;
-        isAtTarget = loadData.isAtTarget;
+        isAtTargetNode = loadData.isAtTarget;
 
         sqrDistanceFromNodeToTarget = loadData.sqrDistanceFromNodesToTarget;
 

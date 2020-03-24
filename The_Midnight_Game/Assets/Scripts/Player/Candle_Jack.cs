@@ -11,11 +11,13 @@ public class Candle_Jack : MonoBehaviour
     public GameObject candleFlame;
     private Inventory_Jack inventoryScript;
 	private SFXManager_LW soundManager;
+    private GameStates_Louie gameStateScript;
 
     private void Start()
     {
         inventoryScript = FindObjectOfType<Inventory_Jack>();
         soundManager = FindObjectOfType<SFXManager_LW>();
+        gameStateScript = FindObjectOfType<GameStates_Louie>();
     }
 
     /// Attempts to light the player's candle.

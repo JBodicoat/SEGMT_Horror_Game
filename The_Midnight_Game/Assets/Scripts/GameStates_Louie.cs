@@ -2,6 +2,9 @@
 // 24/02 - Handles the Win and Lose states of the game.
 // Morgan pryor - 26/02/2020 - Added eggs for bart
 // Jack 09/03/2020 - Reviewed Jump-Scare
+// Jack 24/03/2020 - Altered check for whether the players candle is lit to better support salt circles and to fix
+//                   a bug where the timer is not reset after relighting the candle.
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,7 +16,7 @@ public class GameStates_Louie : MonoBehaviour
     public Camera mainCamera;
     public Camera scareCamera;
     private VideoPlayer jumpScare;
-    float count;
+    float timeSincePlayerNotSafe;
     Candle_Jack candleScript;
     SaltPouring_Jack saltScript;
     bool gameOver = false;
@@ -22,6 +25,7 @@ public class GameStates_Louie : MonoBehaviour
     private const string endTime = "03 : 33";
     private GameObject watch;
     private const int maxSecondsPassed = 10;
+    private bool playerIsSafe = true;
 
     void Awake()
     {
@@ -35,9 +39,14 @@ public class GameStates_Louie : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!candleScript.IsCandleLit())
-        { 
-            CaughtByMidnightMan();
+        if (!gameOver && !playerIsSafe)
+        {
+            timeSincePlayerNotSafe += Time.deltaTime;
+
+            if (timeSincePlayerNotSafe >= maxSecondsPassed)
+            {
+                GameOver();
+            }
         }
     }
 
@@ -54,22 +63,23 @@ public class GameStates_Louie : MonoBehaviour
     }
 
     /// <summary>
-    /// This function is used when the players candle is extinguished.
+    /// Sets playerIsSafe to true protecting them from the Midnight Man.
+    /// </summary>
+    public void SetPlayerSafe()
+    {
+        playerIsSafe = true;
+    }
+
+    /// <summary>
+    /// This function is used when the players candle is extinguished or exits a salt circle with the candle unlit.
     /// It runs the game over function if the player doesn't relight the candle/ use the salt in time.
     /// </summary>
     /// <param name="minutesPassed"></param>
     /// <param name="isSaltDown"></param>
-    public void CaughtByMidnightMan()//float secondsPassed, bool isSaltDown, bool isCandleRelit)
+    public void SetPlayerUnsafe()//float secondsPassed, bool isSaltDown, bool isCandleRelit)
     {
-        if (!gameOver)
-        {
-            count += Time.deltaTime;
-
-            if (count >= maxSecondsPassed && !saltScript.IsInSaltCircle())
-            {
-                GameOver();
-            }
-        }
+        timeSincePlayerNotSafe = 0;
+        playerIsSafe = false;
     }
 
 

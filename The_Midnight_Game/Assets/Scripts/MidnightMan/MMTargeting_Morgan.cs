@@ -38,6 +38,8 @@ public class MMTargeting_Morgan : MonoBehaviour
     //It would be wasteful to consider the Y pos in calculations
     internal float sqrDistanceToPlayer = highNumber;
 
+    const float extinguishDistance = 10.0f;
+
     //true if player room = midnightman room
     internal bool isWithPlayer = false;
 
@@ -60,7 +62,6 @@ public class MMTargeting_Morgan : MonoBehaviour
 
     void Update()
     {
-
         //defining if the player is in the same room as the midnight man
         {
             if (string.Compare(playerRoom, midnightManRoom) == 0 && !isWithPlayer)
@@ -107,7 +108,7 @@ public class MMTargeting_Morgan : MonoBehaviour
             float zDistance = midnightMan.transform.position.z - player.transform.position.z;
             sqrDistanceToPlayer = xDistance * xDistance + zDistance * zDistance;
 
-            if(sqrDistanceToPlayer < 10)
+            if (sqrDistanceToPlayer < extinguishDistance)
             {
                 playerCandleScript.ExtinguishCandle();
                 controllerScript.TeleportMidnightManAway();

@@ -21,7 +21,7 @@ public class NodeHit_Morgan : MonoBehaviour
     {
         if(other.CompareTag(midnightManTag))
         {
-            controllerScript.isAtTarget = true;
+            controllerScript.isAtTargetNode = true;
         }
     }
 }

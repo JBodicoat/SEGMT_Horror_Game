@@ -13,10 +13,14 @@ public class SaltCircle_Jack : MonoBehaviour
     private SaltPouring_Jack playerSaltScript;
     private const string playerTag = "Player";
 
+    private GameStates_Louie gameStatesScript;
+    private Candle_Jack candleScript;
+
     // Start is called before the first frame update
     void Start()
     {
         playerSaltScript = FindObjectOfType<SaltPouring_Jack>();
+        gameStatesScript = FindObjectOfType<GameStates_Louie>();
     }
 
     /// <summary>
@@ -28,6 +32,7 @@ public class SaltCircle_Jack : MonoBehaviour
         if(other.CompareTag(playerTag))
         {
             playerSaltScript.SetInSaltCircle(true);
+            gameStatesScript.SetPlayerSafe();
         }
     }
 
@@ -40,6 +45,10 @@ public class SaltCircle_Jack : MonoBehaviour
         if(other.CompareTag(playerTag))
         {
             playerSaltScript.SetInSaltCircle(false);
+            if(!candleScript.IsCandleLit())
+            {
+                gameStatesScript.SetPlayerUnsafe();
+            }
         }
     }
 }
