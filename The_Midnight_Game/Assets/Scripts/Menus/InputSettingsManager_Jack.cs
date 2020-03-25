@@ -1,5 +1,6 @@
 ﻿// Jack : 15/02/2020 - Created script
 // Jack 19/03/2020 - Removed jump
+// Jack 25/03/2020 - Start() now sets controls in FirstPersonController script for consistency.
 
 using System.Collections;
 using System.Collections.Generic;
@@ -57,35 +58,45 @@ public class InputSettingsManager_Jack : MonoBehaviour
     {
         // Set default controller bindings
         controllerBindings[0].action = PlayerAction.PourSalt;
-        controllerBindings[0].controlType = InputControlType.Action2;
+        controllerBindings[0].controlType = InputControlType.Action4;
+        playerScript.SetSaltControlType(controllerBindings[0].controlType);
 
         controllerBindings[1].action = PlayerAction.LightCandle;
-        controllerBindings[1].controlType = InputControlType.Action4;
+        controllerBindings[1].controlType = InputControlType.Action2;
+        playerScript.SetCandleControlType(controllerBindings[1].controlType);
 
         controllerBindings[2].action = PlayerAction.Interact;
         controllerBindings[2].controlType = InputControlType.Action3;
+        playerScript.SetInteractControlType(controllerBindings[2].controlType);
 
         controllerBindings[3].action = PlayerAction.GrabDrop;
         controllerBindings[3].controlType = InputControlType.LeftTrigger;
+        playerScript.SetGrabControlType(controllerBindings[3].controlType);
 
         controllerBindings[4].action = PlayerAction.Throw;
         controllerBindings[4].controlType = InputControlType.RightTrigger;
+        playerScript.SetThrowControlType(controllerBindings[4].controlType);
 
         // Set default keyboard + mouse bindings
         keyBindings[0].action = PlayerAction.PourSalt;
         keyBindings[0].code = KeyCode.Q;
+        playerScript.SetSaltKey(keyBindings[0].code);
 
         keyBindings[1].action = PlayerAction.LightCandle;
         keyBindings[1].code = KeyCode.F;
+        playerScript.SetCandleKey(keyBindings[1].code);
 
         keyBindings[2].action = PlayerAction.Interact;
         keyBindings[2].code = KeyCode.E;
+        playerScript.SetInteractKey(keyBindings[2].code);
 
         keyBindings[3].action = PlayerAction.GrabDrop;
         keyBindings[3].code = KeyCode.Mouse0;
+        playerScript.SetGrabKey(keyBindings[3].code);
 
         keyBindings[4].action = PlayerAction.Throw;
         keyBindings[4].code = KeyCode.Mouse1;
+        playerScript.SetThrowKey(keyBindings[4].code);
 
         inputDevice = InputManager.ActiveDevice;
     }

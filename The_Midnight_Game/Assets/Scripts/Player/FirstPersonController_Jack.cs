@@ -60,9 +60,9 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         private bool inMenu = false;
 
+        private InputControlType saltControlType = InputControlType.Action4;
         private InputControlType candleControlType = InputControlType.Action2;
         private InputControlType interactControlType = InputControlType.Action3;
-        private InputControlType saltControlType = InputControlType.Action4;
         private InputControlType grabControlType = InputControlType.LeftTrigger;
         private InputControlType throwControlType = InputControlType.RightTrigger;
 
