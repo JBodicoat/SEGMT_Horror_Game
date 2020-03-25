@@ -40,6 +40,7 @@ public class MMController_Morgan : MonoBehaviour
     private float minValue;
     private float maxValue;
     private int maxValueIndex;
+    private int targetNodeIndex;
 
     //speed smoothing
     private int baseSpeed = 2;
