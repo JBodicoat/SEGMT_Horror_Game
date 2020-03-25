@@ -1,6 +1,6 @@
 ﻿// Louie : Handles Journal data and display.
 // Jack : 12/02/2020 QA Review - renamed function, removed magic number, removed unecessary GameObject.Find
-//Louie : 24/03 - Added automatic journal entries and pages.
+//Louie : 24/03 - Added automatic journal entries, pages and adding notes.
 
 using System.Collections;
 using System.Collections.Generic;
