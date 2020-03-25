@@ -1,31 +1,36 @@
-﻿using System.Collections;
+﻿//Louie : 25/03/2020 - Created Script
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Safe_LouieWilliamson : MonoBehaviour
 {
-    // Start is called before the first frame update
+    //References
     private Animator safeAnim;
     public Camera dialCam;
-    private bool isAttemptingSafe;
+    private SFXManager_LW soundManager;
+    private Transform player;
     public Transform dial;
-    private Vector3 rotateRight;
     public GameObject tip;
+
+    //Script Variables
+    private bool isAttemptingSafe;
+    private Vector3 rotateRight;
+    private float dialTimer;
+    private int dialStage;
+
+    //constants
+    private const float clickTime = 1.0f;
+    private const int dialDifference = 7;
+    private const float maxDistance = 4.0f;
+    
     //1st Code is 15
     private const float DialCode1 = 235.0f;
     //2nd Code is 80
     private const float DialCode2 = 109.0f;
     //3rd Code is 45
     private const float DialCode3 = 342.0f;
-
-    private float dialTimer;
-    private const float clickTime = 1.0f;
-    private const int dialDifference = 7;
-    private int dialStage;
-
-    private SFXManager_LW soundManager;
-    private Transform player;
-    private const float maxDistance = 4.0f;
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player").transform;
@@ -40,7 +45,6 @@ public class Safe_LouieWilliamson : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        print(Vector3.Distance(player.position, gameObject.transform.position));
         if (isAttemptingSafe)
         {
             if (Input.GetKey(KeyCode.E))
@@ -56,6 +60,10 @@ public class Safe_LouieWilliamson : MonoBehaviour
             CheckDistance();
         }
     }
+    /// <summary>
+    /// Checks the distance between the player and the safe.
+    /// If the player is too far, the puzzle UI will disable.
+    /// </summary>
     private void CheckDistance()
     {
         if (Vector3.Distance(player.position, gameObject.transform.position) > maxDistance)
@@ -83,7 +91,7 @@ public class Safe_LouieWilliamson : MonoBehaviour
     }
 
     /// <summary>
-    /// Turns the dial camera on
+    /// Turns the dial camera off
     /// </summary>
     private void CameraOff()
     {
