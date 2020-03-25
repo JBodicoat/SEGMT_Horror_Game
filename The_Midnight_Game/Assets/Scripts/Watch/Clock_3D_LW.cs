@@ -89,7 +89,9 @@ public class Clock_3D_LW : MonoBehaviour
         }
     }
 
-    ///Toggles the clock animations
+    /// <summary>
+    /// Toggles the clock animations
+    /// </summary>
     void ToggleClockAnim()
     {
         //if the clock is on the screen, then enable out animation and update boolean
