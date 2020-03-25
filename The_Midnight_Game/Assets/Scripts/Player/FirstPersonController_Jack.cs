@@ -9,6 +9,8 @@
 // Jack 06/03/2020 - Added code that can be used to prevent player from moving/looking whilst in a menu.
 // Jack 16/03/2020 - Added ability to push the latern.
 // Jack 19/03/2020 - Removed jump.
+// Jack 24/03/2020 - Removed landing logic which has partially fixed the issue of constant vibration and
+//                   landing sounds playing after going down small steps.
 
 using System;
 using UnityEngine;
@@ -43,7 +45,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private Vector3 m_MoveDir = Vector3.zero;
         private CharacterController m_CharacterController;
         private CollisionFlags m_CollisionFlags;
-        private bool m_PreviouslyGrounded;
         private Vector3 m_OriginalCameraPosition;
         private float m_StepCycle;
         private float m_NextStep;
@@ -75,9 +76,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
         public Rigidbody rigidBody;
         private bool usingController = true;
         private InputDevice inputDevice = InputManager.ActiveDevice; // InControl input
-
-        // Health
-        private bool dead = false;
 
         private Inventory_Jack inventoryScript;
         private Candle_Jack candleScript;
@@ -126,28 +124,15 @@ namespace UnityStandardAssets.Characters.FirstPerson
         // Update is called once per frame
         private void Update()
         {
-            if (!dead && !inMenu)
+            if (!inMenu)
             {
                 GetInput();
-
-                if (!m_PreviouslyGrounded && m_CharacterController.isGrounded)
-                {
-                    StartCoroutine(m_JumpBob.DoBobCycle());
-                    PlayLandingSound();
-                    m_MoveDir.y = 0f;
-                }
-                if (!m_CharacterController.isGrounded && m_PreviouslyGrounded)
-                {
-                    m_MoveDir.y = 0f;
-                }
-
-                m_PreviouslyGrounded = m_CharacterController.isGrounded;
             }
         }
 
         private void FixedUpdate()
         {
-            if (!dead && !inMenu)
+            if (!inMenu)
             {
                 RotateView();
 
@@ -174,13 +159,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
                 m_MouseLook.UpdateCursorLock();
             }
-        }
-
-        private void PlayLandingSound()
-        {
-            m_AudioSource.clip = m_LandSound;
-            m_AudioSource.Play();
-            m_NextStep = m_StepCycle + .5f;
         }
 
         private void ProgressStepCycle()
