@@ -65,7 +65,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private InputControlType grabControlType = InputControlType.LeftTrigger;
         private InputControlType throwControlType = InputControlType.RightTrigger;
 
-        private KeyCode saltKey = KeyCode.Q;
+        private KeyCode saltKey = KeyCode.R;
         private KeyCode candleKey = KeyCode.F;
         private KeyCode interactKey = KeyCode.E;
         private KeyCode grabKey = KeyCode.Mouse0;

@@ -3,6 +3,7 @@
 // Morgan 03/03/2020 - added door interaction & tag
 // Louie 10/02/2020 - Added interaction with rabbit
 // Jack 19/03/2020 increased throw force
+// Louie 25/03/2020 - added safe interaction
 
 using System.Collections;
 using System.Collections.Generic;
@@ -41,6 +42,7 @@ public class Interaction_Jack : MonoBehaviour
     private const string pianoKeysTag = "Piano Keys";
     private const string rabbitTag = "Rabbit";
     private const string valveTag = "Valve";
+    private const string safeTag = "Safe";
 
     public KeyUIManager_Jack keyManagerScript;
 
@@ -124,6 +126,15 @@ public class Interaction_Jack : MonoBehaviour
             else if (hit.transform.CompareTag(valveTag))
             {
                 hit.transform.gameObject.GetComponentInParent<Valve_Jack>().StartTurn();
+            }
+            else if (hit.transform.CompareTag(safeTag))
+            {
+                print("SAFE");
+                hit.transform.gameObject.GetComponent<Safe_LouieWilliamson>().CameraOn();
+            }
+            else
+            {
+                print("NOT SAFE");
             }
         }
     }
