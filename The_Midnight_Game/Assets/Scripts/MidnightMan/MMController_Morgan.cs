@@ -6,6 +6,9 @@
 //                   Fixed issue where MM would get stuck at one node.
 // Jack : 23/02 Fixed loop sorting nodes based on distance by initializing i to 0 instead of 1.
 //              Implemented MM speed being based on distance to player.
+// Morgan : 24/03/2020 Added ai checking if MM path is complete.
+//
+///
 ///
 /// This is the AI for the Midnight Man
 /// 
@@ -26,7 +29,6 @@ public class MMController_Morgan : MonoBehaviour
     public Transform target;
     //places MM will nav to
     public Transform[] patrolPoints;
-    private int targetNodeIndex;
     //change target
     internal bool isAtTarget = false;
     
@@ -93,13 +95,11 @@ public class MMController_Morgan : MonoBehaviour
                 } while (newTarget == targetNodeIndex);
                 targetNodeIndex = newTarget;
                 isAtTarget = false;
+
+                StartCoroutine(PathCheck());
             }
             else { isAtTarget = false; }
         }
-
-        /// save these comments, Im working on making the MM slow down as he gets closer
-        //speed = (Mathf.Sqrt(targetScript.sqrDistanceToPlayer));
-        //speed = ((defaultSpeed * targetScript.sqrDistanceToPlayer)/targetScript.sqrDistanceToPlayer);
 
         // At minDist and lower MM speed = minSpeed. At maxDist and higher MM speed = maxSpeed
         float maxSpeed = 2f;
@@ -148,10 +148,6 @@ public class MMController_Morgan : MonoBehaviour
         }
 
         //debugging penalties
-        //if (Input.GetKeyDown(KeyCode.K))
-        //{
-        //    EnrageMidnightMan();
-        //}
 
     }
 
@@ -251,6 +247,21 @@ public class MMController_Morgan : MonoBehaviour
 
         //function reused to make MM go to where the player is
         isEnraged = true;
+    }
+
+    IEnumerator PathCheck() 
+    {
+        NavMeshPath path = new NavMeshPath();
+        agent.CalculatePath(patrolPoints[targetNodeIndex].position, path);
+
+        //give time for path to be calculated
+        yield return new WaitForSeconds(0.1f);
+
+        if (path.status == NavMeshPathStatus.PathPartial)
+        {
+            //find new node
+            isAtTarget = true;
+        }
     }
 }
 

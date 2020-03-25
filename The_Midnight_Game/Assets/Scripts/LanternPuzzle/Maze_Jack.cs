@@ -1,4 +1,5 @@
 ﻿// Jack 16/03/2020 created script
+// Morgan 24/03/2020 Added nav mesh layer to ignore list
 
 using System.Collections;
 using System.Collections.Generic;
@@ -19,5 +20,6 @@ public class Maze_Jack : MonoBehaviour
         Physics.IgnoreLayerCollision(5, 11);
         Physics.IgnoreLayerCollision(8, 11);
         Physics.IgnoreLayerCollision(9, 11);
+        Physics.IgnoreLayerCollision(13, 11);
     }
 }
