@@ -219,7 +219,7 @@ public class KeyUIManager_Jack : MonoBehaviour
         currentKeyID = 0;
         keyHighlights[currentKeyID].enabled = true;
 
-        playerControllerScript.SetInMenu(true);
+        playerControllerScript.SetUsingPiano(true);
     }
 
     /// <summary>
@@ -233,7 +233,7 @@ public class KeyUIManager_Jack : MonoBehaviour
 
         wasClosed = true;
 
-        playerControllerScript.SetInMenu(false);
+        playerControllerScript.SetUsingPiano(false);
     }
 
     /// <summary>
