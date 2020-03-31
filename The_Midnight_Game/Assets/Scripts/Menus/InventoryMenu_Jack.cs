@@ -358,7 +358,7 @@ public class InventoryMenu_Jack : MonoBehaviour
     /// </summary>
     private void DeSelect()
     {
-        int selectPosition = selectedColumn + 1 + width * selectedRow;
+        int selectPosition = GetSelectPosition();
 
         ItemType itemToDeSelect = ItemType.sizeOf;
 

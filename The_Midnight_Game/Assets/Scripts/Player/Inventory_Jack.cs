@@ -27,7 +27,7 @@ public enum ItemType
 /// </summary>
 public class Inventory_Jack : MonoBehaviour
 {
-    public InventoryMenu_Jack inventoryMenuScript;
+    private NEWInventoryMenu_Jack inventoryMenuScript;
     private ushort[] inventory = new ushort[(ushort)ItemType.sizeOf];
 
     private void Awake()
@@ -40,7 +40,7 @@ public class Inventory_Jack : MonoBehaviour
     {
         if (!inventoryMenuScript)
         {
-            inventoryMenuScript = FindObjectOfType<InventoryMenu_Jack>();
+            inventoryMenuScript = FindObjectOfType<NEWInventoryMenu_Jack>();
         }
         inventoryMenuScript.UpdateItem(ItemType.matches, 3);
         inventoryMenuScript.UpdateItem(ItemType.salt, 2);

@@ -1,36 +1,46 @@
 ﻿// Jack 16/03/2020 Created script
 // Jack 23/03/2020 Added saving support.
+// Jack 31/03/2020 Changed the valve puzzle so that valves are connected to set lights on each turn.
+//                 E.g. on turn one valve one toggles lights a, b, c
+//                      on turn two valve one toggles lights b, c, e
 
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Controlls individual valves.
+/// Controls individual valves.
 /// </summary>
 public class Valve_Jack : MonoBehaviour
 {
     private ValveController_Jack valveController;
 
-    public GameObject valveLightObject;
+    private const int maxConnectedLights = 5;
+    private const int maxSequences = 3;
+    private int currentSequence = 0;
+    public int numSequences;
 
-    public Valve_Jack leftValve;
-    public Valve_Jack rightValve;
+    public ValveLight_Jack[] sequenceOne = new ValveLight_Jack[maxConnectedLights];
+    public ValveLight_Jack[] sequenceTwo = new ValveLight_Jack[maxConnectedLights];
+    public ValveLight_Jack[] sequenceThree = new ValveLight_Jack[maxConnectedLights];
 
-    public Material lightOnMaterial;
-    public Material lightOffMaterial;
-    private Renderer lightRenderer;
+    private readonly ValveLight_Jack[,] connectedLights = new ValveLight_Jack[maxSequences, maxConnectedLights];
 
     public Animator animator;
     private bool turning = false;
-
-    private bool lightOn = false;
 
     // Start is called before the first frame update
     void Awake()
     {
         valveController = FindObjectOfType<ValveController_Jack>();
-        lightRenderer = valveLightObject.GetComponent<Renderer>();
+
+        // Initialise connectedLights with existing sequences.
+        for(int i = 0; i < maxConnectedLights; ++i)
+        {
+            connectedLights[0, i] = sequenceOne[i];
+            connectedLights[1, i] = sequenceTwo[i];
+            connectedLights[2, i] = sequenceThree[i];
+        }
     }
 
     /// <summary>
@@ -46,16 +56,21 @@ public class Valve_Jack : MonoBehaviour
     }
 
     /// <summary>
-    /// Toggles the valve and adjascent valve lights.
+    /// Toggles the valve and any connected valve lights.
     /// Called by the valves animation trigger.
     /// </summary>
     public void EndTurn()
     {
         if (!valveController.GetPuzzleSolved())
         {
-            leftValve.SwitchLight();
-            SwitchLight();
-            rightValve.SwitchLight();
+            for(int i = 0; i < maxConnectedLights; ++i)
+            {
+                if(connectedLights[currentSequence, i])
+                {
+                    connectedLights[currentSequence, i].SwitchLight();
+                }
+            }
+            IncrementCurrentSequence();
 
             valveController.CheckLights();
         }
@@ -65,41 +80,13 @@ public class Valve_Jack : MonoBehaviour
     }
 
     /// <summary>
-    /// Returns lightOn.
+    /// Increments currentSequence, setting i to 0 if it reaches numSequences.
     /// </summary>
-    /// <returns></returns>
-    public bool IsLightOn()
+    private void IncrementCurrentSequence()
     {
-        return lightOn;
-    }
-
-    /// <summary>
-    /// Alternates whether the valves associated light is on or off, changing its material.
-    /// </summary>
-    public void SwitchLight()
-    {
-        if(lightOn)
+        if(++currentSequence >= numSequences)
         {
-            lightOn = false;
-            lightRenderer.material = lightOffMaterial;
-        }
-        else
-        {
-            lightOn = true;
-            lightRenderer.material = lightOnMaterial;
-        }
-    }
-
-    /// <summary>
-    /// If true is passed the valves light is turned on.
-    /// </summary>
-    /// <param name="newLightOn"></param>
-    public void SetLightOn(bool newLightOn)
-    {
-        lightOn = newLightOn;
-        if(lightOn)
-        {
-            lightRenderer.material = lightOnMaterial;
+            currentSequence = 0;
         }
     }
 }

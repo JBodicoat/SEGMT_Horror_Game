@@ -1,5 +1,6 @@
 ﻿// Jack 16/03/2020 Created script
 // Jack 23/03/2020 Added saving support.
+// Jack 31/03/2020 Now checks ValveLight scripts to see if lights are on rather than Valve scripts.
 
 using System.Collections;
 using System.Collections.Generic;
@@ -10,20 +11,9 @@ using UnityEngine;
 /// </summary>
 public class ValveController_Jack : MonoBehaviour
 {
-    public GameObject valveOne;
-    public Valve_Jack valveOneScript;
-
-    public GameObject valveTwo;
-    public Valve_Jack valveTwoScript;
-
-    public GameObject valveThree;
-    public Valve_Jack valveThreeScript;
-
-    public GameObject valveFour;
-    public Valve_Jack valveFourScript;
-
-    public GameObject valveFive;
-    public Valve_Jack valveFiveScript;
+    private const int numberOfValves = 5;
+    public GameObject[] valveMeshObjects = new GameObject[numberOfValves];
+    public ValveLight_Jack[] valveLights = new ValveLight_Jack[numberOfValves];
 
     private ValvePuzzleDoor_Jack doorController;
     private bool puzzleSolved = false;
@@ -44,23 +34,31 @@ public class ValveController_Jack : MonoBehaviour
     {
         if (!puzzleSolved)
         {
-            if (valveOneScript.IsLightOn()
-                && valveTwoScript.IsLightOn()
-                && valveThreeScript.IsLightOn()
-                && valveFourScript.IsLightOn()
-                && valveFiveScript.IsLightOn())
+            int i;
+            for(i = 0; i < numberOfValves; ++i)
             {
-                doorController.EnableAnimator();
-
-                valveOne.layer = defaultLayer;
-                valveTwo.layer = defaultLayer;
-                valveThree.layer = defaultLayer;
-                valveFour.layer = defaultLayer;
-                valveFive.layer = defaultLayer;
-
-                puzzleSolved = true;
+                if(!valveLights[i].IsLightOn())
+                {
+                    break;
+                }
+            }
+            if (i == numberOfValves)
+            {
+                CompletePuzzle();
             }
         }
+    }
+
+    private void CompletePuzzle()
+    {
+        doorController.EnableAnimator();
+
+        foreach (GameObject valve in valveMeshObjects)
+        {
+            valve.layer = defaultLayer;
+        }
+
+        puzzleSolved = true;
     }
 
     /// <summary>
@@ -69,7 +67,10 @@ public class ValveController_Jack : MonoBehaviour
     /// <param name="newPuzzleSolved"></param>
     public void SetPuzzleSolved(bool newPuzzleSolved)
     {
-        puzzleSolved = newPuzzleSolved;
+        if(newPuzzleSolved)
+        {
+            CompletePuzzle();
+        }
     }
 
     /// <summary>

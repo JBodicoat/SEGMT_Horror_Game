@@ -65,11 +65,11 @@ public class LevelDataManager_Jack : MonoBehaviour
 
     public ValvePuzzleDoor_Jack valvePuzzleDoorScript;
 
-    public Valve_Jack valve1Script;
-    public Valve_Jack valve2Script;
-    public Valve_Jack valve3Script;
-    public Valve_Jack valve4Script;
-    public Valve_Jack valve5Script;
+    public ValveLight_Jack valveLight1Script;
+    public ValveLight_Jack valveLight2Script;
+    public ValveLight_Jack valveLight3Script;
+    public ValveLight_Jack valveLight4Script;
+    public ValveLight_Jack valveLight5Script;
 
     // Burning Puzzle
     public GameObject woodenPanel;
@@ -181,14 +181,14 @@ public class LevelDataManager_Jack : MonoBehaviour
             valveControllerScript.SetPuzzleSolved(LevelSaveData_Jack.current.valvePuzzleSolved);
             valvePuzzleDoorScript.SetDoorOpen(LevelSaveData_Jack.current.valvePuzzleSolved);
 
-            valve1Script.SetLightOn(LevelSaveData_Jack.current.valve1LightOn);
-            valve2Script.SetLightOn(LevelSaveData_Jack.current.valve2LightOn);
-            valve3Script.SetLightOn(LevelSaveData_Jack.current.valve3LightOn);
-            valve4Script.SetLightOn(LevelSaveData_Jack.current.valve4LightOn);
-            valve5Script.SetLightOn(LevelSaveData_Jack.current.valve5LightOn);
+            valveLight1Script.SetLightOn(LevelSaveData_Jack.current.valve1LightOn);
+            valveLight2Script.SetLightOn(LevelSaveData_Jack.current.valve2LightOn);
+            valveLight3Script.SetLightOn(LevelSaveData_Jack.current.valve3LightOn);
+            valveLight4Script.SetLightOn(LevelSaveData_Jack.current.valve4LightOn);
+            valveLight5Script.SetLightOn(LevelSaveData_Jack.current.valve5LightOn);
 
             // ===== Burning Puzzle Data  ===== //
-            if(LevelSaveData_Jack.current.bottle1PickedUp)
+            if (LevelSaveData_Jack.current.bottle1PickedUp)
             {
                 Destroy(bottle1);
             }
@@ -351,11 +351,11 @@ public class LevelDataManager_Jack : MonoBehaviour
         // ===== Valve Puzzle Data ===== //
         LevelSaveData_Jack.current.valvePuzzleSolved = valveControllerScript.GetPuzzleSolved();
 
-        LevelSaveData_Jack.current.valve1LightOn = valve1Script.IsLightOn();
-        LevelSaveData_Jack.current.valve2LightOn = valve2Script.IsLightOn();
-        LevelSaveData_Jack.current.valve3LightOn = valve3Script.IsLightOn();
-        LevelSaveData_Jack.current.valve4LightOn = valve4Script.IsLightOn();
-        LevelSaveData_Jack.current.valve5LightOn = valve5Script.IsLightOn();
+        LevelSaveData_Jack.current.valve1LightOn = valveLight1Script.IsLightOn();
+        LevelSaveData_Jack.current.valve2LightOn = valveLight2Script.IsLightOn();
+        LevelSaveData_Jack.current.valve3LightOn = valveLight3Script.IsLightOn();
+        LevelSaveData_Jack.current.valve4LightOn = valveLight4Script.IsLightOn();
+        LevelSaveData_Jack.current.valve5LightOn = valveLight5Script.IsLightOn();
 
         // ===== Burning Puzzle Data  ===== //
 
