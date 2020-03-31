@@ -1,11 +1,17 @@
 ﻿//Created by Dan - 17/03/2020
+// Jack 31/03/2020 - Reviewed
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Class header comment describing what it is used for.
+/// </summary>
 public class ClockPuzzle_Dan : MonoBehaviour
 {
     public Animator anim;
+    private const string animIsOpen = "isOpen";
 
     private const int degreesPerGameMinute = 6;
     private const int secondsPerGameMinute = 3;
@@ -18,7 +24,6 @@ public class ClockPuzzle_Dan : MonoBehaviour
     private float timer;
     private int minutesTicked;
     private int minsPassed;
-    private int hoursPassed;
     private Transform minutePivot;
     private Transform hourPivot;
 
@@ -26,7 +31,6 @@ public class ClockPuzzle_Dan : MonoBehaviour
     {
         anim = GetComponent<Animator>();
         minsPassed = 0;
-        hoursPassed = 0;
         minutePivot = GameObject.Find("GFCMinutePivot").transform;
         hourPivot = GameObject.Find("GFCHourPivot").transform;
     }
@@ -40,8 +44,8 @@ public class ClockPuzzle_Dan : MonoBehaviour
         {
             //move minute hand once           
             minutePivot.Rotate(minuteHandRoatation);
-            minutesTicked++;
-            minsPassed++;
+            ++minutesTicked;
+            ++minsPassed;
             timer = 0;
             TrackTime();
         }   
@@ -54,19 +58,20 @@ public class ClockPuzzle_Dan : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Function header comment describing what the function does.
+    /// </summary>
     void TrackTime()
     {
-        if (minsPassed == 60)
+        if (minsPassed >= 60)
         {
-            //add 1 to hours gone
             minsPassed = 0;
-            hoursPassed++;
-            anim.SetBool("isOpen", true);
+            anim.SetBool(animIsOpen, true);
         }
 
         else if (minsPassed >= 2)
         {
-            anim.SetBool("isOpen", false);
+            anim.SetBool(animIsOpen, false);
         }
     }
 
