@@ -5,6 +5,7 @@
 // Jack 19/03/2020 increased throw force
 // Jack 23/03/2020 Started intergrating glow shader.
 // Louie 25/03/2020 - added safe interaction
+// Dan 25/03/2020 - Added Clock Puzzle key interaction
 
 using System.Collections;
 using System.Collections.Generic;
@@ -54,6 +55,7 @@ public class Interaction_Jack : MonoBehaviour
     private const string rabbitTag = "Rabbit";
     private const string valveTag = "Valve";
     private const string safeTag = "Safe";
+    private const string clockTag = "ClockKey";
 
     public KeyUIManager_Jack keyManagerScript;
 
@@ -146,7 +148,7 @@ public class Interaction_Jack : MonoBehaviour
     {
         if (interactionHitSucceeded)
         {
-            if(hit.transform.CompareTag(pickupTag))
+            if (hit.transform.CompareTag(pickupTag))
             {
                 hit.transform.gameObject.GetComponent<Pickup_Jack>().Pickup();
             }
@@ -184,6 +186,10 @@ public class Interaction_Jack : MonoBehaviour
             else if (hit.transform.CompareTag(safeTag))
             {
                 hit.transform.gameObject.GetComponent<Safe_LouieWilliamson>().CameraOn();
+            }
+            else if (hit.transform.CompareTag(clockTag))
+            {
+                Destroy(hit.collider.gameObject);
             }
         }
     }

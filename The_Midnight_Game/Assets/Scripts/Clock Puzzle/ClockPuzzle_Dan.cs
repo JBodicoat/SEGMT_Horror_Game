@@ -1,58 +1,79 @@
-﻿using System.Collections;
+﻿//Created by Dan - 17/03/2020
+// Jack 31/03/2020 - Reviewed
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Class header comment describing what it is used for.
+/// </summary>
 public class ClockPuzzle_Dan : MonoBehaviour
 {
-
-    // private int gameTime;
-    // private bool clockMove;
     public Animator anim;
+    private const string animIsOpen = "isOpen";
+
+    private const int degreesPerGameMinute = 6;
+    private const int secondsPerGameMinute = 3;
+    private const int degreesPerHourHandMove = 2;
+    private const int minutesPerHourHandMove = 4;
+
+    private readonly Vector3 minuteHandRoatation = new Vector3(0, 0, degreesPerGameMinute);
+    private readonly Vector3 hourHandRotation = new Vector3(0, 0, degreesPerHourHandMove);
+
+    private float timer;
+    private int minutesTicked;
+    private int minsPassed;
+    private Transform minutePivot;
+    private Transform hourPivot;
 
     void Start()
     {
-
-       // Invoke("ClockDoorMove", 3.0f);
-
-
         anim = GetComponent<Animator>();
-
-        StartCoroutine(ClockSequence());
+        minsPassed = 0;
+        minutePivot = GameObject.Find("GFCMinutePivot").transform;
+        hourPivot = GameObject.Find("GFCHourPivot").transform;
     }
 
     void Update()
     {
-       // if (isOpen)
-       // {
-       //     //Invoke("ClockDoorMove", 3.0f);
-       //     isOpen = false;
-       // }
+        timer += Time.deltaTime;
 
+        //if timer reaches seconds per in game minute (3 seconds)
+        if (timer >= secondsPerGameMinute)
+        {
+            //move minute hand once           
+            minutePivot.Rotate(minuteHandRoatation);
+            ++minutesTicked;
+            ++minsPassed;
+            timer = 0;
+            TrackTime();
+        }   
+
+        //every 4 minutes moves the hour hand 2 degrees
+        if (minutesTicked >= minutesPerHourHandMove)
+        {
+            hourPivot.Rotate(hourHandRotation);
+            minutesTicked = 0;
+        }
     }
 
-    //void ClockDoorMove()
-    //{
-    //    GameObject.Find("BodyDoor").GetComponent<Animator>().SetBool("isOpen", true);
-    //}
-
-    //void ToggleClockDoorMove()
-    //{
-    //    if (isOpen)
-    //    {
-    //        isOpen = false;
-    //    }
-    //}
-
-    IEnumerator ClockSequence()
+    /// <summary>
+    /// Function header comment describing what the function does.
+    /// </summary>
+    void TrackTime()
     {
-        yield return new WaitForSeconds(2);
-        anim.SetBool("isOpen", true);
-        yield return new WaitForSeconds(6);
-        anim.SetBool("isOpen", false);
-        yield return new WaitForSeconds(10);
-        anim.SetBool("isOpen", true);
-        yield return new WaitForSeconds(5);
-        anim.SetBool("isOpen", false);
+        if (minsPassed >= 60)
+        {
+            minsPassed = 0;
+            anim.SetBool(animIsOpen, true);
+        }
+
+        else if (minsPassed >= 2)
+        {
+            anim.SetBool(animIsOpen, false);
+        }
     }
+
 }
 
