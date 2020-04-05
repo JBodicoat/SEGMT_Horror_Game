@@ -3,6 +3,7 @@
 // Jack 23/03/2020 - Added saving of piano puzzle, library puzzle, attic puzzle, valve puzzle, burning puzzle & lantern puzzle.
 //                   Removed door from stone tablets puzzle.
 //                   Added saving for the Midnight Man.
+// Jack 05/04/2020 - Added saving of clock puzzle & safe puzzle.
 
 using UnityEngine;
 using System.Collections;
@@ -35,6 +36,14 @@ public class LevelDataManager_Jack : MonoBehaviour
     public KeyUIManager_Jack pianoKeyScript;
 
     // Clock Puzzle
+    public ClockPuzzle_Dan clockScript;
+    public GameObject minuteHandPivot;
+    public GameObject hourHandPivot;
+
+    public GameObject clockKey;
+
+    // Safe Puzzle
+    public Safe_LouieWilliamson safeScript;
 
     // Library Puzzle
     public BookController_Jack bookControllerScript;
@@ -49,8 +58,6 @@ public class LevelDataManager_Jack : MonoBehaviour
     public Book_Jack book3Script;
 
     // Rabbit Puzzle
-
-    // Safe Puzzle
 
     // Attic Puzzle
     public AtticHatch_Jack atticHatchScript;
@@ -141,6 +148,38 @@ public class LevelDataManager_Jack : MonoBehaviour
 
             // ===== Piano Puzzle Data ===== //
             pianoKeyScript.SetPuzzleSolved(LevelSaveData_Jack.current.pianoPuzzleSolved);
+
+            // ===== Clock Puzzle Data ===== //
+            clockScript.SetMinsPassed(LevelSaveData_Jack.current.minsPassed);
+            clockScript.SetMinsTicked(LevelSaveData_Jack.current.minutesTicked);
+            clockScript.SetClockTimer(LevelSaveData_Jack.current.clockTimer);
+
+            minuteHandPivot.transform.rotation = Quaternion.Euler(
+                minuteHandPivot.transform.eulerAngles.x,
+                minuteHandPivot.transform.eulerAngles.y,
+                LevelSaveData_Jack.current.minutePivotZRot
+                );
+            hourHandPivot.transform.rotation = Quaternion.Euler(
+                hourHandPivot.transform.eulerAngles.x,
+                hourHandPivot.transform.eulerAngles.y,
+                LevelSaveData_Jack.current.hourPivotZRot
+                );
+
+            if(LevelSaveData_Jack.current.clockDoorOpen)
+            {
+                clockScript.OpenDoor();
+            }
+
+            if(LevelSaveData_Jack.current.clockKeyPickedUp)
+            {
+                Destroy(clockKey);
+            }
+
+            // ===== Safe Puzzle Data ===== //
+            if(LevelSaveData_Jack.current.safeOpen)
+            {
+                safeScript.OpenSafe();
+            }
 
             // ===== Library Puzzle Data ===== //
             bookControllerScript.SetPuzzleSolved(LevelSaveData_Jack.current.libraryPuzzleSolved);
@@ -326,6 +365,21 @@ public class LevelDataManager_Jack : MonoBehaviour
 
         // ===== Piano Puzzle Data ===== //    
         LevelSaveData_Jack.current.pianoPuzzleSolved = pianoKeyScript.GetPuzzleSolved();
+
+        // ===== CLock Puzzle Data ===== //
+        LevelSaveData_Jack.current.minsPassed = clockScript.GetMinsPassed();
+        LevelSaveData_Jack.current.minutesTicked = clockScript.GetMinsTicked();
+        LevelSaveData_Jack.current.clockTimer = clockScript.GetClockTimer();
+        
+        LevelSaveData_Jack.current.minutePivotZRot = minuteHandPivot.transform.eulerAngles.z;
+        LevelSaveData_Jack.current.hourPivotZRot = hourHandPivot.transform.eulerAngles.z;
+
+        LevelSaveData_Jack.current.clockDoorOpen = clockScript.IsDoorOpen();
+
+        LevelSaveData_Jack.current.clockKeyPickedUp = !clockKey;
+
+        // ===== Safe Puzzle Data ===== //
+        LevelSaveData_Jack.current.safeOpen = safeScript.IsSafeOpen();
 
         // ===== Library Puzzle Data ===== //
         LevelSaveData_Jack.current.libraryPuzzleSolved = bookControllerScript.GetPuzzleSolved();

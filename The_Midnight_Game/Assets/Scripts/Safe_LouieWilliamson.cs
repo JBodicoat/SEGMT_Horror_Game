@@ -1,5 +1,9 @@
 ﻿//Louie : 25/03/2020 - Created Script
 // Jack : 30/03/2020 - Reviewed script. Optimized distance calculation.
+// Jack : 05/04/2020 - Added saving & loading support.
+//                     Created IsSafeOpen to be used by LevelDataManager
+//                     Moved intitialisation out of Start
+//                     Set OpenSafe to public to be used by LevelDataManager
 
 using System.Collections;
 using System.Collections.Generic;
@@ -18,11 +22,11 @@ public class Safe_LouieWilliamson : MonoBehaviour
     public GameObject tip;
 
     //Script Variables
-    private bool isAttemptingSafe;
-    private bool safeOpen;
-    private Vector3 rotateRight;
-    private float dialTimer;
-    private int dialStage;
+    private bool isAttemptingSafe = false;
+    private bool safeOpen = false;
+    private Vector3 rotateRight = new Vector3(0, 0, 2.5f);
+    private float dialTimer = 0;
+    private int dialStage = 1;
 
     //constants
     private const float clickTime = 1.0f;
@@ -37,16 +41,11 @@ public class Safe_LouieWilliamson : MonoBehaviour
     //3rd Code is 45
     private const float DialCode3 = 342.0f;
 
-    void Start()
+    private void Awake()
     {
+        safeAnim = GetComponent<Animator>();
         playerScript = FindObjectOfType<FirstPersonController_Jack>();
         playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
-        safeAnim = GetComponent<Animator>();
-        safeOpen = false;
-        isAttemptingSafe = false;
-        rotateRight = new Vector3(0, 0, 2.5f);
-        dialStage = 1;
-        dialTimer = 0;
         soundManager = FindObjectOfType<SFXManager_LW>();
     }
 
@@ -85,7 +84,7 @@ public class Safe_LouieWilliamson : MonoBehaviour
     /// <summary>
     /// Plays the open safe animation.
     /// </summary>
-    private void OpenSafe()
+    public void OpenSafe()
     {
         CameraOff();
         safeOpen = true;
@@ -185,5 +184,14 @@ public class Safe_LouieWilliamson : MonoBehaviour
     public void PlayDoorOpenSound()
     {
         soundManager.PlaySFX(SFXManager_LW.SFX.SafeDoor);
+    }
+
+    /// <summary>
+    /// Returns safeOpen.
+    /// </summary>
+    /// <returns></returns>
+    public bool IsSafeOpen()
+    {
+        return safeOpen;
     }
 }

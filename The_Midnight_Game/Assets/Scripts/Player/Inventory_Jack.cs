@@ -36,19 +36,15 @@ public class Inventory_Jack : MonoBehaviour
     {
         inventory[(ushort)ItemType.matches] = 9999;
         inventory[(ushort)ItemType.salt] = 2;
+        inventoryMenuScript = FindObjectOfType<InventoryMenu_Jack>();
     }
 
     private void Start()
     {
-        if (!inventoryMenuScript)
-        {
-            inventoryMenuScript = FindObjectOfType<InventoryMenu_Jack>();
-        }
         inventoryMenuScript.UpdateItem(ItemType.matches, 3);
         inventoryMenuScript.UpdateItem(ItemType.salt, 2);
 
         journalScript.UpdateValues(GetNumOf(ItemType.matches), GetNumOf(ItemType.salt), GetNumOf(ItemType.bottles), GetNumOf(ItemType.dolls));
-
     }
 
     /// Increases the number of passed itemType by passed quantity.

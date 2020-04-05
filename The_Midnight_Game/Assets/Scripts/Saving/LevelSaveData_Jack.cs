@@ -52,6 +52,19 @@ public class LevelSaveData_Jack
     public bool pianoPuzzleSolved;
 
     // Clock Puzzle
+    public int minutesTicked;
+    public int minsPassed;
+    public float clockTimer;
+
+    public float minutePivotZRot;
+    public float hourPivotZRot;
+
+    public bool clockDoorOpen;
+
+    public bool clockKeyPickedUp;
+
+    // Safe Puzzle
+    public bool safeOpen;
 
     // Library Puzzle
     public bool libraryPuzzleSolved;
@@ -61,8 +74,6 @@ public class LevelSaveData_Jack
     public float book3LocalZPos;
 
     // Rabbit Puzzle
-
-    // Safe Puzzle
 
     // Attic Puzzle
     public bool atticPuzzleSolved;

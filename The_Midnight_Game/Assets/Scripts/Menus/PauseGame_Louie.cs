@@ -156,14 +156,6 @@ public class PauseGame_Louie : Menu
     }
 
     /// <summary>
-    /// Save the Game (used by the pause menu button)
-    /// </summary>
-    public void SaveGame()
-    {
-        //insert saving game here
-    }
-
-    /// <summary>
     /// Quits the game (used by the pause menu button)
     /// </summary>
     public void QuitGame()
