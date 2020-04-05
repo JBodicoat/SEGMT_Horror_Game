@@ -22,6 +22,8 @@ namespace InControl
 		public TwoAxisInputControl DPad { get; protected set; }
 
 
+        private const int deadzone = 1000;
+
 		public InputDevice( string name )
 		{
 			Name = name;

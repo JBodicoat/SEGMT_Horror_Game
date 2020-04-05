@@ -93,13 +93,13 @@ public class Interaction_Jack : MonoBehaviour
                 moveHitSucceeded = true;
             }
 
-            if (lastHitGlowScript)
-            {
-                lastHitGlowScript.StopGlow();
-            }
+            //if (lastHitGlowScript)
+            //{
+            //    lastHitGlowScript.StopGlow();
+            //}
 
-            lastHitGlowScript = hit.transform.gameObject.GetComponent<OnHoverGlow_Dan>();
-            lastHitGlowScript.Glow();
+            //lastHitGlowScript = hit.transform.gameObject.GetComponent<OnHoverGlow_Dan>();
+            //lastHitGlowScript.Glow();
         }
         else
         {

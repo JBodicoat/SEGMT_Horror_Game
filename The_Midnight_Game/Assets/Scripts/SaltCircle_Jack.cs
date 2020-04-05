@@ -21,6 +21,7 @@ public class SaltCircle_Jack : MonoBehaviour
     {
         playerSaltScript = FindObjectOfType<SaltPouring_Jack>();
         gameStatesScript = FindObjectOfType<GameStates_Louie>();
+        candleScript = FindObjectOfType<Candle_Jack>();
     }
 
     /// <summary>

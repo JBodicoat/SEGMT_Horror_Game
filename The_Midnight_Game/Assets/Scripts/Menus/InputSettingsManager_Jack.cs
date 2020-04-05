@@ -1,6 +1,7 @@
 ﻿// Jack : 15/02/2020 - Created script
 // Jack 19/03/2020 - Removed jump
 // Jack 25/03/2020 - Start() now sets controls in FirstPersonController script for consistency.
+// Jack 01/04/2020 - Added mouse support
 
 using System.Collections;
 using System.Collections.Generic;
@@ -21,22 +22,16 @@ public enum PlayerAction
 }
 
 /// Handles changing the games input and it's input menu.
-public class InputSettingsManager_Jack : MonoBehaviour
+public class InputSettingsManager_Jack : Menu
 {
     public FirstPersonController_Jack playerScript;
 
     public GameObject inputSettingsMenu;
 
-    public Image saltSelect;
-    public Image candleSelect;
-    public Image interactSelect;
-    public Image grabSelect;
-    public Image throwSelect;
-
-    private PlayerAction selected = 0;
+    private PlayerAction selectedAction = 0;
 
     private InputDevice inputDevice;
-   
+
     private const ushort playerActionSizeOf = (ushort)PlayerAction.SizeOf;
 
     private struct ControllerBinding
@@ -104,8 +99,75 @@ public class InputSettingsManager_Jack : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(HasSelectionChanged())
+        {
+            for(int i = 0; i < buttons.Count; ++i)
+            {
+                if(buttons[i].IsSelected())
+                {
+                    selectedAction = (PlayerAction)i;
+                    break;
+                }
+            }
+        }
+
+        // Keyboard Inputs
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            inputSettingsMenu.SetActive(!inputSettingsMenu.activeSelf);
+        }
+
+        if (inputSettingsMenu.activeSelf)
+        {
+            if (Input.GetKeyDown(KeyCode.DownArrow))
+            {
+                IncrementSelect();
+            }
+            else if (Input.GetKeyDown(KeyCode.UpArrow))
+            {
+                DecrementSelect();
+            }
+
+            if (Input.anyKeyDown)
+            {
+                foreach (KeyCode keyCode in System.Enum.GetValues(typeof(KeyCode)))
+                {
+                    if (Input.GetKeyDown(keyCode) && keyCode != KeyCode.Escape
+                                                    && keyCode != KeyCode.UpArrow
+                                                    && keyCode != KeyCode.DownArrow
+                                                    && keyCode != KeyCode.K)// To be removed
+                    {
+                        if (ChangeKey(selectedAction, keyCode))
+                        {
+                            switch (selectedAction)
+                            {
+                                case PlayerAction.PourSalt:
+                                    playerScript.SetSaltKey(keyCode);
+                                    break;
+                                case PlayerAction.LightCandle:
+                                    playerScript.SetCandleKey(keyCode);
+                                    break;
+                                case PlayerAction.GrabDrop:
+                                    playerScript.SetGrabKey(keyCode);
+                                    break;
+                                case PlayerAction.Throw:
+                                    playerScript.SetThrowKey(keyCode);
+                                    break;
+                                case PlayerAction.Interact:
+                                    playerScript.SetInteractKey(keyCode);
+                                    break;
+                                default:
+                                    break;
+                            }
+                            break;
+                        }
+                    }
+                } // End foreach
+            }
+        }
+
         inputDevice = InputManager.ActiveDevice;
-        if(InputManager.Devices.Count > 0)
+        if (InputManager.Devices.Count > 0)
         {
             // Controller Inputs
             if (inputDevice.MenuWasPressed)
@@ -113,15 +175,15 @@ public class InputSettingsManager_Jack : MonoBehaviour
                 inputSettingsMenu.SetActive(!inputSettingsMenu.activeSelf);
             }
 
-            if(inputSettingsMenu.activeSelf)
-            { 
+            if (inputSettingsMenu.activeSelf)
+            {
                 if (inputDevice.Direction.Down.WasPressed)
                 {
-                    IncrementSelect();
+                    SelectNextAction();
                 }
-                else if(inputDevice.Direction.Up.WasPressed)
+                else if (inputDevice.Direction.Up.WasPressed)
                 {
-                    DecrementSelect();
+                    SelectPreviousAction();
                 }
 
                 InputControl button = inputDevice.AnyControl;
@@ -130,9 +192,9 @@ public class InputSettingsManager_Jack : MonoBehaviour
                 {
                     if (button.Target >= InputControlType.Action1 && button.Target <= InputControlType.RightBumper)
                     {
-                        if (ChangeControlType(selected, button.Target))
+                        if (ChangeControlType(selectedAction, button.Target))
                         {
-                            switch (selected)
+                            switch (selectedAction)
                             {
                                 case PlayerAction.PourSalt:
                                     playerScript.SetSaltControlType(button.Target);
@@ -157,63 +219,6 @@ public class InputSettingsManager_Jack : MonoBehaviour
                 }
             }
         }
-        else
-        {
-            // Keyboard Inputs
-            if (Input.GetKeyDown(KeyCode.K))
-            {
-                inputSettingsMenu.SetActive(!inputSettingsMenu.activeSelf);
-            }
-
-            if (inputSettingsMenu.activeSelf)
-            {
-                if (Input.GetKeyDown(KeyCode.DownArrow))
-                {
-                    IncrementSelect();
-                }
-                else if (Input.GetKeyDown(KeyCode.UpArrow))
-                {
-                    DecrementSelect();
-                }
-
-                if (Input.anyKeyDown)
-                {
-                    foreach (KeyCode keyCode in System.Enum.GetValues(typeof(KeyCode)))
-                    {
-                        if (Input.GetKeyDown(keyCode) && keyCode != KeyCode.Escape
-                                                     && keyCode != KeyCode.UpArrow
-                                                     && keyCode != KeyCode.DownArrow
-                                                     && keyCode != KeyCode.K)// To be removed
-                        {
-                            if (ChangeKey(selected, keyCode))
-                            {
-                                switch (selected)
-                                {
-                                    case PlayerAction.PourSalt:
-                                        playerScript.SetSaltKey(keyCode);
-                                        break;
-                                    case PlayerAction.LightCandle:
-                                        playerScript.SetCandleKey(keyCode);
-                                        break;
-                                    case PlayerAction.GrabDrop:
-                                        playerScript.SetGrabKey(keyCode);
-                                        break;
-                                    case PlayerAction.Throw:
-                                        playerScript.SetThrowKey(keyCode);
-                                        break;
-                                    case PlayerAction.Interact:
-                                        playerScript.SetThrowKey(keyCode);
-                                        break;
-                                    default:
-                                        break;
-                                }
-                                break;
-                            }
-                        }
-                    } // End foreach
-                }
-            }
-        }
     }
 
     /// <summary>
@@ -231,7 +236,7 @@ public class InputSettingsManager_Jack : MonoBehaviour
             {
                 return false;
             }
-            else if(controllerBindings[i].action == action)
+            else if (controllerBindings[i].action == action)
             {
                 index = i;
             }
@@ -250,13 +255,13 @@ public class InputSettingsManager_Jack : MonoBehaviour
     private bool ChangeKey(PlayerAction action, KeyCode keyCode)
     {
         ushort index = 0;
-        for(ushort i = 0; i < playerActionSizeOf; i++)
+        for (ushort i = 0; i < playerActionSizeOf; i++)
         {
-            if(keyBindings[i].code == keyCode)
+            if (keyBindings[i].code == keyCode)
             {
                 return false;
             }
-            else if(keyBindings[i].action == action)
+            else if (keyBindings[i].action == action)
             {
                 index = i;
             }
@@ -266,66 +271,29 @@ public class InputSettingsManager_Jack : MonoBehaviour
         return true;
     }
 
+
+
     /// <summary>
     /// Increments the selected player action.
     /// </summary>
-    private void IncrementSelect()
+    private void SelectNextAction()
     {
-        if (++selected >= PlayerAction.SizeOf)
+        if (++selectedAction >= PlayerAction.SizeOf)
         {
-            selected = 0;
+            selectedAction = 0;
         }
-        ChangeSelection();
+        IncrementSelect();
     }
 
     /// <summary>
     /// Decrements the selected player action.
     /// </summary>
-    private void DecrementSelect()
+    private void SelectPreviousAction()
     {
-        if (--selected < 0)
+        if (--selectedAction < 0)
         {
-            selected = PlayerAction.SizeOf - 1;
+            selectedAction = PlayerAction.SizeOf - 1;
         }
-        ChangeSelection();
-    }
-
-    /// <summary>
-    /// Changes the selected player action.
-    /// </summary>
-    private void ChangeSelection()
-    {
-        switch (selected)
-        {
-            case PlayerAction.PourSalt:
-                throwSelect.enabled = false;
-                saltSelect.enabled = true;
-                candleSelect.enabled = false;
-                break;
-
-            case PlayerAction.LightCandle:
-                saltSelect.enabled = false;
-                candleSelect.enabled = true;
-                interactSelect.enabled = false;
-                break;
-
-            case PlayerAction.Interact:
-                candleSelect.enabled = false;
-                interactSelect.enabled = true;
-                grabSelect.enabled = false;
-                break;
-
-            case PlayerAction.GrabDrop:
-                interactSelect.enabled = false;
-                grabSelect.enabled = true;
-                throwSelect.enabled = false;
-                break;
-
-            case PlayerAction.Throw:
-                grabSelect.enabled = false;
-                throwSelect.enabled = true;
-                saltSelect.enabled = false;
-                break;
-        }
+        DecrementSelect();
     }
 }

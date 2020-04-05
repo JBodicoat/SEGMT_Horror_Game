@@ -1,6 +1,7 @@
 ﻿// Jack 05/03/2020 Created script
 // Jack 06/03/2020 Updated script to allow UI to be closed
 // Jack 23/03/2020 Added saving support.
+// Jack 01/04/2020 Added mouse support.
 
 using InControl;
 using System.Collections;
@@ -14,14 +15,13 @@ using UnityStandardAssets.Characters.FirstPerson;
 /// </summary>
 /// Displays key UI upon interaction with piano keys. Player must repeat the
 /// sequence specified in "tune" to complete the puzzle.
-public class KeyUIManager_Jack : MonoBehaviour
+public class KeyUIManager_Jack : Menu
 {
     public GameObject keyUIObject;
-    
-    private const int numKeys = 7;
-    private int currentKeyID = 1;
 
-    public Image[] keyHighlights = new Image[numKeys];
+    private const int numKeys = 7;
+    private int currentKeyID = 0;
+
     public AudioClip[] keyNotes = new AudioClip[numKeys];
     public AudioSource audioSource;
 
@@ -47,7 +47,7 @@ public class KeyUIManager_Jack : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        if(!playerControllerScript)
+        if (!playerControllerScript)
         {
             playerControllerScript = FindObjectOfType<FirstPersonController_Jack>();
         }
@@ -58,7 +58,19 @@ public class KeyUIManager_Jack : MonoBehaviour
     {
         wasClosed = false;
 
-        if(keyUIObject.activeSelf)
+        if(HasSelectionChanged())
+        {
+            for(int i = 0; i < buttons.Count; ++i)
+            {
+                if(buttons[i].IsSelected())
+                {
+                    currentKeyID = i;
+                    break;
+                }
+            }
+        }
+
+        if (keyUIObject.activeSelf)
         {
             if ((playerTransform.position - gameObject.transform.position).sqrMagnitude > maxSqrDistance)
             {
@@ -187,12 +199,12 @@ public class KeyUIManager_Jack : MonoBehaviour
     /// </summary>
     private void SelectRightKey()
     {
-        keyHighlights[currentKeyID].enabled = false;
+        DeSelectAllButtons();
         if (++currentKeyID >= numKeys)
         {
             currentKeyID = 0;
         }
-        keyHighlights[currentKeyID].enabled = true;
+        buttons[currentKeyID].Select();
     }
 
     /// <summary>
@@ -200,12 +212,12 @@ public class KeyUIManager_Jack : MonoBehaviour
     /// </summary>
     private void SelectLeftKey()
     {
-        keyHighlights[currentKeyID].enabled = false;
-        if(--currentKeyID < 0)
+        DeSelectAllButtons();
+        if (--currentKeyID < 0)
         {
             currentKeyID = numKeys - 1;
         }
-        keyHighlights[currentKeyID].enabled = true;
+        buttons[currentKeyID].Select();
     }
 
     /// <summary>
@@ -216,9 +228,9 @@ public class KeyUIManager_Jack : MonoBehaviour
         keyUIObject.SetActive(true);
         playingTune = false;
 
-        keyHighlights[currentKeyID].enabled = false;
+        DeSelectAllButtons();
         currentKeyID = 0;
-        keyHighlights[currentKeyID].enabled = true;
+        buttons[currentKeyID].Select();
 
         playerControllerScript.SetInMenu(true);
     }
