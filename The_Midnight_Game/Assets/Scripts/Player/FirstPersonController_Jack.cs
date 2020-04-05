@@ -56,7 +56,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private const string horizontalAxis = "Horizontal";
         private const string verticalAxis = "Vertical";
 
-        private bool inMenu = false;
+        private bool usingPiano = false;
+        private bool usingSafe = false;
 
         private InputControlType saltControlType = InputControlType.Action4;
         private InputControlType candleControlType = InputControlType.Action2;
@@ -122,7 +123,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         // Update is called once per frame
         private void Update()
         {
-            if (!inMenu)
+            if (!usingPiano)
             {
                 GetInput();
             }
@@ -130,7 +131,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         private void FixedUpdate()
         {
-            if (!inMenu)
+            if (!usingPiano)
             {
                 RotateView();
 
@@ -218,7 +219,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         private void GetInput()
         {
-            if (!inMenu)
+            if (!usingPiano)
             {
                 // Read input
                 float horizontal = 0f;
@@ -231,7 +232,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
                     // Game pad inputs
                     usingController = true;
 
-                    if (inputDevice.GetControl(saltControlType).WasPressed)
+                    if (!usingSafe && inputDevice.GetControl(saltControlType).WasPressed)
                     {
                         saltPouringScript.PourSaltCirlce();
                     }
@@ -246,7 +247,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
                             candleScript.LightCandle();
                         }
 
-                        if (inputDevice.GetControl(interactControlType).WasPressed)
+                        if (!usingSafe && inputDevice.GetControl(interactControlType).WasPressed)
                         {
                             interactionScript.Interact();
                         }
@@ -273,7 +274,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
                     // Keyboard & mouse inputs
                     usingController = false;
 
-                    if (Input.GetKeyDown(saltKey))
+                    if (!usingSafe && Input.GetKeyDown(saltKey))
                     {
                         saltPouringScript.PourSaltCirlce();
                     }
@@ -288,7 +289,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
                             candleScript.LightCandle();
                         }
 
-                        if (Input.GetKeyDown(interactKey))
+                        if (!usingSafe && Input.GetKeyDown(interactKey))
                         {
                             interactionScript.Interact();
                         }
@@ -478,10 +479,19 @@ namespace UnityStandardAssets.Characters.FirstPerson
         /// <summary>
         /// Sets inMenu. Used for preventing player movement whilst menus are open.
         /// </summary>
-        /// <param name="newInMenu"></param>
-        public void SetInMenu(bool newInMenu)
+        /// <param name="newUsingPiano"></param>
+        public void SetUsingPiano(bool newUsingPiano)
         {
-            inMenu = newInMenu;
+            usingPiano = newUsingPiano;
+        }
+
+        /// <summary>
+        /// Sets usingSage. Used to prevent only player interaction and salt pouring.
+        /// </summary>
+        /// <param name="newUsingSafe"></param>
+        public void SetUsingSafe(bool newUsingSafe)
+        {
+            usingSafe = newUsingSafe;
         }
     }
 }

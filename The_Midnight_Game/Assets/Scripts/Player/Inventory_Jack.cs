@@ -1,4 +1,5 @@
 ﻿// Jack 16/02/2020 - Abstracted inventory system from FirstPersonController
+// Louie 24/03/2020 - Added functionality with Journal UI
 
 using System.Collections;
 using System.Collections.Generic;
@@ -30,6 +31,7 @@ public class Inventory_Jack : MonoBehaviour
     private InventoryMenu_Jack inventoryMenuScript;
     private ushort[] inventory = new ushort[(ushort)ItemType.sizeOf];
 
+    public JournalManager_Louie journalScript;
     private void Awake()
     {
         inventory[(ushort)ItemType.matches] = 9999;
@@ -45,6 +47,8 @@ public class Inventory_Jack : MonoBehaviour
         inventoryMenuScript.UpdateItem(ItemType.matches, 3);
         inventoryMenuScript.UpdateItem(ItemType.salt, 2);
 
+        journalScript.UpdateValues(GetNumOf(ItemType.matches), GetNumOf(ItemType.salt), GetNumOf(ItemType.bottles), GetNumOf(ItemType.dolls));
+
     }
 
     /// Increases the number of passed itemType by passed quantity.
@@ -55,6 +59,8 @@ public class Inventory_Jack : MonoBehaviour
         ushort index = (ushort)itemType;
         inventory[index] += quantity;
         inventoryMenuScript.UpdateItem(itemType, inventory[index]);
+
+        journalScript.UpdateValues(GetNumOf(ItemType.matches), GetNumOf(ItemType.salt), GetNumOf(ItemType.bottles), GetNumOf(ItemType.dolls));
     }
 
     /// Decreases the number of passed itemType by passed quantity.
@@ -65,6 +71,8 @@ public class Inventory_Jack : MonoBehaviour
         ushort index = (ushort)itemType;
         inventory[index] -= quantity;
         inventoryMenuScript.UpdateItem(itemType, inventory[index]);
+
+        journalScript.UpdateValues(GetNumOf(ItemType.matches), GetNumOf(ItemType.salt), GetNumOf(ItemType.bottles), GetNumOf(ItemType.dolls));
     }
 
     /// <summary>

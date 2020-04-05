@@ -6,7 +6,7 @@ public class SFXManager_LW : MonoBehaviour
 {
     // Start is called before the first frame update
     public enum SFX {   CandleBlow, ClockChiming, ClockTick, Death, Floorboards, MatchLighting,
-                        SaltPour, StoneOnStone, Thud1, Thud2, Wind, WindowOpen };
+                        SaltPour, StoneOnStone, Thud1, Thud2, Wind, WindowOpen, Click, Wheelspin, SafeDoor };
 
     public enum MMSFX { Breathing, Whispers };
 
@@ -34,6 +34,9 @@ public class SFXManager_LW : MonoBehaviour
         SFX_Dictionary.Add(SFX.Thud2, ListOfAudioClips[9]);
         SFX_Dictionary.Add(SFX.Wind, ListOfAudioClips[10]);
         SFX_Dictionary.Add(SFX.WindowOpen, ListOfAudioClips[11]);
+        SFX_Dictionary.Add(SFX.Click, ListOfAudioClips[12]);
+        SFX_Dictionary.Add(SFX.Wheelspin, ListOfAudioClips[13]);
+        SFX_Dictionary.Add(SFX.SafeDoor, ListOfAudioClips[14]);
 
         //Gets the Midnight Man SFX audio sources
         mmWhispers = GameObject.Find("Whispers").GetComponent<AudioSource>();

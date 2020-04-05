@@ -232,7 +232,7 @@ public class KeyUIManager_Jack : Menu
         currentKeyID = 0;
         buttons[currentKeyID].Select();
 
-        playerControllerScript.SetInMenu(true);
+        playerControllerScript.SetUsingPiano(true);
     }
 
     /// <summary>
@@ -246,7 +246,7 @@ public class KeyUIManager_Jack : Menu
 
         wasClosed = true;
 
-        playerControllerScript.SetInMenu(false);
+        playerControllerScript.SetUsingPiano(false);
     }
 
     /// <summary>
