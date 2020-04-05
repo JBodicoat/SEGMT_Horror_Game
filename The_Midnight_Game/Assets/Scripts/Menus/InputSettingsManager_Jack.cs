@@ -121,11 +121,11 @@ public class InputSettingsManager_Jack : Menu
         {
             if (Input.GetKeyDown(KeyCode.DownArrow))
             {
-                IncrementSelect();
+                SelectNextAction();
             }
             else if (Input.GetKeyDown(KeyCode.UpArrow))
             {
-                DecrementSelect();
+                SelectPreviousAction();
             }
 
             if (Input.anyKeyDown)

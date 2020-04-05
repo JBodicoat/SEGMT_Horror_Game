@@ -55,34 +55,31 @@ public class TabletSlot_Jack : MonoBehaviour
     /// Rotates the held tablet 90 degrees clockwise.
     public void RotateTablet()
     {
-        if(heldTablet)
+        if(++tabletOrientation == Orientation.sizeOf)
         {
-            if(++tabletOrientation == Orientation.sizeOf)
-            {
-                tabletOrientation = 0;
-            }
-
-            switch(tabletOrientation)
-            {
-                case Orientation.right:
-                    heldTablet.transform.rotation = Quaternion.Euler(0, 0, 0);
-                    break;
-
-                case Orientation.down:
-                    heldTablet.transform.rotation = Quaternion.Euler(0, 90, 0);
-                    break;
-
-                case Orientation.left:
-                    heldTablet.transform.rotation = Quaternion.Euler(0, 180, 0);
-                    break;
-
-                case Orientation.up:
-                    heldTablet.transform.rotation = Quaternion.Euler(0, 270, 0);
-                    break;
-            }
-
-            controllerScript.CheckSlots();
+            tabletOrientation = 0;
         }
+
+        switch(tabletOrientation)
+        {
+            case Orientation.right:
+                heldTablet.transform.rotation = Quaternion.Euler(0, 0, 0);
+                break;
+
+            case Orientation.down:
+                heldTablet.transform.rotation = Quaternion.Euler(0, 90, 0);
+                break;
+
+            case Orientation.left:
+                heldTablet.transform.rotation = Quaternion.Euler(0, 180, 0);
+                break;
+
+            case Orientation.up:
+                heldTablet.transform.rotation = Quaternion.Euler(0, 270, 0);
+                break;
+        }
+
+        controllerScript.CheckSlots();
     }
 
     /// Returns the orientation of the held tablet.

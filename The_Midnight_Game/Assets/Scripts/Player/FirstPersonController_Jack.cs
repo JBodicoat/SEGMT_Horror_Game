@@ -11,7 +11,8 @@
 // Jack 19/03/2020 - Removed jump.
 // Jack 24/03/2020 - Removed landing logic which has partially fixed the issue of constant vibration and
 //                   landing sounds playing after going down small steps.
-
+// Jack 05/04/2020 - Added GetInteractBindingString() & GetGrabBindingString() to be used for the tooltip
+//                   in Interaction_Jack
 using System;
 using UnityEngine;
 using UnityStandardAssets.CrossPlatformInput;
@@ -249,7 +250,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
                         if (!usingSafe && inputDevice.GetControl(interactControlType).WasPressed)
                         {
-                            interactionScript.Interact();
+                            interactionScript.AttemptToInteract();
                         }
 
                         if (inputDevice.GetControl(throwControlType).WasPressed && interactionScript.GetHeldObject())
@@ -291,7 +292,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
                         if (!usingSafe && Input.GetKeyDown(interactKey))
                         {
-                            interactionScript.Interact();
+                            interactionScript.AttemptToInteract();
                         }
 
                         if (Input.GetKeyDown(throwKey) && interactionScript.GetHeldObject())
@@ -398,6 +399,40 @@ namespace UnityStandardAssets.Characters.FirstPerson
         }
 
         // ===== Input Settings ===== //
+        /// <summary>
+        /// Returns the string format of the current interact binding.
+        /// Will always return controller binding if one is plugged in.
+        /// </summary>
+        /// <returns></returns>
+        public string GetInteractButtonString()
+        {
+            if(usingController)
+            {
+                return interactControlType.ToString();
+            }
+            else
+            {
+                return interactKey.ToString();
+            }
+        }
+
+        /// <summary>
+        /// Returns the string format of the current grab binding.
+        /// Will always return controller binding if one is plugged in.
+        /// </summary>
+        /// <returns></returns>
+        public string GetGrabButtonString()
+        {
+            if(usingController)
+            {
+                return grabControlType.ToString();
+            }
+            else
+            {
+                return grabKey.ToString();
+            }
+        }
+
         /// <summary>
         /// Sets the interact InputControlType.
         /// </summary>

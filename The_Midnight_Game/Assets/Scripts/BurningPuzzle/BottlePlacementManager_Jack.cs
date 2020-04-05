@@ -30,6 +30,15 @@ public class BottlePlacementManager_Jack : MonoBehaviour
     public GameObject[] placedBottles = new GameObject[maxBottles];
 
     /// <summary>
+    /// Returns true if all the bottles needed have been placed.
+    /// </summary>
+    /// <returns></returns>
+    public bool AllBottlesPlaced()
+    {
+        return (currentNumBottles >= maxBottles);
+    }
+
+    /// <summary>
     /// Places all the players bottles in front of the panel.
     /// If enough bottles have already been placed, a match is used to set the bottles on fire.
     /// </summary>
