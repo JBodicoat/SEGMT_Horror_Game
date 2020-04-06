@@ -1,8 +1,10 @@
 ﻿//Louie : 25/03/2020 - Created Script
+// Jack : 30/03/2020 - Reviewed script. Optimized distance calculation.
 
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityStandardAssets.Characters.FirstPerson;
 
 public class Safe_LouieWilliamson : MonoBehaviour
 {
@@ -10,12 +12,14 @@ public class Safe_LouieWilliamson : MonoBehaviour
     private Animator safeAnim;
     public Camera dialCam;
     private SFXManager_LW soundManager;
-    private Transform player;
+    private FirstPersonController_Jack playerScript;
+    private Transform playerTransform;
     public Transform dial;
     public GameObject tip;
 
     //Script Variables
     private bool isAttemptingSafe;
+    private bool safeOpen;
     private Vector3 rotateRight;
     private float dialTimer;
     private int dialStage;
@@ -24,6 +28,7 @@ public class Safe_LouieWilliamson : MonoBehaviour
     private const float clickTime = 1.0f;
     private const int dialDifference = 7;
     private const float maxDistance = 4.0f;
+    private const float maxSqrDistance = maxDistance * maxDistance;
     
     //1st Code is 15
     private const float DialCode1 = 235.0f;
@@ -31,10 +36,13 @@ public class Safe_LouieWilliamson : MonoBehaviour
     private const float DialCode2 = 109.0f;
     //3rd Code is 45
     private const float DialCode3 = 342.0f;
+
     void Start()
     {
-        player = GameObject.FindGameObjectWithTag("Player").transform;
+        playerScript = FindObjectOfType<FirstPersonController_Jack>();
+        playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
         safeAnim = GetComponent<Animator>();
+        safeOpen = false;
         isAttemptingSafe = false;
         rotateRight = new Vector3(0, 0, 2.5f);
         dialStage = 1;
@@ -66,7 +74,10 @@ public class Safe_LouieWilliamson : MonoBehaviour
     /// </summary>
     private void CheckDistance()
     {
-        if (Vector3.Distance(player.position, gameObject.transform.position) > maxDistance)
+        float xDifference = playerTransform.position.x - transform.position.x;
+        float zDifference = playerTransform.position.z - transform.position.z;
+        float sqrDistance = xDifference * xDifference + zDifference * zDifference;
+        if (sqrDistance > maxSqrDistance)
         {
             CameraOff();
         }
@@ -77,6 +88,7 @@ public class Safe_LouieWilliamson : MonoBehaviour
     private void OpenSafe()
     {
         CameraOff();
+        safeOpen = true;
         safeAnim.SetBool("Unlocked", true);
     }
 
@@ -85,9 +97,13 @@ public class Safe_LouieWilliamson : MonoBehaviour
     /// </summary>
     public void CameraOn()
     {
-        dialCam.enabled = true;
-        isAttemptingSafe = dialCam.enabled;
-        tip.SetActive(true);
+        if (!safeOpen)
+        {
+            playerScript.SetUsingSafe(true);
+            dialCam.enabled = true;
+            isAttemptingSafe = dialCam.enabled;
+            tip.SetActive(true);
+        }
     }
 
     /// <summary>
@@ -95,6 +111,7 @@ public class Safe_LouieWilliamson : MonoBehaviour
     /// </summary>
     private void CameraOff()
     {
+        playerScript.SetUsingSafe(false);
         dialCam.enabled = false;
         isAttemptingSafe = dialCam.enabled;
         tip.SetActive(false);
@@ -131,14 +148,14 @@ public class Safe_LouieWilliamson : MonoBehaviour
                 case 1:
                     if (dial.rotation.eulerAngles.z <= DialCode1 + dialDifference && dial.rotation.eulerAngles.z >= DialCode1 - dialDifference)
                     {
-                        dialStage++;
+                        ++dialStage;
                         soundManager.PlaySFX(SFXManager_LW.SFX.Click);
                     }
                     break;
                 case 2:
                     if (dial.rotation.eulerAngles.z <= DialCode2 + dialDifference && dial.rotation.eulerAngles.z >= DialCode2 - dialDifference)
                     {
-                        dialStage++;
+                        ++dialStage;
                         soundManager.PlaySFX(SFXManager_LW.SFX.Click);
                     }
                     break;

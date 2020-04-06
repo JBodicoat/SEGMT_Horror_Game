@@ -1,6 +1,7 @@
 ﻿// Louie : Handles Journal data and display.
 // Jack : 12/02/2020 QA Review - renamed function, removed magic number, removed unecessary GameObject.Find
 //Louie : 24/03 - Added automatic journal entries, pages and adding notes.
+// Jack 30/02/2020 - Reviewed minor optimizations and quality changes to AddNote()
 
 using System.Collections;
 using System.Collections.Generic;
@@ -33,12 +34,15 @@ public class JournalManager_Louie : MonoBehaviour
     public Inventory_Jack inventoryScript;
     public GameObject Page1;
     public GameObject Page2;
-    public Text LeftPage;
-    public Text RightPage;
+    public Text leftPage;
+    public Text rightPage;
 
     private bool isOnPage1;
-    private int NumberOfEntries;
-    private const int MaxEntriesPerPage = 7;
+    private int numberOfEntries;
+    private const int maxEntriesPerPage = 7;
+
+    private const string entrySeperator = ". ";
+
     void Start()
     { 
 		isJournalOn = false;
@@ -46,7 +50,7 @@ public class JournalManager_Louie : MonoBehaviour
         hoursLeft = 3;
         minutesleft = 33;
         isOnPage1 = true;
-        NumberOfEntries = 0;
+        numberOfEntries = 0;
     }
 
     // Update is called once per frame
@@ -159,25 +163,24 @@ public class JournalManager_Louie : MonoBehaviour
     /// <param name="newNote"></param>
     public void AddNote(string newNote)
     {
-        NumberOfEntries++;
-        if (NumberOfEntries < MaxEntriesPerPage)
+        if (++numberOfEntries < maxEntriesPerPage)
         {
-            if (NumberOfEntries == 1)
+            if (numberOfEntries == 1)
             {
-                LeftPage.text = NumberOfEntries + ". " + newNote;
+                leftPage.text = numberOfEntries + entrySeperator + newNote;
             }
             else
             {
-                LeftPage.text = LeftPage.text + "\n" + NumberOfEntries + ". " + newNote;
+                leftPage.text = leftPage.text + '\n' + numberOfEntries + entrySeperator + newNote;
             }
         }
-        else if (NumberOfEntries == MaxEntriesPerPage)
+        else if (numberOfEntries == maxEntriesPerPage)
         {
-            RightPage.text = NumberOfEntries + ". " + newNote;
+            rightPage.text = numberOfEntries + entrySeperator + newNote;
         }
         else
         {
-            RightPage.text = RightPage.text + "\n" + NumberOfEntries + ". " + newNote;
+            rightPage.text = rightPage.text + '\n' + numberOfEntries + entrySeperator + newNote;
         }
     }
 }

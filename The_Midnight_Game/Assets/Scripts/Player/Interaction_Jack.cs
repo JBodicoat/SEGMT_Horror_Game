@@ -129,12 +129,7 @@ public class Interaction_Jack : MonoBehaviour
             }
             else if (hit.transform.CompareTag(safeTag))
             {
-                print("SAFE");
                 hit.transform.gameObject.GetComponent<Safe_LouieWilliamson>().CameraOn();
-            }
-            else
-            {
-                print("NOT SAFE");
             }
         }
     }
