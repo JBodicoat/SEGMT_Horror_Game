@@ -43,7 +43,7 @@ public class Safe_LouieWilliamson : MonoBehaviour
 
     private void Awake()
     {
-        safeAnim = GetComponent<Animator>();
+        safeAnim = GetComponentInParent<Animator>();
         playerScript = FindObjectOfType<FirstPersonController_Jack>();
         playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
         soundManager = FindObjectOfType<SFXManager_LW>();

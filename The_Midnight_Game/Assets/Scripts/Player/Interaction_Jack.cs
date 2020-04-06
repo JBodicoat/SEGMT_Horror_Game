@@ -7,6 +7,7 @@
 // Louie 25/03/2020 - added safe interaction
 // Dan 25/03/2020 - Added Clock Puzzle key interaction
 // Jack 05/04/2020 - Added tooltip logic
+// Jack 06/04/2020 - Raycast now gets blocked by any objects on default layer.
 
 using System.Collections;
 using System.Collections.Generic;
@@ -25,6 +26,7 @@ public class Interaction_Jack : MonoBehaviour
 
     // Picking up objects
     private int defaultLayer;
+    private readonly LayerMask defaultLayerMask = 1 << 0;
     private readonly LayerMask moveableObjectsLayerMask = 1 << 8;
     private int moveableObjectsLayer;
     private const ushort interactDistance = 5;
@@ -87,7 +89,7 @@ public class Interaction_Jack : MonoBehaviour
         characterController = GetComponent<CharacterController>();
         playerControllerScript = FindObjectOfType<FirstPersonController_Jack>();
 
-        raycastFilterLayerMask = moveableObjectsLayerMask | interactableObjectsLayerMask;
+        raycastFilterLayerMask = defaultLayerMask | moveableObjectsLayerMask | interactableObjectsLayerMask;
 
         defaultLayer = LayerMask.NameToLayer("Default");
         moveableObjectsLayer = LayerMask.NameToLayer("Moveable Object");
@@ -101,41 +103,53 @@ public class Interaction_Jack : MonoBehaviour
     {
         if(Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out hit, interactDistance, raycastFilterLayerMask))
         {
-            tooltipText.enabled = true;
-            if (hit.collider.gameObject.layer == interactableObjectsLayer)
+            if(hit.collider.gameObject.layer == defaultLayer)
             {
-                interactionHitSucceeded = true;
+                RaycastMissed();
             }
             else
             {
-                moveHitSucceeded = true;
-                tooltipText.text = tooltipStringBegin + playerControllerScript.GetGrabButtonString() + tooltipStringMiddle + tooltipStringEndGrab;
+                tooltipText.enabled = true;
+                if (hit.collider.gameObject.layer == interactableObjectsLayer)
+                {
+                    interactionHitSucceeded = true;
+                }
+                else
+                {
+                    moveHitSucceeded = true;
+                    tooltipText.text = tooltipStringBegin + playerControllerScript.GetGrabButtonString() + tooltipStringMiddle + tooltipStringEndGrab;
+                }
+
+                if (lastHitGlowScript)
+                {
+                    lastHitGlowScript.StopGlow();
+                }
+
+                Interact();
+
+                lastHitGlowScript = hit.transform.gameObject.GetComponent<OnHoverGlow_Dan>();
+                lastHitGlowScript.Glow();
             }
-
-            //if (lastHitGlowScript)
-            //{
-            //    lastHitGlowScript.StopGlow();
-            //}
-
-            //lastHitGlowScript = hit.transform.gameObject.GetComponent<OnHoverGlow_Dan>();
-            //lastHitGlowScript.Glow();
-
-            
-            Interact();
-            attemptToInteract = false;
         }
         else
         {
-            interactionHitSucceeded = false;
-            moveHitSucceeded = false;
-
-            if (lastHitGlowScript)
-            {
-                lastHitGlowScript.StopGlow();
-            }
-
-            tooltipText.enabled = false;
+            RaycastMissed();
         }
+
+        attemptToInteract = false;
+    }
+
+    private void RaycastMissed()
+    {
+        interactionHitSucceeded = false;
+        moveHitSucceeded = false;
+
+        if (lastHitGlowScript)
+        {
+            lastHitGlowScript.StopGlow();
+        }
+
+        tooltipText.enabled = false;
     }
 
     void FixedUpdate()

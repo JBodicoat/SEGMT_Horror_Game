@@ -5,13 +5,16 @@ using UnityEngine;
 
 public class OnHoverGlow_Dan : MonoBehaviour
 {
-    public Shader glowShader;
+    private Shader glowShader;
     private Shader previousShader;
 
+    private const string outlineColorName = "_DistortColor";
+    private Color outlineColor = new Color(255, 0, 0);
     private Renderer objectRenderer;
 
     private void Start()
     {
+        glowShader = Shader.Find("Custom/FinalOutline");
         objectRenderer = GetComponent<Renderer>();
     }
 
@@ -22,6 +25,7 @@ public class OnHoverGlow_Dan : MonoBehaviour
     {
         previousShader = objectRenderer.material.shader;
         objectRenderer.material.shader = glowShader;
+        objectRenderer.material.SetColor(outlineColorName, outlineColor);
     }
 
     /// <summary>

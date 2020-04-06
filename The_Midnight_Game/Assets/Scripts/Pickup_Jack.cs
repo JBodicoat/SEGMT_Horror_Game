@@ -5,7 +5,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityStandardAssets.Characters.FirstPerson;
 
 /// <summary>
 /// Attatch this script to any items that can be picked up by the player.
@@ -18,7 +17,6 @@ public class Pickup_Jack : MonoBehaviour
     public ushort quantity;
 
     private Inventory_Jack playerInventoryScript;
-    private const string playerTag = "Player";
 
     private void Start()
     {

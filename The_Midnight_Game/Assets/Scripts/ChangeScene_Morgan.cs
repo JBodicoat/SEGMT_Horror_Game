@@ -11,6 +11,6 @@ public class ChangeScene_Morgan : MonoBehaviour
 {
     public void Button()
     {
-        SceneManager.LoadScene("Pre-Beta");
+        SceneManager.LoadScene(1);
     }
 }

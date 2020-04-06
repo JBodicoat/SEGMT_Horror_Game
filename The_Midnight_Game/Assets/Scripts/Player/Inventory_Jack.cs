@@ -11,7 +11,7 @@ public enum ItemType
     salt,
     dolls,
     bottles,
-    item5,
+    clockKey,
     item6,
     item7,
     item8,

@@ -13,6 +13,7 @@
 //                   landing sounds playing after going down small steps.
 // Jack 05/04/2020 - Added GetInteractBindingString() & GetGrabBindingString() to be used for the tooltip
 //                   in Interaction_Jack
+
 using System;
 using UnityEngine;
 using UnityStandardAssets.CrossPlatformInput;

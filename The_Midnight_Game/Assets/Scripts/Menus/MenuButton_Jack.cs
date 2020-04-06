@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class MenuButton_Jack : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class MenuButton_Jack : MonoBehaviour, IPointerEnterHandler
 {
     public Menu menu;
     
@@ -13,12 +13,11 @@ public class MenuButton_Jack : MonoBehaviour, IPointerEnterHandler, IPointerExit
     public Color selectedColour;
 
     public bool selected = false;
-    private bool mouseOver = false;
 
     private void Awake()
     {
         buttonImage = GetComponent<Image>();
-        
+
         if(selected)
         {
             buttonImage.color = selectedColour;
@@ -29,25 +28,11 @@ public class MenuButton_Jack : MonoBehaviour, IPointerEnterHandler, IPointerExit
         }
     }
 
-    private void Update()
-    {
-        if(mouseOver && Input.GetMouseButtonDown(0))
-        {
-            // Click
-        }
-    }
-
     public void OnPointerEnter(PointerEventData eventData)
     {
-        mouseOver = true;
         menu.MouseSelection();
         menu.DeSelectAllButtons();
         Select();
-    }
-
-    public void OnPointerExit(PointerEventData eventData)
-    {
-        mouseOver = false;
     }
     
     public bool IsSelected()
