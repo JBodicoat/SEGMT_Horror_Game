@@ -30,12 +30,13 @@ public class TabletSlot_Jack : MonoBehaviour
     private LayerMask interactableLayer;
     private const RigidbodyConstraints tabletConstraints = RigidbodyConstraints.FreezeAll;
     private Orientation tabletOrientation = Orientation.right;
-
+    private SFXManager_LW soundManager;
     // Start is called before the first frame update
     void Start()
     {
         playerInteractScript = FindObjectOfType<Interaction_Jack>();
         interactableLayer = LayerMask.GetMask("Interactable Objects");
+        soundManager = GameObject.Find("SFX_Manager").GetComponent<SFXManager_LW>();
     }
 
     /// Returns holdingTablet.
@@ -126,7 +127,7 @@ public class TabletSlot_Jack : MonoBehaviour
             // Fix tablet in place
             heldTablet.transform.position = transform.position + Vector3.up * 0.6f;
             heldTablet.transform.rotation = Quaternion.Euler(0, 0, 0);
-
+            soundManager.PlaySFX(SFXManager_LW.SFX.Thud1);
             doorScript.CheckSlots();
         }
     }
