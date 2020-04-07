@@ -250,6 +250,10 @@ public class MMController_Morgan : MonoBehaviour
         isEnraged = true;
     }
 
+    /// <summary>
+    /// Checks if the target has a complete path, otherwise changes target
+    /// </summary>
+    /// <returns></returns>
     IEnumerator PathCheck() 
     {
         NavMeshPath path = new NavMeshPath();
