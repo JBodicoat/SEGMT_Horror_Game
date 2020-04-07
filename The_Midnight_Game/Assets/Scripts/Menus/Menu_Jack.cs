@@ -1,9 +1,13 @@
-﻿using System.Collections;
+﻿// Jack - 31/03/2020 Created script
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
 /// Handles changing the games input and it's input menu.
-public class Menu : MonoBehaviour
+/// </summary>
+public class Menu_Jack : MonoBehaviour
 {
     public List<MenuButton_Jack> buttons = new List<MenuButton_Jack>();
 
@@ -37,6 +41,9 @@ public class Menu : MonoBehaviour
         buttons[selectedButton].Select();
     }
 
+    /// <summary>
+    /// Sets all attached buttons to unselected.
+    /// </summary>
     public void DeSelectAllButtons()
     {
         foreach(MenuButton_Jack button in buttons)
@@ -48,11 +55,21 @@ public class Menu : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Sets selectionChanged to true.
+    /// Used by Button scripts when mouse has been used to select it.
+    /// </summary>
     public void MouseSelection()
     {
         selectionChanged = true;
     }
 
+    /// <summary>
+    /// Returns true if a button has been selected using the mouse.
+    /// Sets selectionChanged to false on being called.
+    /// Use within child classes to check if the highlighted button needs to be changed.
+    /// </summary>
+    /// <returns></returns>
     public bool HasSelectionChanged()
     {
         bool returnValue = selectionChanged;

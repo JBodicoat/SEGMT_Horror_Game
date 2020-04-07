@@ -22,7 +22,7 @@ public enum PlayerAction
 }
 
 /// Handles changing the games input and it's input menu.
-public class InputSettingsManager_Jack : Menu
+public class InputSettingsManager_Jack : Menu_Jack
 {
     public FirstPersonController_Jack playerScript;
 

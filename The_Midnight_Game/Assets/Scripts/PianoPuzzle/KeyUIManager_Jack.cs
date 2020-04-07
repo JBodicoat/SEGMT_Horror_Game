@@ -15,7 +15,7 @@ using UnityStandardAssets.Characters.FirstPerson;
 /// </summary>
 /// Displays key UI upon interaction with piano keys. Player must repeat the
 /// sequence specified in "tune" to complete the puzzle.
-public class KeyUIManager_Jack : Menu
+public class KeyUIManager_Jack : Menu_Jack
 {
     public GameObject keyUIObject;
 

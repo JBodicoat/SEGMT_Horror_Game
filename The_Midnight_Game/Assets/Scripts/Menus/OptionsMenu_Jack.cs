@@ -6,7 +6,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class OptionsMenu_Jack : Menu
+/// <summary>
+/// Controls navigation of the options menu.
+/// </summary>
+public class OptionsMenu_Jack : Menu_Jack
 {
     private VideoSettings_LouieWilliamson videoSettingsScript;
 
@@ -186,6 +189,10 @@ public class OptionsMenu_Jack : Menu
         }
     }
 
+    /// <summary>
+    /// Selects the next pre-set resolution.
+    /// Used within this script and on the options menu arrow button.
+    /// </summary>
     public void SelectNextResolution()
     {
         if(++currentResolution >= numResolutions)
@@ -198,6 +205,10 @@ public class OptionsMenu_Jack : Menu
         videoSettingsScript.ChangeResolution(currentResolution);
     }
 
+    /// <summary>
+    /// Selects the previous pre-set resolution.
+    /// Used within this script and on the options menu arrow button.
+    /// </summary>
     public void SelectPreviousResolution()
     {
         if(--currentResolution < 0)
@@ -210,6 +221,9 @@ public class OptionsMenu_Jack : Menu
         videoSettingsScript.ChangeResolution(currentResolution);
     }
 
+    /// <summary>
+    /// Displays the newly selected resolution in the options menu.
+    /// </summary>
     private void UpdateResolutionText()
     {
         switch (currentResolution)
@@ -228,6 +242,10 @@ public class OptionsMenu_Jack : Menu
         }
     }
 
+    /// <summary>
+    /// Selects the next texture quality.
+    /// Used within this script and on the options menu arrow button.
+    /// </summary>
     public void SelectNextTextureQuality()
     {
         if(++textureQuality >= numTextureOptions)
@@ -240,6 +258,10 @@ public class OptionsMenu_Jack : Menu
         videoSettingsScript.ChangeTextureQuality(textureQuality);
     }
 
+    /// <summary>
+    /// Selects the previous texture quality.
+    /// Used within this script and on the options menu arrow button.
+    /// </summary>
     public void SelectPreviousTextureQuality()
     {
         if(--textureQuality < 0)
@@ -252,6 +274,9 @@ public class OptionsMenu_Jack : Menu
         videoSettingsScript.ChangeTextureQuality(textureQuality);
     }
 
+    /// <summary>
+    /// Displays the newly selected texture quality in the options menu.
+    /// </summary>
     private void UpdateTextureQualityText()
     {
         switch(textureQuality)
@@ -270,6 +295,10 @@ public class OptionsMenu_Jack : Menu
         }
     }
 
+    /// <summary>
+    /// Returns the amount the audio sliders should change by.
+    /// </summary>
+    /// <returns></returns>
     private float GetSliderChangeAmount()
     {
         return sliderValueChange * sliderMove * Time.deltaTime;

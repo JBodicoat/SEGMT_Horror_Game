@@ -1,12 +1,17 @@
-﻿using System.Collections;
+﻿// Jack - 31/03/2020 Created script
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
+/// <summary>
+/// Used to bring mouse support to controller/keyboard controlled buttons.
+/// </summary>
 public class MenuButton_Jack : MonoBehaviour, IPointerEnterHandler
 {
-    public Menu menu;
+    public Menu_Jack menu;
     
     private Image buttonImage;
     public Color unselectedColour;
@@ -28,6 +33,10 @@ public class MenuButton_Jack : MonoBehaviour, IPointerEnterHandler
         }
     }
 
+    /// <summary>
+    /// Selects this button when the mouse collides with the attached image.
+    /// </summary>
+    /// <param name="eventData"></param>
     public void OnPointerEnter(PointerEventData eventData)
     {
         menu.MouseSelection();
@@ -35,17 +44,27 @@ public class MenuButton_Jack : MonoBehaviour, IPointerEnterHandler
         Select();
     }
     
+    /// <summary>
+    /// Returns true if this button is selected.
+    /// </summary>
+    /// <returns></returns>
     public bool IsSelected()
     {
         return selected;
     }
 
+    /// <summary>
+    /// Selects this button and highlights it.
+    /// </summary>
     public void Select()
     {
         selected = true;
         buttonImage.color = selectedColour;
     }
 
+    /// <summary>
+    /// Deselectes this button hiding the highlight.
+    /// </summary>
     public void DeSelect()
     {
         selected = false;

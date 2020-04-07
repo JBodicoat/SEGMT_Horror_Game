@@ -8,7 +8,7 @@ using UnityEngine;
 using InControl;
 using UnityEngine.UI;
 
-public class PauseGame_Louie : Menu
+public class PauseGame_Louie : Menu_Jack
 {
     public GameObject optionsMenu;
 

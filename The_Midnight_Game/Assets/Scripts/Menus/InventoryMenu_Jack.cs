@@ -10,7 +10,7 @@ using UnityEngine.UI;
 /// <summary>
 /// Controls the in-game inventory menus navigation and display.
 /// </summary>
-public class InventoryMenu_Jack : Menu
+public class InventoryMenu_Jack : Menu_Jack
 {
     public GameObject inventoryMenu;
 
