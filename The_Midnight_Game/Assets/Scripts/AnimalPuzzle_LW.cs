@@ -4,34 +4,41 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Handles all of the animal puzzle.
+/// </summary>
 public class AnimalPuzzle_LW : MonoBehaviour
 {
+    //Created for the script
     private bool isAtAnimalPuzzle;
-
-    public GameObject player;
-    private RaycastHit hit;
-    private string playerTag;
     private float DistanceToPlayer;
     private int numberOfMovements;
+    private RaycastHit hit;
+    private float timer;
+    private bool isWaitingToBark;
 
+    //Constants
     private const float minimumDistance = 15.0f;
+    private const float minimumBarkingDistance = 25.0f;
     private const float rayDistance = 100.0f;
     private const int maxMovements = 4;
+    private const float waitTime = 4.0f;
 
+    //References
+    public GameObject player;
+    private string playerTag;
     public Transform[] animalNodes;
     private List<Transform> usedNodes = new List<Transform>();
+    public Transform spawn;
+    private AudioSource barking;
 
-    private float timer;
-    private const float waitTime = 4.0f;
-    private bool isWaitingToBark;
-    private AudioSource audio;
     void Start()
     {
         isWaitingToBark = false;
-        isAtAnimalPuzzle = true;
+        isAtAnimalPuzzle = false;
         playerTag = player.tag;
         numberOfMovements = 0;
-        audio = GetComponent<AudioSource>();
+        barking = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -41,58 +48,65 @@ public class AnimalPuzzle_LW : MonoBehaviour
 
         if (isAtAnimalPuzzle)
         {
-            if (Physics.Raycast(gameObject.transform.position, player.transform.position - gameObject.transform.position, out hit, rayDistance))                                  // (storing this layer mask here for future refrence in case I need it)  1 << LayerMask.NameToLayer("layer"))
+            if (Physics.Raycast(gameObject.transform.position, player.transform.position - gameObject.transform.position, out hit, rayDistance))
             {
-                Debug.DrawLine(transform.position, hit.point, Color.cyan);
-
+                //if the animal can see the player
                 if (hit.transform.CompareTag(playerTag))
                 {
-                    if (audio.isPlaying)
+                    if (barking.isPlaying && DistanceToPlayer <= minimumBarkingDistance)
                     {
-                        print("PausingBark");
-                        audio.Pause();
+                        barking.Pause();
                     }
+                    else if (!barking.isPlaying && DistanceToPlayer > minimumBarkingDistance)
+                    {
+                        barking.Play();
+                    }
+                    //if the player is closer to the animal than minimum distance, move the animal and delay the barking sound
                     if (DistanceToPlayer <= minimumDistance)
                     {
                         MoveAnimal();
                         isWaitingToBark = true;
-                        audio.Pause();
+                        barking.Pause();
                     }
                 }
+                //if the animal cant see the player
                 else
                 {
-                    if (!audio.isPlaying)
+                    if (!barking.isPlaying)
                     {
-                        print("PlayingBark");
-                        audio.Play();
+                        barking.Play();
                     }
                 }
             }
         }
-
+        //This causes the delay between barking after the animal has bee moved.
         if (isWaitingToBark)
         {
             timer += Time.deltaTime;
 
             if (timer >= waitTime)
             {
-                audio.Play();
+                barking.Play();
+                timer = 0;
                 isWaitingToBark = false;
             }
         }
-
+        //THIS IS FOR REVIEWERS TESTING --- PRESS G TO INITIATE THE PUZZLE
         if (Input.GetKeyDown(KeyCode.G))
         {
-            MoveAnimal();
+            EnableAnimal();
         }
+        
     }
     /// <summary>
     /// Enables the animal gameobject and starts activates the puzzle.
     /// </summary>
-    private void EnableAnimal()
+    public void EnableAnimal()
     {
         isAtAnimalPuzzle = true;
-        //spawn animal
+        isWaitingToBark = true;
+        transform.position = spawn.position;
+        gameObject.GetComponent<Rigidbody>().useGravity = true;
     }
     /// <summary>
     /// Moves animal to a new node.
@@ -106,12 +120,12 @@ public class AnimalPuzzle_LW : MonoBehaviour
             transform.position = animalNodes[node].position;
             usedNodes.Add(animalNodes[node]);
             numberOfMovements++;
-            //puff of smoke or something (could change into a household object)
+            //puff of smoke or something (could change into a household object) or play a SFX?
         }
         else
         {
             print("Moved Enough!");
-            //move animal to final location and do the end of the puzzle/ lead to another puzzle
+            //move animal to final location and do the end of the puzzle/ lead to another puzzle/ reward
         }
     }
     /// <summary>
@@ -145,7 +159,6 @@ public class AnimalPuzzle_LW : MonoBehaviour
             {
                 if (node == usedNodes[i])
                 {
-                    print("Error: " + node.name + " already used");
                     hasBeenUsed = true;
                 }
             }

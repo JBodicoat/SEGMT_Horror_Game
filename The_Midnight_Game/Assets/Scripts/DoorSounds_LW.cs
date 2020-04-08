@@ -4,6 +4,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Handle's the door sounds, functions are used by events in the animations.
+/// </summary>
 public class DoorSounds_LW : MonoBehaviour
 {
     // Start is called before the first frame update
