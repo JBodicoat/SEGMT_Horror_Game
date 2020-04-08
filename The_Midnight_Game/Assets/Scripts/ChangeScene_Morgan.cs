@@ -1,4 +1,5 @@
 ﻿//Morgan pryor 26/02/2020 
+//Dan 08/04/2020
 
 ///
 /// This script changes the scene
@@ -11,6 +12,6 @@ public class ChangeScene_Morgan : MonoBehaviour
 {
     public void Button()
     {
-        SceneManager.LoadScene("Pre-Beta");
+        SceneManager.LoadScene("OpeningCinematic");
     }
 }

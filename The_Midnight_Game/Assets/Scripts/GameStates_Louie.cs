@@ -2,11 +2,12 @@
 // 24/02 - Handles the Win and Lose states of the game.
 // Morgan pryor - 26/02/2020 - Added eggs for bart
 // Jack 09/03/2020 - Reviewed Jump-Scare
+// Dan 08/04/2020 - Added opening cinematic functionality
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Video;
-
 public class GameStates_Louie : MonoBehaviour
 {
     //eggs for bart functionality
@@ -36,7 +37,7 @@ public class GameStates_Louie : MonoBehaviour
     void Update()
     {
         if (!candleScript.IsCandleLit())
-        { 
+        {
             CaughtByMidnightMan();
         }
     }
@@ -71,7 +72,6 @@ public class GameStates_Louie : MonoBehaviour
             }
         }
     }
-
 
     /// <summary>
     /// This function will start the end game sequence for when the player completes the game.
