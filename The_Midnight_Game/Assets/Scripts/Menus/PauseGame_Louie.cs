@@ -1,4 +1,6 @@
 ﻿//Louie - 24/02 - Handles the game being paused and unpaused, aswell as the pause menu animations.
+//Louie - 15/04 - Added menu sounds
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,8 +15,13 @@ public class PauseGame_Louie : MonoBehaviour
     public GameObject OptionsMenu;
 
     private VideoSettings_LouieWilliamson vSettings;
+    private SFXManager_LW soundManager;
+    public AudioSource PauseMusic;
+
     void Start()
     {
+        PauseMusic.ignoreListenerPause = true;
+        soundManager = GameObject.Find("SFX_Manager").GetComponent<SFXManager_LW>();
         isGamePaused = false;
         pauseAnim = gameObject.GetComponent<Animator>();
         Cursor.visible = false;
@@ -58,7 +65,11 @@ public class PauseGame_Louie : MonoBehaviour
     {
         pauseAnim.SetBool("Paused", true);
         Time.timeScale = 0;
+        AudioListener.pause = true;   
         isGamePaused = true;
+        soundManager.PlayMenuSFX(SFXManager_LW.SFX.OnPause);
+        PauseMusic.Play();
+
     }
 
     /// <summary>
@@ -69,6 +80,9 @@ public class PauseGame_Louie : MonoBehaviour
         pauseAnim.SetBool("Paused", false);
         Time.timeScale = 1;
         isGamePaused = false;
+        AudioListener.pause = false;
+        soundManager.PlayMenuSFX(SFXManager_LW.SFX.UIClick);
+        PauseMusic.Pause();
     }
 
     /// <summary>
@@ -77,6 +91,7 @@ public class PauseGame_Louie : MonoBehaviour
     public void Options()
     {   
         OptionsMenu.SetActive(true);
+        soundManager.PlayMenuSFX(SFXManager_LW.SFX.Swoosh);
     }
 
     /// <summary>
@@ -84,6 +99,7 @@ public class PauseGame_Louie : MonoBehaviour
     /// </summary>
     public void backOptions()
     {
+        soundManager.PlayMenuSFX(SFXManager_LW.SFX.Swoosh2);
         OptionsMenu.SetActive(false);
     }
 
@@ -92,6 +108,7 @@ public class PauseGame_Louie : MonoBehaviour
     /// </summary>
     public void SaveGame()
     {
+        soundManager.PlayMenuSFX(SFXManager_LW.SFX.Saving);
         //insert saving game here
     }
 
@@ -100,6 +117,7 @@ public class PauseGame_Louie : MonoBehaviour
     /// </summary>
     public void QuitGame()
     {
+        soundManager.PlayMenuSFX(SFXManager_LW.SFX.UIClick);
         Application.Quit();
     }
 }
