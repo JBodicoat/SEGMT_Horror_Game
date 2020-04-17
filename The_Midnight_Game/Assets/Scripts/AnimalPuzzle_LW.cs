@@ -1,11 +1,12 @@
 ﻿//Louie 08/04/2020 - Created Script
+//Louie 17/04/2020 - Added looking at player
 
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Handles all of the animal puzzle.
+/// Handles all of the dog's behaviour in the animal puzzle.
 /// </summary>
 public class AnimalPuzzle_LW : MonoBehaviour
 {
@@ -16,7 +17,8 @@ public class AnimalPuzzle_LW : MonoBehaviour
     private RaycastHit hit;
     private float timer;
     private bool isWaitingToBark;
-
+    private Vector3 targetPosition;
+    private float moveTimer;
     //Constants
     private const float minimumDistance = 15.0f;
     private const float minimumBarkingDistance = 25.0f;
@@ -31,6 +33,7 @@ public class AnimalPuzzle_LW : MonoBehaviour
     private List<Transform> usedNodes = new List<Transform>();
     public Transform spawn;
     private AudioSource barking;
+    public Transform ParentGO;
 
     void Start()
     {
@@ -38,6 +41,7 @@ public class AnimalPuzzle_LW : MonoBehaviour
         isAtAnimalPuzzle = false;
         playerTag = player.tag;
         numberOfMovements = 0;
+        moveTimer = 0;
         barking = GetComponent<AudioSource>();
     }
 
@@ -48,6 +52,8 @@ public class AnimalPuzzle_LW : MonoBehaviour
 
         if (isAtAnimalPuzzle)
         {
+            LookAtPlayer();
+
             if (Physics.Raycast(gameObject.transform.position, player.transform.position - gameObject.transform.position, out hit, rayDistance))
             {
                 //if the animal can see the player
@@ -64,9 +70,14 @@ public class AnimalPuzzle_LW : MonoBehaviour
                     //if the player is closer to the animal than minimum distance, move the animal and delay the barking sound
                     if (DistanceToPlayer <= minimumDistance)
                     {
-                        MoveAnimal();
-                        isWaitingToBark = true;
-                        barking.Pause();
+                        moveTimer += Time.deltaTime;
+                        if (moveTimer >= 3)
+                        {
+                            MoveAnimal();
+                            isWaitingToBark = true;
+                            barking.Pause();
+                            moveTimer = 0;
+                        }
                     }
                 }
                 //if the animal cant see the player
@@ -91,6 +102,7 @@ public class AnimalPuzzle_LW : MonoBehaviour
                 isWaitingToBark = false;
             }
         }
+
         //THIS IS FOR REVIEWERS TESTING --- PRESS G TO INITIATE THE PUZZLE
         if (Input.GetKeyDown(KeyCode.G))
         {
@@ -98,6 +110,16 @@ public class AnimalPuzzle_LW : MonoBehaviour
         }
         
     }
+
+    /// <summary>
+    /// This function ensure the dog is always lookng towards the player.
+    /// </summary>
+    private void LookAtPlayer()
+    {
+        targetPosition = new Vector3(player.transform.position.x, transform.position.y, player.transform.position.z);
+        ParentGO.LookAt(targetPosition);
+    }
+
     /// <summary>
     /// Enables the animal gameobject and starts activates the puzzle.
     /// </summary>
@@ -105,7 +127,7 @@ public class AnimalPuzzle_LW : MonoBehaviour
     {
         isAtAnimalPuzzle = true;
         isWaitingToBark = true;
-        transform.position = spawn.position;
+        ParentGO.position = spawn.position;
         gameObject.GetComponent<Rigidbody>().useGravity = true;
     }
     /// <summary>
@@ -116,8 +138,7 @@ public class AnimalPuzzle_LW : MonoBehaviour
         if (numberOfMovements < maxMovements)
         {
             int node = GetNewNode();
-            print("Moving to " + animalNodes[node].name);
-            transform.position = animalNodes[node].position;
+            ParentGO.position = animalNodes[node].position;
             usedNodes.Add(animalNodes[node]);
             numberOfMovements++;
             //puff of smoke or something (could change into a household object) or play a SFX?
