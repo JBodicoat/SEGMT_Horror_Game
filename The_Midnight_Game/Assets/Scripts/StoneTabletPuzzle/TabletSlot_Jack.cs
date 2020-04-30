@@ -38,7 +38,7 @@ public class TabletSlot_Jack : MonoBehaviour
     {
         playerInteractScript = FindObjectOfType<Interaction_Jack>();
         interactableLayer = LayerMask.GetMask("Interactable Objects");
-        soundManager = GameObject.Find("SFX_Manager").GetComponent<SFXManager_LW>();
+        soundManager = FindObjectOfType<SFXManager_LW>();
     }
 
     /// Returns holdingTablet.

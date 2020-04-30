@@ -28,7 +28,7 @@ public class LanternSlot_Jack : MonoBehaviour
     {
         lanternRigidbody = lantern.GetComponent<Rigidbody>();
         lanternParticleSystem = lantern.GetComponentInChildren<ParticleSystem>();
-        soundManager = GameObject.Find("SFX_Manager").GetComponent<SFXManager_LW>();
+        soundManager = FindObjectOfType<SFXManager_LW>();
     }
 
     private void FixedUpdate()

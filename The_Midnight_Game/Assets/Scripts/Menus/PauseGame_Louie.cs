@@ -32,7 +32,7 @@ public class PauseGame_Louie : Menu_Jack
     void Start()
     {
         PauseMusic.ignoreListenerPause = true;
-        soundManager = GameObject.Find("SFX_Manager").GetComponent<SFXManager_LW>();
+        soundManager = FindObjectOfType<SFXManager_LW>();
         isGamePaused = false;
         pauseAnim = gameObject.GetComponent<Animator>();
         Cursor.visible = false;
@@ -194,8 +194,6 @@ public class PauseGame_Louie : Menu_Jack
         optionsMenu.SetActive(true);
 
         soundManager.PlayMenuSFX(SFXManager_LW.SFX.Swoosh);
-        
-        OptionsMenu.SetActive(false);
     }
 
     /// <summary>

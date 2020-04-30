@@ -36,7 +36,7 @@ public class Book_Jack : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        soundManager = GameObject.Find("SFX_Manager").GetComponent<SFXManager_LW>();
+        soundManager = FindObjectOfType<SFXManager_LW>();
 
         if (!bookController)
         {

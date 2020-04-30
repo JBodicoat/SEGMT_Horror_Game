@@ -18,6 +18,8 @@ public class LevelDataManager_Jack : MonoBehaviour
 {
     private static bool loadData = false;
 
+    private SFXManager_LW soundManager;
+
     // Player Data
     public FirstPersonController_Jack playerScript;
 
@@ -97,6 +99,8 @@ public class LevelDataManager_Jack : MonoBehaviour
 
     private void Start()
     {
+        soundManager = FindObjectOfType<SFXManager_LW>();
+
         if (loadData)
         {
             // Player Data
@@ -292,6 +296,8 @@ public class LevelDataManager_Jack : MonoBehaviour
     /// Saves the player and level data for level 1.
     public void SaveGameData()
     {
+        soundManager.PlayMenuSFX(SFXManager_LW.SFX.Saving);
+
         LevelSaveData_Jack.current = new LevelSaveData_Jack();
 
         // Player Data
