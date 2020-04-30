@@ -10,6 +10,7 @@ using UnityEngine.UI;
 
 public class PauseGame_Louie : Menu_Jack
 {
+    public GameObject inputSettingsMenu;
     public GameObject optionsMenu;
 
     private Animator pauseAnim;
@@ -20,6 +21,7 @@ public class PauseGame_Louie : Menu_Jack
     private const int numButtons = 5;
     public Button[] unityButtons = new Button[numButtons];
 
+    InputDevice inputDevice;
     void Start()
     {
         isGamePaused = false;
@@ -43,7 +45,25 @@ public class PauseGame_Louie : Menu_Jack
             }
         }
 
-        if(inPauseMenu)
+        inputDevice = InputManager.ActiveDevice;
+        if(InputManager.Devices.Count > 0)
+        {
+            if (inputDevice.MenuWasPressed)
+            {
+                //if game is not paused and escape is pressed, pause the game and display pause menu
+                if (!isGamePaused)
+                {
+                    PauseGame();
+                }
+                //if game is paused and escape is pressed, resume the game
+                else if (isGamePaused)
+                {
+                    ResumeGame();
+                }
+            }
+        }
+
+        if (inPauseMenu)
         {
             if(HasSelectionChanged())
             {
@@ -59,7 +79,6 @@ public class PauseGame_Louie : Menu_Jack
                 }
             }
 
-            InputDevice inputDevice = InputManager.ActiveDevice;
             if(InputManager.Devices.Count > 0)
             {
                 if(inputDevice.Action2.WasPressed)
@@ -135,6 +154,18 @@ public class PauseGame_Louie : Menu_Jack
 
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
+    }
+
+    public void OpenInputSettings()
+    {
+        inPauseMenu = false;
+        inputSettingsMenu.SetActive(true);
+    }
+
+    public void CloseInputSettings()
+    {
+        inPauseMenu = true;
+        inputSettingsMenu.SetActive(false);
     }
 
     /// <summary>

@@ -5,6 +5,7 @@
 //                     Moved intitialisation out of Start
 //                     Set OpenSafe to public to be used by LevelDataManager
 
+using InControl;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -41,6 +42,9 @@ public class Safe_LouieWilliamson : MonoBehaviour
     //3rd Code is 45
     private const float DialCode3 = 342.0f;
 
+    // Controller input
+    InputDevice inputDevice;
+
     private void Awake()
     {
         safeAnim = GetComponentInParent<Animator>();
@@ -54,13 +58,26 @@ public class Safe_LouieWilliamson : MonoBehaviour
     {
         if (isAttemptingSafe)
         {
-            if (Input.GetKey(KeyCode.E))
+            inputDevice = InputManager.ActiveDevice;
+            if(InputManager.Devices.Count > 0)
             {
-                RotateDial(true);
+                if(inputDevice.LeftTrigger)
+                {
+                    RotateDial(false);
+                }
+                else if(inputDevice.RightTrigger)
+                {
+                    RotateDial(true);
+                }
             }
-            else if (Input.GetKey(KeyCode.Q))
+
+            if (Input.GetKey(KeyCode.Q))
             {
                 RotateDial(false);
+            }
+            else if (Input.GetKey(KeyCode.E))
+            {
+                RotateDial(true);
             }
             dialTimer += Time.deltaTime;
             CheckDial();

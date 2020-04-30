@@ -53,11 +53,18 @@ public class InventoryMenu_Jack : Menu_Jack
     // Update is called once per frame
     void Update()
     {
-
-        // Temporary for testing
         if (Input.GetKeyDown(KeyCode.I))
         {
             inventoryMenu.SetActive(!inventoryMenu.activeSelf);
+        }
+
+        inputDevice = InputManager.ActiveDevice;
+        if(InputManager.Devices.Count > 0)
+        {
+            if(inputDevice.RightBumper.WasPressed)
+            {
+                inventoryMenu.SetActive(!inventoryMenu.activeSelf);
+            }
         }
 
         if (inventoryMenu.activeSelf)
@@ -89,8 +96,7 @@ public class InventoryMenu_Jack : Menu_Jack
                     }
                 }
             }
-
-            inputDevice = InputManager.ActiveDevice;
+ 
             if (InputManager.Devices.Count > 0)
             {
                 // Controller input

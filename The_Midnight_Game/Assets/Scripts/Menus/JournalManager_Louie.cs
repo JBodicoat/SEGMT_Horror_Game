@@ -3,6 +3,7 @@
 //Louie : 24/03 - Added automatic journal entries, pages and adding notes.
 // Jack 30/02/2020 - Reviewed minor optimizations and quality changes to AddNote()
 
+using InControl;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -43,6 +44,9 @@ public class JournalManager_Louie : MonoBehaviour
 
     private const string entrySeperator = ". ";
 
+    // Controller Input
+    InputDevice inputDevice;
+
     void Start()
     { 
 		isJournalOn = false;
@@ -56,9 +60,34 @@ public class JournalManager_Louie : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        inputDevice = InputManager.ActiveDevice;
+        if (InputManager.Devices.Count > 0)
+        {
+            if(inputDevice.LeftBumper.WasPressed)
+            {
+                ToggleJournal();
+            }
+        }
+        
         if (Input.GetKeyDown(KeyCode.Tab))
         {
             ToggleJournal();
+        }
+
+        if(isJournalOn)
+        {
+            if (InputManager.Devices.Count > 0)
+            {
+                if (inputDevice.Direction.Left.WasPressed || inputDevice.Direction.Right.WasPressed)
+                {
+                    ToggleDisplayPage1();
+                }
+            }
+
+            if(Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow))
+            {
+                ToggleDisplayPage1();
+            }
         }
         //----------------------------------------------------TESTING
         //Used to test the page turning

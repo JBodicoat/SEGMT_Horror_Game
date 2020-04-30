@@ -42,7 +42,7 @@ public class Inventory_Jack : MonoBehaviour
     private void Start()
     {
         inventoryMenuScript.UpdateItem(ItemType.matches, 3);
-        inventoryMenuScript.UpdateItem(ItemType.salt, 2);
+        inventoryMenuScript.UpdateItem(ItemType.salt, 99);
 
         journalScript.UpdateValues(GetNumOf(ItemType.matches), GetNumOf(ItemType.salt), GetNumOf(ItemType.bottles), GetNumOf(ItemType.dolls));
     }

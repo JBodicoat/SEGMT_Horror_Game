@@ -26,7 +26,7 @@ public class InputSettingsManager_Jack : Menu_Jack
 {
     public FirstPersonController_Jack playerScript;
 
-    public GameObject inputSettingsMenu;
+    public PauseGame_Louie pauseMenuScript;
 
     private PlayerAction selectedAction = 0;
 
@@ -99,11 +99,11 @@ public class InputSettingsManager_Jack : Menu_Jack
     // Update is called once per frame
     void Update()
     {
-        if(HasSelectionChanged())
+        if (HasSelectionChanged())
         {
-            for(int i = 0; i < buttons.Count; ++i)
+            for (int i = 0; i < buttons.Count; ++i)
             {
-                if(buttons[i].IsSelected())
+                if (buttons[i].IsSelected())
                 {
                     selectedAction = (PlayerAction)i;
                     break;
@@ -112,108 +112,100 @@ public class InputSettingsManager_Jack : Menu_Jack
         }
 
         // Keyboard Inputs
-        if (Input.GetKeyDown(KeyCode.K))
+        if (Input.GetKeyDown(KeyCode.Backspace))
         {
-            inputSettingsMenu.SetActive(!inputSettingsMenu.activeSelf);
+            pauseMenuScript.CloseInputSettings();
         }
 
-        if (inputSettingsMenu.activeSelf)
+        if (Input.GetKeyDown(KeyCode.DownArrow))
         {
-            if (Input.GetKeyDown(KeyCode.DownArrow))
-            {
-                SelectNextAction();
-            }
-            else if (Input.GetKeyDown(KeyCode.UpArrow))
-            {
-                SelectPreviousAction();
-            }
+            SelectNextAction();
+        }
+        else if (Input.GetKeyDown(KeyCode.UpArrow))
+        {
+            SelectPreviousAction();
+        }
 
-            if (Input.anyKeyDown)
+        if (Input.anyKeyDown)
+        {
+            foreach (KeyCode keyCode in System.Enum.GetValues(typeof(KeyCode)))
             {
-                foreach (KeyCode keyCode in System.Enum.GetValues(typeof(KeyCode)))
+                if (Input.GetKeyDown(keyCode) && keyCode != KeyCode.Escape
+                                                && keyCode != KeyCode.UpArrow
+                                                && keyCode != KeyCode.DownArrow)
                 {
-                    if (Input.GetKeyDown(keyCode) && keyCode != KeyCode.Escape
-                                                    && keyCode != KeyCode.UpArrow
-                                                    && keyCode != KeyCode.DownArrow
-                                                    && keyCode != KeyCode.K)// To be removed
+                    if (ChangeKey(selectedAction, keyCode))
                     {
-                        if (ChangeKey(selectedAction, keyCode))
+                        switch (selectedAction)
                         {
-                            switch (selectedAction)
-                            {
-                                case PlayerAction.PourSalt:
-                                    playerScript.SetSaltKey(keyCode);
-                                    break;
-                                case PlayerAction.LightCandle:
-                                    playerScript.SetCandleKey(keyCode);
-                                    break;
-                                case PlayerAction.GrabDrop:
-                                    playerScript.SetGrabKey(keyCode);
-                                    break;
-                                case PlayerAction.Throw:
-                                    playerScript.SetThrowKey(keyCode);
-                                    break;
-                                case PlayerAction.Interact:
-                                    playerScript.SetInteractKey(keyCode);
-                                    break;
-                                default:
-                                    break;
-                            }
-                            break;
+                            case PlayerAction.PourSalt:
+                                playerScript.SetSaltKey(keyCode);
+                                break;
+                            case PlayerAction.LightCandle:
+                                playerScript.SetCandleKey(keyCode);
+                                break;
+                            case PlayerAction.GrabDrop:
+                                playerScript.SetGrabKey(keyCode);
+                                break;
+                            case PlayerAction.Throw:
+                                playerScript.SetThrowKey(keyCode);
+                                break;
+                            case PlayerAction.Interact:
+                                playerScript.SetInteractKey(keyCode);
+                                break;
+                            default:
+                                break;
                         }
+                        break;
                     }
-                } // End foreach
-            }
+                }
+            } // End foreach
         }
 
         inputDevice = InputManager.ActiveDevice;
         if (InputManager.Devices.Count > 0)
         {
-            // Controller Inputs
-            if (inputDevice.MenuWasPressed)
+            if(inputDevice.MenuWasPressed)
             {
-                inputSettingsMenu.SetActive(!inputSettingsMenu.activeSelf);
+                pauseMenuScript.CloseInputSettings();
             }
 
-            if (inputSettingsMenu.activeSelf)
+            if (inputDevice.Direction.Down.WasPressed)
             {
-                if (inputDevice.Direction.Down.WasPressed)
-                {
-                    SelectNextAction();
-                }
-                else if (inputDevice.Direction.Up.WasPressed)
-                {
-                    SelectPreviousAction();
-                }
+                SelectNextAction();
+            }
+            else if (inputDevice.Direction.Up.WasPressed)
+            {
+                SelectPreviousAction();
+            }
 
-                InputControl button = inputDevice.AnyControl;
+            InputControl button = inputDevice.AnyControl;
 
-                if (button)
+            if (button)
+            {
+                if (button.Target >= InputControlType.Action1 && button.Target <= InputControlType.RightTrigger)
                 {
-                    if (button.Target >= InputControlType.Action1 && button.Target <= InputControlType.RightBumper)
+                    if (ChangeControlType(selectedAction, button.Target))
                     {
-                        if (ChangeControlType(selectedAction, button.Target))
+                        switch (selectedAction)
                         {
-                            switch (selectedAction)
-                            {
-                                case PlayerAction.PourSalt:
-                                    playerScript.SetSaltControlType(button.Target);
-                                    break;
-                                case PlayerAction.LightCandle:
-                                    playerScript.SetCandleControlType(button.Target);
-                                    break;
-                                case PlayerAction.GrabDrop:
-                                    playerScript.SetGrabControlType(button.Target);
-                                    break;
-                                case PlayerAction.Throw:
-                                    playerScript.SetThrowControlType(button.Target);
-                                    break;
-                                case PlayerAction.Interact:
-                                    playerScript.SetInteractControlType(button.Target);
-                                    break;
-                                default:
-                                    break;
-                            }
+                            case PlayerAction.PourSalt:
+                                playerScript.SetSaltControlType(button.Target);
+                                break;
+                            case PlayerAction.LightCandle:
+                                playerScript.SetCandleControlType(button.Target);
+                                break;
+                            case PlayerAction.GrabDrop:
+                                playerScript.SetGrabControlType(button.Target);
+                                break;
+                            case PlayerAction.Throw:
+                                playerScript.SetThrowControlType(button.Target);
+                                break;
+                            case PlayerAction.Interact:
+                                playerScript.SetInteractControlType(button.Target);
+                                break;
+                            default:
+                                break;
                         }
                     }
                 }
@@ -270,8 +262,6 @@ public class InputSettingsManager_Jack : Menu_Jack
         keyBindings[index].code = keyCode;
         return true;
     }
-
-
 
     /// <summary>
     /// Increments the selected player action.
