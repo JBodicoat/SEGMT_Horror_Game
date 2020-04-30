@@ -43,6 +43,8 @@ public class AnimalPuzzle_LW : MonoBehaviour
         numberOfMovements = 0;
         moveTimer = 0;
         barking = GetComponent<AudioSource>();
+
+        EnableAnimal();
     }
 
     // Update is called once per frame
@@ -101,14 +103,7 @@ public class AnimalPuzzle_LW : MonoBehaviour
                 timer = 0;
                 isWaitingToBark = false;
             }
-        }
-
-        //THIS IS FOR REVIEWERS TESTING --- PRESS G TO INITIATE THE PUZZLE
-        if (Input.GetKeyDown(KeyCode.G))
-        {
-            EnableAnimal();
-        }
-        
+        }       
     }
 
     /// <summary>

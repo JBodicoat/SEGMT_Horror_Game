@@ -44,10 +44,8 @@ public class InventoryMenu_Jack : Menu_Jack
         itemsDisplayed[1] = true;
         for (ushort i = 2; i < maxItems; ++i)
         {
-            //itemsDisplayed[i] = false;
-            itemsDisplayed[i] = true;
+            itemsDisplayed[i] = false;
         }
-        itemsDisplayed[2] = false;
     }
 
     // Update is called once per frame

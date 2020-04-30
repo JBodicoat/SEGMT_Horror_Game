@@ -61,7 +61,7 @@ public class BottlePlacementManager_Jack : MonoBehaviour
     {
         ushort numToPlace = inventoryScript.GetNumOf(ItemType.bottles);
 
-        for (int i = currentNumBottles; i < currentNumBottles + numToPlace; ++i)
+        for (int i = currentNumBottles; i < currentNumBottles + numToPlace && i < maxBottles; ++i)
         {
             placedBottles[i].SetActive(true);
         }
