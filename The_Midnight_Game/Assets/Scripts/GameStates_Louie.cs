@@ -25,7 +25,7 @@ public class GameStates_Louie : MonoBehaviour
     private const string endTime = "03 : 33";
     private GameObject watch;
     private const int maxSecondsPassed = 10;
-    private bool playerIsSafe = true;
+    private bool playerIsSafe = false;
 
     void Awake()
     {
@@ -39,7 +39,7 @@ public class GameStates_Louie : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!gameOver && !playerIsSafe)
+        if (!gameOver && !playerIsSafe && !candleScript.IsCandleLit())
         {
             timeSincePlayerNotSafe += Time.deltaTime;
 
@@ -47,6 +47,10 @@ public class GameStates_Louie : MonoBehaviour
             {
                 GameOver();
             }
+        }
+        else
+        {
+            timeSincePlayerNotSafe = 0;
         }
     }
 
