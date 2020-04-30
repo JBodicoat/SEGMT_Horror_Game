@@ -21,5 +21,6 @@ public class Maze_Jack : MonoBehaviour
         Physics.IgnoreLayerCollision(8, 11);
         Physics.IgnoreLayerCollision(9, 11);
         Physics.IgnoreLayerCollision(13, 11);
+        Physics.IgnoreLayerCollision(14, 11);
     }
 }
