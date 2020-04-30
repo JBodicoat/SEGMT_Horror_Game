@@ -93,9 +93,9 @@ public class MMController_Morgan : MonoBehaviour
         {
             float xDistance = patrolPoints[targetNodeIndex].transform.position.x - gameObject.transform.position.x;
             float zDistance = patrolPoints[targetNodeIndex].transform.position.z - gameObject.transform.position.z;
-            float SqrDistanceFromPlayerToNode = xDistance * xDistance + zDistance * zDistance;
+            float sqrDistanceFromTargetNode = xDistance * xDistance + zDistance * zDistance;
 
-            if (SqrDistanceFromPlayerToNode < 2)
+            if (sqrDistanceFromTargetNode < 2)
             {
                 int newTarget;
                 do
@@ -103,11 +103,15 @@ public class MMController_Morgan : MonoBehaviour
                     newTarget = Random.Range(0, patrolPoints.Length);
                 } while (newTarget == targetNodeIndex);
                 targetNodeIndex = newTarget;
+
+                isAtTargetNode = false;
+
+                StartCoroutine(PathCheck());
             }
-
-            StartCoroutine(PathCheck());
-
-            isAtTargetNode = false;
+            else
+            {
+                isAtTargetNode = false;
+            }
         }
 
         //penalties logic
