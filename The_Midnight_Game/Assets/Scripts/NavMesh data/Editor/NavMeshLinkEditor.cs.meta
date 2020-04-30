@@ -1,13 +1,5 @@
 fileFormatVersion: 2
-<<<<<<< HEAD:The_Midnight_Game/Assets/Cinemachine/Base/Editor/Editors/CinemachineBlenderSettingsEditor.cs.meta
-guid: 1ff9d8296ed1f02419bf4f417ff2265e
-timeCreated: 1486495673
-licenseType: Store
-=======
-guid: 2736c3ce72815474a841d00c8558a7a3
-timeCreated: 1520502094
-licenseType: Pro
->>>>>>> Morgan-week-9:The_Midnight_Game/Assets/Scripts/NavMesh data/Editor/NavMeshLinkEditor.cs.meta
+guid: 939bb4b7e5a9f67409ba77848a3ca42e
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2

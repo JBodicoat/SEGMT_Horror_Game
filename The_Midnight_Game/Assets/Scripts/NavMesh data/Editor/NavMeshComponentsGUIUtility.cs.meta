@@ -1,13 +1,5 @@
 fileFormatVersion: 2
-<<<<<<< HEAD:The_Midnight_Game/Assets/Cinemachine/Base/Editor/Editors/CinemachineBasicMultiChannelPerlinEditor.cs.meta
-guid: ee42f1964a0e8224c90be81905946699
-timeCreated: 1484091313
-licenseType: Store
-=======
-guid: 15548e45f29cdba49aea85acca959a91
-timeCreated: 1520502094
-licenseType: Pro
->>>>>>> Morgan-week-9:The_Midnight_Game/Assets/Scripts/NavMesh data/Editor/NavMeshComponentsGUIUtility.cs.meta
+guid: 914211475570f59469a81b02cedb4174
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
