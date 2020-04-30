@@ -1,6 +1,7 @@
 ﻿// Jack 23/02/2020 Script created.
 // Jack 19/03/2020 Renamed eums to match puzzle hints.
 // Jack 23/03/2020 Added saving support.
+// Louie 15/04 - added book moving sound
 
 using System.Collections;
 using System.Collections.Generic;
@@ -30,10 +31,14 @@ public class Book_Jack : MonoBehaviour
 
     public BookController_Jack bookController;
 
+    private SFXManager_LW soundManager;
+
     // Start is called before the first frame update
     void Start()
     {
-        if(!bookController)
+        soundManager = GameObject.Find("SFX_Manager").GetComponent<SFXManager_LW>();
+
+        if (!bookController)
         {
             bookController = FindObjectOfType<BookController_Jack>();
         }
@@ -49,6 +54,7 @@ public class Book_Jack : MonoBehaviour
         {
             pulling = true;
             bookAnimator.SetTrigger(pullTrigger);
+            soundManager.PlaySFX(SFXManager_LW.SFX.BookMoving);
             return true;
         }
 

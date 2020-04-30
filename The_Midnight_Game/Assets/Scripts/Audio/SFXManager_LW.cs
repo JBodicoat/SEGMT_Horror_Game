@@ -6,7 +6,9 @@ public class SFXManager_LW : MonoBehaviour
 {
     // Start is called before the first frame update
     public enum SFX {   CandleBlow, ClockChiming, ClockTick, Death, Floorboards, MatchLighting,
-                        SaltPour, StoneOnStone, Thud1, Thud2, Wind, WindowOpen, Click, Wheelspin, SafeDoor };
+                        SaltPour, StoneOnStone, Thud1, Thud2, Wind, WindowOpen, Click, Wheelspin,
+                        SafeDoor, DoorOpen, DoorClose, DoorShut, FireLit, BookMoving, UIClick,
+                        OptionApply, OnPause, Swoosh, Saving, Swoosh2 };
 
     public enum MMSFX { Breathing, Whispers };
 
@@ -37,6 +39,17 @@ public class SFXManager_LW : MonoBehaviour
         SFX_Dictionary.Add(SFX.Click, ListOfAudioClips[12]);
         SFX_Dictionary.Add(SFX.Wheelspin, ListOfAudioClips[13]);
         SFX_Dictionary.Add(SFX.SafeDoor, ListOfAudioClips[14]);
+        SFX_Dictionary.Add(SFX.DoorOpen, ListOfAudioClips[15]);
+        SFX_Dictionary.Add(SFX.DoorClose, ListOfAudioClips[16]);
+        SFX_Dictionary.Add(SFX.DoorShut, ListOfAudioClips[17]);
+        SFX_Dictionary.Add(SFX.FireLit, ListOfAudioClips[18]);
+        SFX_Dictionary.Add(SFX.BookMoving, ListOfAudioClips[19]);
+        SFX_Dictionary.Add(SFX.UIClick, ListOfAudioClips[20]);
+        SFX_Dictionary.Add(SFX.OptionApply, ListOfAudioClips[21]);
+        SFX_Dictionary.Add(SFX.OnPause, ListOfAudioClips[22]);
+        SFX_Dictionary.Add(SFX.Swoosh, ListOfAudioClips[23]);
+        SFX_Dictionary.Add(SFX.Saving, ListOfAudioClips[24]);
+        SFX_Dictionary.Add(SFX.Swoosh2, ListOfAudioClips[25]);
 
         //Gets the Midnight Man SFX audio sources
         mmWhispers = GameObject.Find("Whispers").GetComponent<AudioSource>();
@@ -80,7 +93,25 @@ public class SFXManager_LW : MonoBehaviour
         //Destroy instance once sfx has been played 
         Destroy(sfxAudio.gameObject, SFX_Dictionary[sfx].length);
     }
-    
+
+    public void PlayMenuSFX(SFX sfx)
+    {
+        //creates instance of sfx prefab and gets the audio source component
+        AudioSource MenusfxAudio = Instantiate(SFXPrefab).GetComponent<AudioSource>();
+
+        //Menu audio needs to ignore the audio listener pause
+        MenusfxAudio.ignoreListenerPause = true;
+
+        //Add audio clip name to the end of each instance (used to test later)
+        MenusfxAudio.gameObject.name = MenusfxAudio.gameObject.name + "_" + SFX_Dictionary[sfx].name;
+
+        //Plays sfx once
+        MenusfxAudio.PlayOneShot(SFX_Dictionary[sfx]);
+
+        //Destroy instance once sfx has been played 
+        Destroy(MenusfxAudio.gameObject, SFX_Dictionary[sfx].length);
+    }
+
     //returns true if the SFX is not already being played --needs fixing--
     public bool CanPlaySound(SFX sfx)
     {

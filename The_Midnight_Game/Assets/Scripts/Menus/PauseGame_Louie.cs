@@ -1,6 +1,7 @@
 ﻿//Louie - 24/02 - Handles the game being paused and unpaused, aswell as the pause menu animations.
 // Jack 01/04/2020 - Added support for controller and keyboard input.
 //                   Script now inherits from Menu, and all the code in 
+//Louie - 15/04 - Added menu sounds
 
 using System.Collections;
 using System.Collections.Generic;
@@ -21,9 +22,17 @@ public class PauseGame_Louie : Menu_Jack
     private const int numButtons = 5;
     public Button[] unityButtons = new Button[numButtons];
 
+
     InputDevice inputDevice;
+
+    private VideoSettings_LouieWilliamson vSettings;
+    private SFXManager_LW soundManager;
+    public AudioSource PauseMusic;
+
     void Start()
     {
+        PauseMusic.ignoreListenerPause = true;
+        soundManager = GameObject.Find("SFX_Manager").GetComponent<SFXManager_LW>();
         isGamePaused = false;
         pauseAnim = gameObject.GetComponent<Animator>();
         Cursor.visible = false;
@@ -135,10 +144,14 @@ public class PauseGame_Louie : Menu_Jack
 
         pauseAnim.SetBool("Paused", true);
         Time.timeScale = 0;
+        AudioListener.pause = true;   
         isGamePaused = true;
 
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
+
+        soundManager.PlayMenuSFX(SFXManager_LW.SFX.OnPause);
+        PauseMusic.Play();
     }
 
     /// <summary>
@@ -154,6 +167,10 @@ public class PauseGame_Louie : Menu_Jack
 
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
+
+        AudioListener.pause = false;
+        soundManager.PlayMenuSFX(SFXManager_LW.SFX.UIClick);
+        PauseMusic.Pause();
     }
 
     public void OpenInputSettings()
@@ -175,6 +192,10 @@ public class PauseGame_Louie : Menu_Jack
     {
         inPauseMenu = false;
         optionsMenu.SetActive(true);
+
+        soundManager.PlayMenuSFX(SFXManager_LW.SFX.Swoosh);
+        
+        OptionsMenu.SetActive(false);
     }
 
     /// <summary>
@@ -184,6 +205,8 @@ public class PauseGame_Louie : Menu_Jack
     {
         inPauseMenu = true;
         optionsMenu.SetActive(false);
+
+        soundManager.PlayMenuSFX(SFXManager_LW.SFX.Swoosh2);
     }
 
     /// <summary>
@@ -191,6 +214,7 @@ public class PauseGame_Louie : Menu_Jack
     /// </summary>
     public void QuitGame()
     {
+        soundManager.PlayMenuSFX(SFXManager_LW.SFX.UIClick);
         Application.Quit();
     }
 }

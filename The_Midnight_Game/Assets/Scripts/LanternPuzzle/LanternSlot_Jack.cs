@@ -1,5 +1,5 @@
 ﻿// Jack 16/03/2020 Created script
-
+// Louie 07/04/2020 Added Fire Sound to lit lantern
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -21,12 +21,14 @@ public class LanternSlot_Jack : MonoBehaviour
 
     private const float minDistance = 0.001f;
     private const float lanternMoveSpeed = 2.5f;
+    private SFXManager_LW soundManager;
 
     // Start is called before the first frame update
     void Start()
     {
         lanternRigidbody = lantern.GetComponent<Rigidbody>();
         lanternParticleSystem = lantern.GetComponentInChildren<ParticleSystem>();
+        soundManager = GameObject.Find("SFX_Manager").GetComponent<SFXManager_LW>();
     }
 
     private void FixedUpdate()
@@ -63,6 +65,8 @@ public class LanternSlot_Jack : MonoBehaviour
     {
         lanternRigidbody.constraints = lanternConstraints;
         lanternParticleSystem.Play();
+        lantern.GetComponent<LanternSound_LW>().PlayFireLitSound();
+        soundManager.PlaySFX(SFXManager_LW.SFX.FireLit);
         Destroy(this);
     }
 }
