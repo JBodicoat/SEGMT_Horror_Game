@@ -40,8 +40,8 @@ public class MMController_Morgan : MonoBehaviour
     private float[] sqrDistanceFromNodeToTarget;
 
     //speed smoothing
-    const float maxSpeed = 2f;
-    const float minSpeed = 0.8f;
+    const float maxSpeed = 4f;
+    const float minSpeed = 2f;
 
     const float maxDist = 400.0f;
     const float minDist = 100.0f;
@@ -91,26 +91,15 @@ public class MMController_Morgan : MonoBehaviour
 
         if (isAtTargetNode)
         {
+            isAtTargetNode = false;
+
             float xDistance = patrolPoints[targetNodeIndex].transform.position.x - gameObject.transform.position.x;
             float zDistance = patrolPoints[targetNodeIndex].transform.position.z - gameObject.transform.position.z;
             float sqrDistanceFromTargetNode = xDistance * xDistance + zDistance * zDistance;
 
             if (sqrDistanceFromTargetNode < 2)
             {
-                int newTarget;
-                do
-                {
-                    newTarget = Random.Range(0, patrolPoints.Length);
-                } while (newTarget == targetNodeIndex);
-                targetNodeIndex = newTarget;
-
-                isAtTargetNode = false;
-
-                StartCoroutine(PathCheck());
-            }
-            else
-            {
-                isAtTargetNode = false;
+                FindNewNode();
             }
         }
 
@@ -143,6 +132,18 @@ public class MMController_Morgan : MonoBehaviour
 
             agent.speed = speed;
         }
+    }
+
+    private void FindNewNode()
+    {
+        int newTarget;
+        do
+        {
+            newTarget = Random.Range(0, patrolPoints.Length);
+        } while (newTarget == targetNodeIndex);
+        targetNodeIndex = newTarget;
+
+        StartCoroutine(PathCheck());
     }
 
     /// <summary>
@@ -203,6 +204,8 @@ public class MMController_Morgan : MonoBehaviour
             }
         }
         agent.Warp(patrolPoints[maxValueIndex].transform.position);
+
+        FindNewNode();
     }
 
     /// <summary>
@@ -264,10 +267,9 @@ public class MMController_Morgan : MonoBehaviour
         //give time for path to be calculated
         yield return new WaitForSeconds(0.1f);
 
-        if (path.status == NavMeshPathStatus.PathPartial)
+        if (path.status != NavMeshPathStatus.PathComplete)
         {
-            //find new node
-            isAtTargetNode = true;
+            FindNewNode();
         }
     }
 

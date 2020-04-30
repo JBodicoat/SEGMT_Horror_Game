@@ -65,7 +65,6 @@ public class LanternSlot_Jack : MonoBehaviour
     {
         lanternRigidbody.constraints = lanternConstraints;
         lanternParticleSystem.Play();
-        lantern.GetComponent<LanternSound_LW>().PlayFireLitSound();
         soundManager.PlaySFX(SFXManager_LW.SFX.FireLit);
         Destroy(this);
     }
