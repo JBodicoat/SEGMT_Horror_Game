@@ -4,12 +4,12 @@
 // Jack 09/03/2020 - Reviewed Jump-Scare
 // Jack 24/03/2020 - Altered check for whether the players candle is lit to better support salt circles and to fix
 //                   a bug where the timer is not reset after relighting the candle.
+// Dan 08/04/2020 - Added opening cinematic functionality
 
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Video;
-
 public class GameStates_Louie : MonoBehaviour
 {
     //eggs for bart functionality
@@ -81,7 +81,6 @@ public class GameStates_Louie : MonoBehaviour
         timeSincePlayerNotSafe = 0;
         playerIsSafe = false;
     }
-
 
     /// <summary>
     /// This function will start the end game sequence for when the player completes the game.
