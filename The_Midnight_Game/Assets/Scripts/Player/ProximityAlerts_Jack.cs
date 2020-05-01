@@ -18,7 +18,7 @@ public class ProximityAlerts_Jack : MonoBehaviour
     public MMTargeting_Morgan mmTargetingScript;
     private Vignette proximityVignette;
 
-    private const float minVignetteDistanceSquared = 400f;
+    private const float minVignetteDistanceSquared = 800f;
 
     private FloatParameter opacity = new FloatParameter();
     private float targetOpacity;
@@ -36,11 +36,11 @@ public class ProximityAlerts_Jack : MonoBehaviour
 
     // Whispers
     public AudioSource whispersAudioSource;
-    private const float minWhispersDistanceSquared = 200f;
+    private const float minWhispersDistanceSquared = 300f;
 
     // Breath
     public ParticleSystem breathParticleSystem;
-    private const float minBreathDistanceSquared = 300f;
+    private const float minBreathDistanceSquared = 500f;
     private bool breathActive = false;
     private const float timeBetweenBreaths = 4f;
     private float breathTimer = 0f;
