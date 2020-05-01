@@ -14,7 +14,7 @@ public class DoorSounds_LW : MonoBehaviour
 
     void Start()
     {
-        soundManager = GameObject.Find("SFX_Manager").GetComponent<SFXManager_LW>();
+        soundManager = FindObjectOfType<SFXManager_LW>();
     }
 
     // Update is called once per frame
